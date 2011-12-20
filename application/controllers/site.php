@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Welcome extends CI_Controller {
+class Site extends CI_Controller {
 
 	/**
 	 * Index Page for this controller.
@@ -19,7 +19,13 @@ class Welcome extends CI_Controller {
 	 */
 	public function index()
 	{
-		$this->load->view('welcome_message');
+		$this->load->view('site/login');
+	}
+	public function login() {
+		//mestinya otentikasi
+		//otorisasi user level
+		//baru dibuang ke dashboard
+		$this->load->view('site/dashboard');
 	}
 }
 
