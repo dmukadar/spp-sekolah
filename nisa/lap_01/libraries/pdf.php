@@ -126,6 +126,27 @@ class pdf extends TCPDF {
 		
 	}
 	
-	
+/*	function Header()
+{
+    //Logo  
+    $this->SetX(92);
+    $this->SetFont('times','B',15);
+    //Title
+    $this->Cell(30,10,'YAYASAN AL AZHAR KELAPA GADING',0,0,'C');
+    //Line break
+    $this->Ln(20);
+}*/
+
+//Page footer
+function Footer()
+{
+    //Position at 1.5 cm from bottom
+    $this->SetY(-15);
+    //Arial italic 8
+    $this->SetFont('times',' ',8);
+    //Page number
+  //  $this->Cell(0,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
+    $this->Cell(0,10,' ',0,0,'C');
+}
 	
 }

@@ -118,7 +118,7 @@
 	 * of a two-element array containing the width and the height.
 	 ************************************************************/
 	
-	$tcpdf['page_format'] = 'LETTER';
+	$tcpdf['page_format'] = 'FOLIO';
 	
 	
 	/************************************************************
@@ -182,7 +182,7 @@
 	 ***********************************************************/
 	
 	$tcpdf['margin_top']    = 27;
-	$tcpdf['margin_bottom'] = 27;
+	$tcpdf['margin_bottom'] = 2;
 	$tcpdf['margin_left']   = 15;
 	$tcpdf['margin_right']  = 15;
 	
@@ -209,9 +209,9 @@
 	$tcpdf['header_on'] = TRUE;
 	$tcpdf['header_font'] = $tcpdf['page_font'];
 	$tcpdf['header_font_size'] = 14;
-	$tcpdf['header_margin'] = 5;
-	$tcpdf['header_title'] = 'YAYASAN AL AZHAR KELAPA GADING';
-	$tcpdf['header_string'] = "Jl. Semampir Utara 27 Telp (031) 59821234, 23445321 Fax 23412443\nSurabaya";
+	$tcpdf['header_margin'] = '5';
+	$tcpdf['header_title'] = '                                    YAYASAN AL AZHAR KELAPA GADING';
+	$tcpdf['header_string'] = "                  Jl. Semampir Utara 27 Telp (031) 59821234, 23445321 Fax 23412443\n                                                                  Surabaya     ";
 	$tcpdf['header_logo'] = FALSE;
 	$tcpdf['header_logo_width'] = 2;
 	
@@ -225,7 +225,7 @@
 	$tcpdf['footer_on'] = TRUE;
 	$tcpdf['footer_font'] = $tcpdf['page_font'];
 	$tcpdf['footer_font_size'] = 8;
-	$tcpdf['footer_margin'] = 10;
+	$tcpdf['footer_margin'] = 20;
 	
 	
 	/************************************************************
