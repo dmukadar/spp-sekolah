@@ -44,7 +44,7 @@
 			<a id="view-site" href="#">View Site</a>
 		</div>
 		<div id="userinfo" class="grid_6">
-			Welcome, <a href="#">Administrator</a>
+			Welcome, <a href="#" onclick="return false;"><?php echo (ME()->get_current_user()->get_user_full_name());?></a>
 		</div>
 	</div>
 </header>
@@ -53,22 +53,10 @@
 	<div class="container_12 clearfix">
 		<div class="grid_12">
 			<ul id="mainmenu" class="sf-menu">
-				<li class="current"><a href="dashboard.html">Dashboard</a></li>
-				<li><a href="styles.html">Styles</a></li>
-				<li><a href="tables.html">Tables</a></li>
-				<li><a href="forms.html">Forms</a></li>
-				<li><a href="#">Sample Pages</a>
-					<ul>
-						<li><a href="news.html">News</a></li>
-						<li><a href="gallery.html">Photo Gallery</a></li>
-						<li><a href="settings.html">Settings</a></li>
-						<li><a href="login.html">Login</a></li>
-					</ul>
-				</li>
+				<li><a href="<?php echo (site_url('dashboard/index'));?>">Dashboard</a></li>
 			</ul>
 			<ul id="usermenu">
-				<li><a href="#" class="inbox">Inbox (3)</a></li>
-				<li><a href="#">Logout</a></li>
+				<li><a href="<?php echo (site_url('site/logout'));?>">Logout</a></li>
 			</ul>
 		</div>
 	</div>
