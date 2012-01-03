@@ -18,6 +18,29 @@ $config['base_url']	= '';
 
 /*
 |--------------------------------------------------------------------------
+| Guest/Anonymous username
+|--------------------------------------------------------------------------
+|
+*/
+$config['anon_username']	= 'guest';
+
+/*
+|--------------------------------------------------------------------------
+| Login URL
+|--------------------------------------------------------------------------
+|
+| URL untuk halamna login, digunakan untuk melakukan redirect user.
+| Isinya bukan full path URL melainkan bagian controller dari URL
+| 
+| misal:
+| 'redirect_login' => '/site/index'
+| 
+| akan sama dengan http://example.com/index.php/site/index
+*/
+$config['redirect_login']	= '/site/index';
+
+/*
+|--------------------------------------------------------------------------
 | Index File
 |--------------------------------------------------------------------------
 |
