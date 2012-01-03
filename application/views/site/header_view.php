@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html lang="en">
 <head>
-<title><?php echo (@$page_title);?></title>
+<title><?php echo (ME()->get_page_title());?></title>
 <meta charset="utf-8">
 
 <base href="<?php echo base_url(); ?>"></base>

@@ -134,6 +134,17 @@ class Alazka_Controller extends CI_Controller {
 			printf($div, $this->flash_class, $this->flash_message);
 		}
 	}
+	
+	/**
+	 * Method untuk mendapatkan nilai dari judul halaman yang sedang aktif.
+	 *
+	 * @author Rio Astamal <me@rioastamal.net>
+	 *
+	 * @return string
+	 */
+	public function get_page_title() {
+		return @$this->data['page_title'];
+	}
 }
 
 /**
