@@ -262,7 +262,7 @@ EOF;
 		\$this->db->update({$konstanta}, \$data);
 		
 		if (\$this->db->affected_rows() == 0) {
-			throw new Exception(sprintf('Tidak ada perubahan yang dilakukan.'));
+			// do nothing
 		}
 	}
 	
@@ -295,7 +295,7 @@ EOF;
 		\$this->db->delete({$konstanta}, \$where);
 		
 		if (\$this->db->affected_rows() == 0) {
-			throw new Exception(sprintf('Gagal menghapus data {$classname_lower}.'));
+			// do nothing
 		}
 	}
 	
@@ -344,8 +344,25 @@ if (isset($_POST['submit'])) {
 	</form>
 	<a name="class"></a>
 	<h2>Class <?php echo ($classfile);?></h2>
-	<pre class="code"><?php echo ($class); ?>
+	<pre class="code" id="result"><?php echo ($class); ?>
 
 <?php echo ($ci_model); ?></pre>
+
+	<script type="text/javascript">
+	 function selectText() {
+		  if (document.selection) {
+		  var range = document.body.createTextRange();
+				range.moveToElementText(document.getElementById('result'));
+		  range.select();
+		  }
+		  else if (window.getSelection) {
+		  var range = document.createRange();
+		  range.selectNode(document.getElementById('result'));
+		  window.getSelection().addRange(range);
+		  }
+	 }
+	 
+	 document.getElementById('result').onclick = selectText;
+	 </script>
 </body>
 <html>
