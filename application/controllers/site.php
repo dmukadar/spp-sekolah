@@ -19,8 +19,11 @@ class Site extends CI_Controller {
 	 */
 	public function index()
 	{
-		$this->load->view('site/login');
+		$this->load->view('site/header_lite_view');
+		$this->load->view('site/login_view');
+		$this->load->view('site/footer_lite_view');
 	}
+	
 	public function login() {
 		//mestinya otentikasi
 		//otorisasi user level
