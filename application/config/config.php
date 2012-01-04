@@ -18,6 +18,29 @@ $config['base_url']	= '';
 
 /*
 |--------------------------------------------------------------------------
+| Guest/Anonymous username
+|--------------------------------------------------------------------------
+|
+*/
+$config['anon_username']	= 'guest';
+
+/*
+|--------------------------------------------------------------------------
+| Login URL
+|--------------------------------------------------------------------------
+|
+| URL untuk halamna login, digunakan untuk melakukan redirect user.
+| Isinya bukan full path URL melainkan bagian controller dari URL
+| 
+| misal:
+| 'redirect_login' => '/site/index'
+| 
+| akan sama dengan http://example.com/index.php/site/index
+*/
+$config['redirect_login']	= '/site/index';
+
+/*
+|--------------------------------------------------------------------------
 | Index File
 |--------------------------------------------------------------------------
 |
@@ -224,7 +247,7 @@ $config['cache_path'] = '';
 | MUST set an encryption key.  See the user guide for info.
 |
 */
-$config['encryption_key'] = '';
+$config['encryption_key'] = '!@#$%^AL-AZHAR@#$%^&*ZXCVBNM<';
 
 /*
 |--------------------------------------------------------------------------
@@ -244,13 +267,13 @@ $config['encryption_key'] = '';
 | 'sess_time_to_update'		= how many seconds between CI refreshing Session Information
 |
 */
-$config['sess_cookie_name']		= 'ci_session';
+$config['sess_cookie_name']		= md5('ci_session');
 $config['sess_expiration']		= 7200;
 $config['sess_expire_on_close']	= FALSE;
-$config['sess_encrypt_cookie']	= FALSE;
+$config['sess_encrypt_cookie']	= TRUE;
 $config['sess_use_database']	= FALSE;
 $config['sess_table_name']		= 'ci_sessions';
-$config['sess_match_ip']		= FALSE;
+$config['sess_match_ip']		= TRUE;
 $config['sess_match_useragent']	= TRUE;
 $config['sess_time_to_update']	= 300;
 
