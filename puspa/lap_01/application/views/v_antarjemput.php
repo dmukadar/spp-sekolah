@@ -63,6 +63,7 @@
 		-webkit-box-shadow: 0 0 8px #D0D0D0;
 	}
     .style5 {color: #000000; font-family: "Times New Roman", Times, serif; font-size: 14; }
+    .style6 {color: #FFFFFF}
     </style>
 </head>
 <body>
@@ -116,11 +117,11 @@
 <table width="100%" border="1">
   <tr>
     <td width="5%" height="32"><div align="center"><?php echo $row->inv_id;?></div></td>
-    <td width="27%" height="32"><div align="center"><?php echo $row->namalengkap;?></div></td>
+    <td width="27%" height="32"><div align="left"><span class="style6">_</span><?php echo $row->namalengkap;?></div></td>
     <td width="11%" height="32"><div align="center"><?php echo $row->kelas;?></div></td>
     <td width="14%" height="32"><div align="center"><?php echo $row->bulan;?></div></td>
     <td width="27%" height="32"><div align="center"><?php echo $row->description;?></div></td>
-    <td width="16%" height="32"><div align="center"><?php echo $row->tagihan;?></div></td>
+    <td width="16%" height="32"><div align="right"><?php echo $row->tagihan;?><span class="style6">.</span></div>   </td>
   </tr>
 </table>
 <?php }?>
@@ -130,7 +131,11 @@
     <td width="38%"><div align="center">TOTAL JUMLAH </div></td>
     <td width="14%"><div align="center"></div></td>
     <td width="27%"><div align="center"></div></td>
-    <td width="16%"><div align="center"><?php foreach($data_total->result() as $row){?><?php echo $row->total;?><?php }?></div></td>
+    <td width="16%"><div align="right">
+      <?php foreach($data_total->result() as $row){?>
+      <?php echo $row->total;?>
+      <?php }?>
+    </div></td>
   </tr>
 </table>
 
