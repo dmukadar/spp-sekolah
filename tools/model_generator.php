@@ -204,7 +204,7 @@ class {$classname}_model extends CI_Model {
 		}
 		\$query = \$this->db->get({$konstanta});
 		if (\$query->num_rows == 0) {
-			throw new Exception ("Record tidak ditemukan.");
+			throw new {$classname}NotFoundException ("Record tidak ditemukan.");
 		}
 		
 		\$result = \$query->result();
@@ -213,13 +213,9 @@ class {$classname}_model extends CI_Model {
 	}
 	
 	public function get_single_{$classname_lower}(\$where=array()) {
-		try {
-			\$record = \$this->get_all_{$classname_lower}(\$where, 1, 0);
+		\$record = \$this->get_all_{$classname_lower}(\$where, 1, 0);
 			
-			return \$record[0];
-		} catch (Exception \$e) {
-			throw new Exception (\$e->getMessage());
-		}
+		return \$record[0];
 	}
 	
 	public function insert(\${$classname_lower}) {
@@ -303,6 +299,14 @@ EOF;
 		\$this->db->delete({$konstanta}, \$where);
 	}
 }
+
+
+class {$classname}NotFoundException extends Exception {
+	public function __construct(\$mesg, \$code=101) {
+		parent::__construct(\$mesg, \$code);
+	}
+}
+
 EOF;
 	
 }
