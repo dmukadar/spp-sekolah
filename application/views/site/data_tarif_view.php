@@ -30,7 +30,7 @@
 					<td><?php echo ($tarif->get_category());?></td>
 					<td><?php echo ($tarif->get_name());?></td>
 					<td style="text-align:right;"><?php echo ($tarif->get_fare(TRUE));?></td>
-					<td style="text-align:center;"><a href="#" class="reply">ubah</a></td>
+					<td style="text-align:center;"><a href="<?php echo (ME()->get_edit_link($tarif));?>" class="reply">ubah</a></td>
 				</tr>
 				<?php endforeach; ?>	
 				</tbody>

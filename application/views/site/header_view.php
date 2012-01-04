@@ -54,6 +54,12 @@
 		<div class="grid_12">
 			<ul id="mainmenu" class="sf-menu">
 				<li><a href="<?php echo (site_url('dashboard/index'));?>">Dashboard</a></li>
+				<li><a href="#" onclick="return false;">Tarif</a>
+					<ul>
+						<li><a href="<?php echo (site_url('data_tarif/index'));?>">Data Tarif</a></li>
+						<li><a onclick="alert('Feature in progress'); return false;" href="<?php echo (site_url('data_tarif/index'));?>">Input Tarif</a></li>
+					</ul>
+				</li>
 			</ul>
 			<ul id="usermenu">
 				<li><a href="<?php echo (site_url('site/logout'));?>">Logout</a></li>

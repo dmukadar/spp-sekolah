@@ -178,7 +178,7 @@ class Rate_model extends CI_Model {
 		}
 		$query = $this->db->get(RATE_TABLE);
 		if ($query->num_rows == 0) {
-			throw new Exception ("Record tidak ditemukan.");
+			throw new RateNotFoundException ("Record tidak ditemukan.");
 		}
 		
 		$result = $query->result();
@@ -187,13 +187,9 @@ class Rate_model extends CI_Model {
 	}
 	
 	public function get_single_rate($where=array()) {
-		try {
-			$record = $this->get_all_rate($where, 1, 0);
+		$record = $this->get_all_rate($where, 1, 0);
 			
-			return $record[0];
-		} catch (Exception $e) {
-			throw new Exception ($e->getMessage());
-		}
+		return $record[0];
 	}
 	
 	public function get_all_category() {
@@ -250,5 +246,11 @@ class Rate_model extends CI_Model {
 	
 	public function custom_delete($where) {
 		$this->db->delete(RATE_TABLE, $where);
+	}
+}
+
+class RateNotFoundException extends Exception {
+	public function __construct($mesg, $code=101) {
+		parent::__construct($mesg, $code);
 	}
 }
