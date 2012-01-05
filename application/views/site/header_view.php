@@ -63,6 +63,12 @@
 						<li><a onClick="alert('Feature in progress'); return false;" href="<?php echo (site_url('data_tarif/index'));?>">Input Tarif</a></li>
 					</ul>
 				</li>
+				<li><a href="#" onClick="return false;">Laporan</a>
+					<ul>
+						<li><a href="<?php echo (site_url('rekap/index'));?>">Data Tagihan</a></li>
+						<li><a href="<?php echo (site_url('setoran/index'));?>">Data Setoran</a></li>
+					</ul>
+				</li>
 			</ul>
 			<ul id="usermenu">
 				<li><a href="<?php echo (site_url('site/logout'));?>">Logout</a></li>
