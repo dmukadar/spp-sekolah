@@ -415,26 +415,34 @@ class Tlain2 extends Alazka_Controller {
 	//	echo $tanggal_mulai;
 	//	echo $ajaran;
 		if ($jenjang==0 && empty($tanggal_akhir)){
-		$data['data_antarjemput']=$this->Spp_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));		
+		$data['data_sppbpps']=$this->Spp_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));		
 		$data['data_total']=$this->Spp_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));
+		$data['data_spp']=$this->Spp_model->get_total_spp(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));
+		$data['data_bpps']=$this->Spp_model->get_total_bpps(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));
 		//echo "1";
 		}
 		
 		else if ($jenjang==0 && !empty($tanggal_akhir)){
-		$data['data_antarjemput']=$this->Spp_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		$data['data_sppbpps']=$this->Spp_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
 		$data['data_total']=$this->Spp_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		$data['data_spp']=$this->Spp_model->get_total_spp(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		$data['data_bpps']=$this->Spp_model->get_total_bpps(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
 	//	echo "2";
 		}
 		
 		else if ($jenjang!=0 && empty($tanggal_akhir)){
-		$data['data_antarjemput']=$this->Spp_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_sppbpps']=$this->Spp_model->get_all(array('due_date >='=>$tanggal_mulai, 'tahun'=>$ajaran,'sis_siswa.dm_jenjang_id'=>$jenjang));	
 		$data['data_total']=$this->Spp_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_spp']=$this->Spp_model->get_total_spp(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_bpps']=$this->Spp_model->get_total_bpps(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
 		//echo "3";
 		}
 		
 		else if ($jenjang!=0 && !empty($tanggal_akhir)){
-		$data['data_antarjemput']=$this->Spp_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_sppbpps']=$this->Spp_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
 		$data['data_total']=$this->Spp_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_spp']=$this->Spp_model->get_total_spp(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_bpps']=$this->Spp_model->get_total_bpps(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
 		//echo "4";
 		} 
 		
