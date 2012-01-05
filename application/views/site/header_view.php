@@ -32,7 +32,10 @@
 <script type="text/javascript" src="js/jquery.flot.min.js"></script>
 <script type="text/javascript" src="js/custom.js"></script>
 <script type="text/javascript" src="js/facebox.js"></script>
-
+<script type="text/javascript" src="<?php echo base_url();?>js/jquery.autocomplete.js"></script>
+<script type="text/javascript" src="<?php echo base_url();?>datepicker/datetimepicker_css.js"></script>
+<link href="../../../css/style.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" media="all" href="<?php echo base_url();?>css/jquery.autocomplete.css" />
 </head>
 <body>
 
@@ -44,7 +47,7 @@
 			<a id="view-site" href="#">View Site</a>
 		</div>
 		<div id="userinfo" class="grid_6">
-			Welcome, <a href="#" onclick="return false;"><?php echo (ME()->get_current_user()->get_user_full_name());?></a>
+			Welcome, <a href="#" onClick="return false;"><?php echo (ME()->get_current_user()->get_user_full_name());?></a>
 		</div>
 	</div>
 </header>
@@ -54,10 +57,10 @@
 		<div class="grid_12">
 			<ul id="mainmenu" class="sf-menu">
 				<li><a href="<?php echo (site_url('dashboard/index'));?>">Dashboard</a></li>
-				<li><a href="#" onclick="return false;">Tarif</a>
+				<li><a href="#" onClick="return false;">Tarif</a>
 					<ul>
 						<li><a href="<?php echo (site_url('data_tarif/index'));?>">Data Tarif</a></li>
-						<li><a onclick="alert('Feature in progress'); return false;" href="<?php echo (site_url('data_tarif/index'));?>">Input Tarif</a></li>
+						<li><a onClick="alert('Feature in progress'); return false;" href="<?php echo (site_url('data_tarif/index'));?>">Input Tarif</a></li>
 					</ul>
 				</li>
 			</ul>
