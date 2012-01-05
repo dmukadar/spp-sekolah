@@ -10,10 +10,13 @@ function __construct()
 	
 	public function index()
 	{
-	    $this->load->model('M_unit');		
-		$data['data_unit']=$this->M_unit->get_all_unit();			
+	    $this->load->model('Unit_model');		
+		$data['data_unit']=$this->Unit_model->get_all_unit();			
 		$data['page']='index';
-		$this->load->view('v_rekap',$data);
+		$this->load->view('sites/header_view');
+        $this->load->view('rekap_view',$data);
+        $this->load->view('sites/footer_view');
+
 	}
 	
 }

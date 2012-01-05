@@ -14,37 +14,38 @@ class Tlain2 extends CI_Controller {
 	function pilih_report_tunggakan(){
 		$pilihan=$this->input->post('bt_laporan');
 		if($pilihan==8){
-			echo "alat";
-			//$this->alat();
+			//echo "alat";
+			$this->alat();
 		}
 		else if($pilihan==7){	
-			echo "seragam";	
-			//$this->seragam();
+			//echo "seragam";	
+			$this->seragam();
 		}
 		else if($pilihan==6){			
 			$this->antarjemput();
 		}
 		else if($pilihan==5){
-			 echo "sanggar";
-			//$this->sanggar();
+			 //echo "sanggar";
+			 $this->sanggar();
 		}
 		else if($pilihan==4){
-			 echo "uang buku";
-			//$this->uang_buku();
+			// echo "uang buku";
+			$this->uang_buku();
 		}
 		else if($pilihan==3){
-			 echo "uang kegiatan";
-			//$this->uang_kegiatan();
+			// echo "uang kegiatan";
+			$this->uang_kegiatan();
 		}
 		else if($pilihan==2){
-			 echo "uang masuk";
-			//$this->uang_masuk();
+			// echo "uang masuk";
+			$this->uang_masuk();
 		}
 		else if($pilihan==1){
-			 echo "SPP";
-			//$this->spp();
+			// echo "SPP";
+			 $this->spp();
 		}
 	}
+	
 	
     function antarjemput()
     {      
@@ -58,7 +59,60 @@ class Tlain2 extends CI_Controller {
 		$this->pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
         $this->pdf->AddPage(); 
 		
-        $this->load->model('M_antarjemput');
+        $this->load->model('Antarjemput_model');
+		$tanggal_mulai=$this->input->post('tx_mulai'); 
+		$tanggal_akhir=$this->input->post('tx_akhir'); 
+		$ajaran=$this->input->post('tx_ajaran');	
+		$jenjang=$this->input->post('tx_unit');
+		
+	    $data['ajaran']=$ajaran;
+		$data ['per_tanggal']=$tanggal_mulai;
+		$data ['nm_jenjang']=$jenjang;
+		
+		if ($jenjang==0 && empty($tanggal_akhir)){
+		$data['data_antarjemput']=$this->Antarjemput_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));		
+		$data['data_total']=$this->Antarjemput_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));
+		}
+		
+		else if ($jenjang==0 && !empty($tanggal_akhir)){
+		$data['data_antarjemput']=$this->Antarjemput_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		$data['data_total']=$this->Antarjemput_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		}
+		
+		else if ($jenjang!=0 && empty($tanggal_akhir)){
+		$data['data_antarjemput']=$this->Antarjemput_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Antarjemput_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		}
+		
+		else if ($jenjang!=0 && !empty($tanggal_akhir)){
+		$data['data_antarjemput']=$this->Antarjemput_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Antarjemput_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		} 
+		
+		$data['page']='index';
+		
+		$html = $this->load->view('antarjemput_view', $data, true);
+		$this->pdf->writeHTML($html, true, true, true, true, '');		
+		$this->pdf->lastPage();		
+		$this->pdf->Output("rekaptg_antjmput.pdf", 'I');       
+    }
+	
+
+	
+	
+	function alat()
+    {       
+		$this->load->library('pdf');
+        $this->pdf->SetSubject('Laporan Tunggakan Alat');
+        $this->pdf->SetKeywords('TCPDF, PDF');      
+        $this->pdf->SetFont('times', '', 12);   
+		$this->pdf->setHeaderFont(Array('times', '', '14'));
+		$this->pdf->setFooterFont(Array('times', '', '12'));
+        $this->pdf->SetAutoPageBreak(FALSE, PDF_MARGIN_BOTTOM);    
+		$this->pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+        $this->pdf->AddPage(); 
+		
+        $this->load->model('Alat_model');
 		$tanggal_mulai=$this->input->post('tx_mulai'); 
 		$tanggal_akhir=$this->input->post('tx_akhir'); 
 		$ajaran=$this->input->post('tx_ajaran');	
@@ -67,44 +121,82 @@ class Tlain2 extends CI_Controller {
 		$data ['per_tanggal']=$tanggal_mulai;
 		
 		if ($jenjang==0 && empty($tanggal_akhir)){
-		$data['data_antarjemput']=$this->M_antarjemput->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));		
-		$data['data_total']=$this->M_antarjemput->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));
+		$data['data_antarjemput']=$this->Alat_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));		
+		$data['data_total']=$this->Alat_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));
 		}
 		
 		else if ($jenjang==0 && !empty($tanggal_akhir)){
-		$data['data_antarjemput']=$this->M_antarjemput->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
-		$data['data_total']=$this->M_antarjemput->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		$data['data_antarjemput']=$this->Alat_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		$data['data_total']=$this->Alat_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
 		}
 		
 		else if ($jenjang!=0 && empty($tanggal_akhir)){
-		$data['data_antarjemput']=$this->M_antarjemput->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_total']=$this->M_antarjemput->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_antarjemput']=$this->Alat_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Alat_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
 		}
 		
 		else if ($jenjang!=0 && !empty($tanggal_akhir)){
-		$data['data_antarjemput']=$this->M_antarjemput->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_total']=$this->M_antarjemput->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_antarjemput']=$this->Alat_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Alat_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
 		} 
 		
 		$data['page']='index';
-		$html = $this->load->view('v_antarjemput', $data, true);
+		$html = $this->load->view('alat_view', $data, true);
 		$this->pdf->writeHTML($html, true, true, true, true, '');		
 		$this->pdf->lastPage();		
-		$this->pdf->Output("rekap_tunggakan_ant_jemput.pdf", 'I');       
+		$this->pdf->Output("rekaptg_alat.pdf", 'I');          
     }
 	
-
 	
-	
-	function alat()
-    {       
-		//8    
-    }
 	
 	function seragam()
     {       
-		//7    
+	$this->load->library('pdf');
+        $this->pdf->SetSubject('Laporan Tunggakan Lain-lain');
+        $this->pdf->SetKeywords('TCPDF, PDF');      
+        $this->pdf->SetFont('times', '', 12);   
+		$this->pdf->setHeaderFont(Array('times', '', '14'));
+		$this->pdf->setFooterFont(Array('times', '', '12'));
+        $this->pdf->SetAutoPageBreak(FALSE, PDF_MARGIN_BOTTOM);    
+		$this->pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+        $this->pdf->AddPage(); 
+		
+        $this->load->model('Seragam_model');
+		$tanggal_mulai=$this->input->post('tx_mulai'); 
+		$tanggal_akhir=$this->input->post('tx_akhir'); 
+		$ajaran=$this->input->post('tx_ajaran');	
+		$jenjang=$this->input->post('tx_unit');
+	    $data['ajaran']=$ajaran;
+		$data ['per_tanggal']=$tanggal_mulai;
+		
+		if ($jenjang==0 && empty($tanggal_akhir)){
+		$data['data_antarjemput']=$this->Seragam_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));		
+		$data['data_total']=$this->Seragam_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));
+		}
+		
+		else if ($jenjang==0 && !empty($tanggal_akhir)){
+		$data['data_antarjemput']=$this->Seragam_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		$data['data_total']=$this->Seragam_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		}
+		
+		else if ($jenjang!=0 && empty($tanggal_akhir)){
+		$data['data_antarjemput']=$this->Seragam_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Seragam_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		}
+		
+		else if ($jenjang!=0 && !empty($tanggal_akhir)){
+		$data['data_antarjemput']=$this->Seragam_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Seragam_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		} 
+		
+		$data['page']='index';
+		$html = $this->load->view('seragam_view', $data, true);
+		$this->pdf->writeHTML($html, true, true, true, true, '');		
+		$this->pdf->lastPage();		
+		$this->pdf->Output("rekaptg_seragam.pdf", 'I');         
     }
+	
+	
 	function sanggar()
     {       
 		$this->load->library('pdf');
@@ -117,7 +209,7 @@ class Tlain2 extends CI_Controller {
 		$this->pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
         $this->pdf->AddPage(); 
 		
-        $this->load->model('M_sanggar');
+        $this->load->model('Sanggar_model');
 		$tanggal_mulai=$this->input->post('tx_mulai'); 
 		$tanggal_akhir=$this->input->post('tx_akhir'); 
 		$ajaran=$this->input->post('tx_ajaran');	
@@ -126,49 +218,225 @@ class Tlain2 extends CI_Controller {
 		$data ['per_tanggal']=$tanggal_mulai;
 		
 		if ($jenjang==0 && $tanggal_akhir==0){
-		$data['data_antarjemput']=$this->M_sanggar->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));		
-		$data['data_total']=$this->M_sanggar->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));
+		$data['data_antarjemput']=$this->Sanggar_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));		
+		$data['data_total']=$this->Sanggar_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));
 		}
 		
 		else if ($jenjang==0 && $tanggal_akhir!=0){
-		$data['data_antarjemput']=$this->M_sanggar->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
-		$data['data_total']=$this->M_sanggar->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		$data['data_antarjemput']=$this->Sanggar_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		$data['data_total']=$this->Sanggar_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
 		}
 		
 		else if ($jenjang!=0 && $tanggal_akhir==0){
-		$data['data_antarjemput']=$this->M_sanggar->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_total']=$this->M_sanggar->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_antarjemput']=$this->Sanggar_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Sanggar_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
 		}
 		
 		else if ($jenjang!=0 && $tanggal_akhir!=0){
-		$data['data_antarjemput']=$this->M_sanggar->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_total']=$this->M_sanggar->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_antarjemput']=$this->Sanggar_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Sanggar_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
 		} 
 		
 		$data['page']='index';
-		$html = $this->load->view('v_sanggar', $data, true);
+		$html = $this->load->view('sanggar_view', $data, true);
 		$this->pdf->writeHTML($html, true, true, true, true, '');		
 		$this->pdf->lastPage();		
-		$this->pdf->Output("rekap_tunggakan_sanggar.pdf", 'I');       
+		$this->pdf->Output("rekaptg_sanggar.pdf", 'I');       
     }
+	
+	
 	
 	function uang_buku()
     {       
-		  //4  
+		  $this->load->library('pdf');
+        $this->pdf->SetSubject('Laporan Tunggakan Lain-lain');
+        $this->pdf->SetKeywords('TCPDF, PDF');      
+        $this->pdf->SetFont('times', '', 12);   
+		$this->pdf->setHeaderFont(Array('times', '', '14'));
+		$this->pdf->setFooterFont(Array('times', '', '12'));
+        $this->pdf->SetAutoPageBreak(FALSE, PDF_MARGIN_BOTTOM);    
+		$this->pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+        $this->pdf->AddPage(); 
+		
+        $this->load->model('Buku_model');
+		$tanggal_mulai=$this->input->post('tx_mulai'); 
+		$tanggal_akhir=$this->input->post('tx_akhir'); 
+		$ajaran=$this->input->post('tx_ajaran');	
+		$jenjang=$this->input->post('tx_unit');
+	    $data['ajaran']=$ajaran;
+		$data ['per_tanggal']=$tanggal_mulai;
+		
+		if ($jenjang==0 && empty($tanggal_akhir)){
+		$data['data_antarjemput']=$this->Buku_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));		
+		$data['data_total']=$this->Buku_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));
+		}
+		
+		else if ($jenjang==0 && !empty($tanggal_akhir)){
+		$data['data_antarjemput']=$this->Buku_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		$data['data_total']=$this->Buku_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		}
+		
+		else if ($jenjang!=0 && empty($tanggal_akhir)){
+		$data['data_antarjemput']=$this->Buku_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Buku_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		}
+		
+		else if ($jenjang!=0 && !empty($tanggal_akhir)){
+		$data['data_antarjemput']=$this->Buku_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Buku_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		} 
+		
+		$data['page']='index';
+		$html = $this->load->view('buku_view', $data, true);
+		$this->pdf->writeHTML($html, true, true, true, true, '');		
+		$this->pdf->lastPage();		
+		$this->pdf->Output("rekaptg_buku.pdf", 'I');       
     }
+	
+	
 	function uang_kegiatan()
     {       
-		//3   
+		$this->load->library('pdf');
+        $this->pdf->SetSubject('Laporan Tunggakan Lain-lain');
+        $this->pdf->SetKeywords('TCPDF, PDF');      
+        $this->pdf->SetFont('times', '', 12);   
+		$this->pdf->setHeaderFont(Array('times', '', '14'));
+		$this->pdf->setFooterFont(Array('times', '', '12'));
+        $this->pdf->SetAutoPageBreak(FALSE, PDF_MARGIN_BOTTOM);    
+		$this->pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+        $this->pdf->AddPage(); 
+		
+        $this->load->model('Kegiatan_model');
+		$tanggal_mulai=$this->input->post('tx_mulai'); 
+		$tanggal_akhir=$this->input->post('tx_akhir'); 
+		$ajaran=$this->input->post('tx_ajaran');	
+		$jenjang=$this->input->post('tx_unit');
+	    $data['ajaran']=$ajaran;
+		$data ['per_tanggal']=$tanggal_mulai;
+		
+		if ($jenjang==0 && empty($tanggal_akhir)){
+		$data['data_antarjemput']=$this->Kegiatan_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));		
+		$data['data_total']=$this->Kegiatan_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));
+		}
+		
+		else if ($jenjang==0 && !empty($tanggal_akhir)){
+		$data['data_antarjemput']=$this->Kegiatan_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		$data['data_total']=$this->Kegiatan_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		}
+		
+		else if ($jenjang!=0 && empty($tanggal_akhir)){
+		$data['data_antarjemput']=$this->Kegiatan_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Kegiatan_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		}
+		
+		else if ($jenjang!=0 && !empty($tanggal_akhir)){
+		$data['data_antarjemput']=$this->Kegiatan_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Kegiatan_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		} 
+		
+		$data['page']='index';
+		$html = $this->load->view('kegiatan_view', $data, true);
+		$this->pdf->writeHTML($html, true, true, true, true, '');		
+		$this->pdf->lastPage();		
+		$this->pdf->Output("rekaptg_kegiatan.pdf", 'I');         
     }
+	
+	
 	
 	function uang_masuk()
     {       
-		//2   
+	$this->load->library('pdf');
+        $this->pdf->SetSubject('Laporan Tunggakan Lain-lain');
+        $this->pdf->SetKeywords('TCPDF, PDF');      
+        $this->pdf->SetFont('times', '', 12);   
+		$this->pdf->setHeaderFont(Array('times', '', '14'));
+		$this->pdf->setFooterFont(Array('times', '', '12'));
+        $this->pdf->SetAutoPageBreak(FALSE, PDF_MARGIN_BOTTOM);    
+		$this->pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+        $this->pdf->AddPage(); 
+		
+        $this->load->model('Dftulang_model');
+		$tanggal_mulai=$this->input->post('tx_mulai'); 
+		$tanggal_akhir=$this->input->post('tx_akhir'); 
+		$ajaran=$this->input->post('tx_ajaran');	
+		$jenjang=$this->input->post('tx_unit');
+	    $data['ajaran']=$ajaran;
+		$data ['per_tanggal']=$tanggal_mulai;
+		
+		if ($jenjang==0 && empty($tanggal_akhir)){
+		$data['data_antarjemput']=$this->Dftulang_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));		
+		$data['data_total']=$this->Dftulang_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));
+		}
+		
+		else if ($jenjang==0 && !empty($tanggal_akhir)){
+		$data['data_antarjemput']=$this->Dftulang_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		$data['data_total']=$this->Dftulang_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		}
+		
+		else if ($jenjang!=0 && empty($tanggal_akhir)){
+		$data['data_antarjemput']=$this->Dftulang_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Dftulang_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		}
+		
+		else if ($jenjang!=0 && !empty($tanggal_akhir)){
+		$data['data_antarjemput']=$this->Dftulang_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Dftulang_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		} 
+		
+		$data['page']='index';
+		$html = $this->load->view('dftulang_view', $data, true);
+		$this->pdf->writeHTML($html, true, true, true, true, '');		
+		$this->pdf->lastPage();		
+		$this->pdf->Output("rekaptg_dftulang.pdf", 'I');         
     }
+	
+	
 	
 	function spp()
     {       
-		//1    
+		$this->load->library('pdf');
+        $this->pdf->SetSubject('Laporan Tunggakan Lain-lain');
+        $this->pdf->SetKeywords('TCPDF, PDF');      
+        $this->pdf->SetFont('times', '', 12);   
+		$this->pdf->setHeaderFont(Array('times', '', '14'));
+		$this->pdf->setFooterFont(Array('times', '', '12'));
+        $this->pdf->SetAutoPageBreak(FALSE, PDF_MARGIN_BOTTOM);    
+		$this->pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+        $this->pdf->AddPage(); 
+		
+        $this->load->model('Spp_model');
+		$tanggal_mulai=$this->input->post('tx_mulai'); 
+		$tanggal_akhir=$this->input->post('tx_akhir'); 
+		$ajaran=$this->input->post('tx_ajaran');	
+		$jenjang=$this->input->post('tx_unit');
+	    $data['ajaran']=$ajaran;
+		$data ['per_tanggal']=$tanggal_mulai;
+		
+		if ($jenjang==0 && empty($tanggal_akhir)){
+		$data['data_antarjemput']=$this->Spp_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));		
+		$data['data_total']=$this->Spp_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));
+		}
+		
+		else if ($jenjang==0 && !empty($tanggal_akhir)){
+		$data['data_antarjemput']=$this->Spp_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		$data['data_total']=$this->Spp_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		}
+		
+		else if ($jenjang!=0 && empty($tanggal_akhir)){
+		$data['data_antarjemput']=$this->Spp_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Spp_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		}
+		
+		else if ($jenjang!=0 && !empty($tanggal_akhir)){
+		$data['data_antarjemput']=$this->Spp_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Spp_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		} 
+		
+		$data['page']='index';
+		$html = $this->load->view('spp_view', $data, true);
+		$this->pdf->writeHTML($html, true, true, true, true, '');		
+		$this->pdf->lastPage();		
+		$this->pdf->Output("rekaptg_spp.pdf", 'I');  
     }
 }  
 

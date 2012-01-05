@@ -1,5 +1,5 @@
 <?php
-class M_unit extends CI_Model{ // Buat class 
+class Unit_model extends CI_Model{ // Buat class 
 function __construct()
     {
         parent::__construct();
@@ -7,7 +7,7 @@ function __construct()
 
 
 function get_all_unit($filter=array()){
-	    $this->load->model("M_unit");
+	    $this->load->model("Unit_model");
 		$this->db->select("*");		
 		$this->db->where("id > 1");
 		$this->db->where($filter);

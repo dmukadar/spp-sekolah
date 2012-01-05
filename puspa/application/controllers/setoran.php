@@ -13,7 +13,9 @@ function __construct()
 	    $this->load->model('M_unit');		
 		$data['data_unit']=$this->M_unit->get_all_unit();			
 		$data['page']='index';
-		$this->load->view('v_setor',$data);
+		$this->load->view('sites/header_view');
+		$this->load->view('setor_view',$data);
+		 $this->load->view('sites/footer_view');
 	}
 	
 }

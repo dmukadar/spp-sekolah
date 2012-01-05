@@ -4,12 +4,12 @@ class Tarif_khusus extends CI_Controller {
 /**/
 	public function index()
 	{
-		$this->load->model('M_vtarif_khusus');
+		$this->load->model('Vtarif_khusus_model');
 		$data['view']='form';
 		$no_induk=$this->input->post('tx_induk');
 		if(!empty($no_induk)){
 			$data['view']='data';
-			$data['data_mas03']=$this->M_vtarif_khusus->get_all(array('sis_siswa.noinduk' => $no_induk));
+			$data['data_mas03']=$this->Vtarif_khusus_model->get_all(array('sis_siswa.noinduk' => $no_induk));
 		}
 		
 		$data['page']='index';
@@ -18,10 +18,10 @@ class Tarif_khusus extends CI_Controller {
 	 
 	
 	function ajax_get_siswa(){
-		$this->load->model('M_vtarif_khusus');
+		$this->load->model('Vtarif_khusus_model');
 		$get_data=$this->input->get("text");		
 		
-		$data_mas03=$this->M_vtarif_khusus->get_siswa($get_data);
+		$data_mas03=$this->Vtarif_khusus_model->get_siswa($get_data);
 		
 		$data=array();
 		$index=0;
@@ -32,15 +32,15 @@ class Tarif_khusus extends CI_Controller {
 	}
 	
 	function update_data($id=0){
-	$this->load->model('M_vtarif_khusus');
-		$data['data_mas03']=$this->M_vtarif_khusus->get_all(array('id'=>$id));
+	$this->load->model('Vtarif_khusus_model');
+		$data['data_mas03']=$this->Vtarif_khusus_model->get_all(array('id'=>$id));
 		 $data['page']='v_tarif_khusus';
 		$this->load->view('v_tarif_khusus',$data);		
 	}
 	
 	 
 	public function act_update_data($id=0){
-	$this->load->model('M_vtarif_khusus');
+	$this->load->model('Vtarif_khusus_model');
 		$data=array(			
 			'category'=>$this->input->post('tx_kategori'), 
 			'name'=>$this->input->post('tx_tagihan'), 
