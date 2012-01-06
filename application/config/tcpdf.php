@@ -211,7 +211,7 @@
 	$tcpdf['header_font_size'] = 14;
 	$tcpdf['header_margin'] = '5';
 	$tcpdf['header_title'] = '                                    YAYASAN AL AZHAR KELAPA GADING';
-	$tcpdf['header_string'] = "                  Jl. Semampir Utara 27 Telp (031) 59821234, 23445321 Fax 23412443\n                                                                  Surabaya     ";
+	$tcpdf['header_string'] = "                  Jl. Taman Bhaskara Utara Telp (031) 5938178,5927420 Fax. 5938179\n                                                                  Surabaya     ";
 	$tcpdf['header_logo'] = FALSE;
 	$tcpdf['header_logo_width'] = 2;
 	
