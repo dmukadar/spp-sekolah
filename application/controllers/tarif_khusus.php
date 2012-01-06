@@ -141,7 +141,7 @@ class Tarif_khusus extends Alazka_Controller {
 			foreach ($daftar_siswa as $siswa) {
 				$sis = new stdClass();
 				$sis->id = $siswa->get_id();
-				$sis->text = sprintf('%s | NIS: %d | Kelas: %s (%s)', $siswa->get_namalengkap(), $siswa->get_noinduk(), $siswa->kelas->get_kelas(), $siswa->kelas->get_jenjang());
+				$sis->text = sprintf('%s &raquo; %s (%s)', $siswa->get_namalengkap(), $siswa->kelas->get_kelas(), $siswa->kelas->get_jenjang());
 				$sis->nama = $siswa->get_namalengkap();
 				$sis->noinduk = $siswa->get_noinduk();
 				$sis->kelas = $siswa->kelas->get_kelas();
