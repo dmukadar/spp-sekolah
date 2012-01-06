@@ -11,7 +11,6 @@ class Data_tarif extends Alazka_Controller {
 	 *
 	 * @author Rio Astamal <me@rioastamal>
 	 *
-	 * @param int $id - ID dari tarif yang akan diedit
 	 * @return void
 	 */
 	public function index() {
