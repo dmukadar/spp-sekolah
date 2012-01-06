@@ -23,6 +23,8 @@ class Tarif_khusus extends Alazka_Controller {
 		// Page title untuk HTML
 		$this->data['page_title'] = 'Daftar Tarif Khusus';
 		
+		// URL untuk Ajax
+		$this->data['ajax_siswa_url'] = site_url('tarif_khusus/get_ajax_siswa/10/');
 		
 		// digunakan pada form action
 		// membiarkan form action kosong bukanlah ide yang baik, dan itu
@@ -64,9 +66,12 @@ class Tarif_khusus extends Alazka_Controller {
 		$this->form_validation->set_rules('jumlah', 'Jumlah', 'required|numeric');
 		
 		$sess = new stdClass();
+		$sess->id = $this->input->post('siswa_id');
 		$sess->tagihan = $this->input->post('tagihan');
 		$sess->nama_siswa = $this->input->post('siswa');
 		$sess->jumlah = $this->input->post('jumlah');
+		$sess->no_induk = $this->input->post('rep-siswa-induk');
+		$sess->kelas_jenjang = $this->input->post('rep-siswa-kelas');
 		$this->data['sess'] = $sess;
 		
 		// jalankan pengecekan
@@ -83,7 +88,35 @@ class Tarif_khusus extends Alazka_Controller {
 			return FALSE;
 		}
 		
-		$this->set_flash_message('OK BRO...', 'information msg');
+		$this->load->model('Siswa_model');
+		$this->load->model('Kelas_model');
+		
+		// apakah siswa yang ingin disimpan ada didatabase?
+		try {
+			$where = array('sis_siswa.id' => $sess->id);
+			$siswa = $this->Siswa_model->get_single_siswa($where);
+			
+			// oke siswa ada dan aktif, waktunya menyimpan...
+			$this->load->model('Custom_Rate_model');
+			
+			$custrate = new Custom_Rate();
+			$custrate->set_id_rate($sess->tagihan);
+			$custrate->set_id_student($sess->id);
+			$custrate->set_fare($sess->jumlah);
+			
+			// insert ke tabel
+			$this->Custom_Rate_model->insert($custrate);
+			
+			$mesg = sprintf('Siswa <strong>%s</strong> berhasil dimasukkan ke data tarif khusus.', $siswa->get_namalengkap());
+			$this->set_flash_message($mesg, 'information msg');
+			
+			// clear repopulate form session
+			$this->data['sess'] = new stdClass();
+		} catch (SiswaNotFoundException $e) {
+			$this->set_flash_message('Mohon maaf, siswa tersebut tidak ditemukan di database, coba lagi.', 'error msg');
+		} catch (Exception $e) {
+			$this->set_flash_message('Mohon maaf, terjadi error saat penyimpan, coba lagi.', 'error msg');
+		}
 		
 		$this->index();
 	}
@@ -100,11 +133,15 @@ class Tarif_khusus extends Alazka_Controller {
 		$this->load->model('Kelas_model');
 		$this->load->model('Siswa_model');
 		
+		// ?search=namasiswa yang dipanggil oleh AJAX
+		$nama = $this->input->get('search');
 		try {
-			$daftar_siswa = $this->Siswa_model->get_all_siswa_ajax('achmad', $limit);
+			$daftar_siswa = $this->Siswa_model->get_all_siswa_ajax($nama, $limit);
 			$json = array();
 			foreach ($daftar_siswa as $siswa) {
 				$sis = new stdClass();
+				$sis->id = $siswa->get_id();
+				$sis->text = sprintf('%s | NIS: %d | Kelas: %s (%s)', $siswa->get_namalengkap(), $siswa->get_noinduk(), $siswa->kelas->get_kelas(), $siswa->kelas->get_jenjang());
 				$sis->nama = $siswa->get_namalengkap();
 				$sis->noinduk = $siswa->get_noinduk();
 				$sis->kelas = $siswa->kelas->get_kelas();
@@ -116,23 +153,6 @@ class Tarif_khusus extends Alazka_Controller {
 		} catch (SiswaNotFoundException $e) {
 		}
 	}
-/*
-	public function index()
-	{
-		$this->load->model('Vtarif_khusus_model');
-		$data['view']='form';
-		$no_induk=$this->input->post('tx_induk');
-		if(!empty($no_induk)){
-			$data['view']='data';
-			$data['data_mas03']=$this->Vtarif_khusus_model->get_all(array('sis_siswa.noinduk' => $no_induk));
-		}
-		
-		$data['page']='index';
-		$this->load->view('site/header_view');
-		$this->load->view('site/tarif_khusus_view',$data);
-		$this->load->view('site/footer_view');
-	}
-*/ 
 	
 	function ajax_get_siswa(){
 		$this->load->model('Vtarif_khusus_model');
@@ -176,8 +196,6 @@ class Tarif_khusus extends Alazka_Controller {
 	 * @return void
 	 */
 	public function add_more_css() {
-		$script = '<link rel="stylesheet" type="text/css" href="%s" />';
-		printf($script, base_url() . 'css/jquery.autocomplete.css');
 	}
 
 	/**
@@ -188,8 +206,9 @@ class Tarif_khusus extends Alazka_Controller {
 	 * @return void
 	 */
 	public function add_more_javascript() {
-		$script = '<script type="text/javascript" src="%s"></script>';
-		printf($script, base_url() . 'js/jquery.autocomplete.js');
+		$script = '<!-- Autocomplete diambil dari http://tomcoote.co.uk/javascript/jquery-json-suggestsearch-box-v2/ -->
+		<script type="text/javascript" src="%s"></script>';
+		printf($script, base_url() . 'js/json.suggest.js');
 	}
  
 }

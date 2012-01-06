@@ -25,9 +25,17 @@
 					<td style="font-weight:bold;"><dt><label for="siswa">Siswa</label></dt></td>
 					<td style="font-weight:bold;">
 						<dl>
-							<dd><input id="siswa" type="text" name="siswa" value="<?php echo (@$sess->nama_siswa);?>" /></dd>
+							<dd><input id="siswa" type="text" name="siswa" value="<?php echo (@$sess->nama_siswa);?>" size="30"/></dd>
 						<dl>
 					</td>
+				</tr>
+				<tr id="siswa-kelas" style="display:none;">
+					<td style="font-weight:bold;"><dt><label for="">Kelas</dt></label></td>
+					<td style="font-weight:bold;"><dl><dd id="siswa-kelas-col"><?php echo (@$sess->kelas_jenjang);?></dd></dl></label>
+				</tr>
+				<tr id="siswa-induk" style="display:none;">
+					<td style="font-weight:bold;"><dt><label for="">No. Induk</dt></label></td>
+					<td style="font-weight:bold;"><dl><dd id="siswa-induk-col"><?php echo (@$sess->no_induk);?></dd></dl></label></td>
 				</tr>
 				<tr>
 					<td style="font-weight:bold;"><dt><label for="jumlah">Jumlah</label></dt></td>
@@ -46,26 +54,53 @@
 					</td>
 				</tr>
 			</table>
+			<!-- helper untuk repopulate -->
+			<input type="hidden" name="rep-siswa-kelas" id="rep-siswa-kelas" value="<?php echo (@$sess->kelas_jenjang);?>" />
+			<input type="hidden" name="rep-siswa-induk" id="rep-siswa-induk" value="<?php echo (@$sess->no_induk);?>" />
+			<input type="hidden" name="siswa_id" id="siswa_id" value="<?php echo (@$sess->id);?>" />
 		</form>
 
 		<script>
-		jQuery(document).ready(function() {
-			jQuery("#jumlah").keydown(function(event) {
-				// Allow only backspace and delete
-				if ( event.keyCode == 46 || event.keyCode == 8 ) {
-					// let it happen, don't do anything
-				}
-				else {
-					// Ensure that it is a number and stop the keypress
-					if ((event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105 )) {
-						event.preventDefault(); 
-					}   
-				}
-			});
+		jQuery("#jumlah").keydown(function(event) {
+			// Allow only backspace, delete, tab, and enter
+			if ( event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 13) {
+				// let it happen, don't do anything
+			}
+			else {
+				// Ensure that it is a number and stop the keypress
+				if ((event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105 )) {
+					event.preventDefault(); 
+				}   
+			}
+		});
+
+		jQuery('#siswa').jsonSuggest({
+			minCharacters: 3,
+			url: '<?php echo ($ajax_siswa_url);?>',
+			onSelect: function(item) {
+				document.getElementById('siswa').value = item.nama;
+				
+				// tampilkan hidden row
+				document.getElementById('siswa-kelas').style.display = '';
+				document.getElementById('siswa-induk').style.display = '';
+				
+				document.getElementById('rep-siswa-kelas').value = item.kelas + " (" + item.jenjang + ")";
+				document.getElementById('rep-siswa-induk').value = item.noinduk;
+				document.getElementById('siswa_id').value = item.id;
+				
+				document.getElementById('siswa-kelas-col').innerHTML = item.kelas + " (" + item.jenjang + ")";
+				document.getElementById('siswa-induk-col').innerHTML = item.noinduk;
+				document.getElementById('jumlah').focus();
+			},
+			onEnter: function() {
+				// cegah form submit
+				return false;
+			}
 		});
 		
-
-		// var data_unit = ['Foo', 'Bar', 'Shit'];
-		var data_unit = [{"nama":"Achmad Abdul Rohim","noinduk":"10.03.259","kelas":"VIII","jenjang":"SMP"},{"nama":"Achmad Fasya Dwiana Adwifya","noinduk":"09.02.501","kelas":"III A","jenjang":"SD"},{"nama":"Achmad Rozaq R. Hadju","noinduk":"11.01.338","kelas":"A2","jenjang":"TK"},{"nama":"Achmad Tsani","noinduk":"09.02.502","kelas":"III B","jenjang":"SD"}];
-		jQuery('#siswa').autocomplete({data: data_unit});
+		// repopulate jika hidden field rep-siswa-induk tidak kosong
+		if (document.getElementById('rep-siswa-induk').value.length > 0) {
+			document.getElementById('siswa-kelas').style.display = '';
+			document.getElementById('siswa-induk').style.display = '';
+		}
 		</script>
