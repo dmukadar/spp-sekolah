@@ -145,6 +145,33 @@ class Alazka_Controller extends CI_Controller {
 	public function get_page_title() {
 		return @$this->data['page_title'];
 	}
+	
+	/**
+	 * Method untuk yang akan dipanggil pada HTML head dibawah css. Anda dapat
+	 * memanggil method ini untuk menambahkan link rel CSS. Controller
+	 * perlu mengoverwrite method ini menampilkan CSS yang dinginkan.
+	 *
+	 * @author Rio Astamal <me@rioastamal.net>
+	 *
+	 * @param array $css_list - Alamat URL CSS tambahan yang disimpan pada array.
+	 * @return void
+	 */
+	public function add_more_css() {
+		// load your css
+	}
+	
+	/**
+	 * Method untuk yang akan dipanggil pada HTML head dibawah javascript. 
+	 * Hampir sama dengan method add_more_css hanya saja ini khusus untuk 
+	 * javascript.
+	 *
+	 * @author Rio Astamal <me@rioastamal.net>
+	 *
+	 * @return void
+	 */
+	public function add_more_javascript() {
+		// load your js
+	}
 }
 
 /**

@@ -14,6 +14,7 @@
 <link rel="stylesheet" type="text/css" href="css/jquery.wysiwyg.css">
 <link rel="stylesheet" type="text/css" href="css/facebox.css">
 <link rel="stylesheet" type="text/css" href="css/smoothness/jquery-ui-1.8.8.custom.css">
+<?php ME()->add_more_css(); ?>
 
 <!--[if lte IE 8]>
 <script type="text/javascript" src="js/html5.js"></script>
@@ -32,10 +33,8 @@
 <script type="text/javascript" src="js/jquery.flot.min.js"></script>
 <script type="text/javascript" src="js/custom.js"></script>
 <script type="text/javascript" src="js/facebox.js"></script>
-<script type="text/javascript" src="<?php echo base_url();?>js/jquery.autocomplete.js"></script>
-<script type="text/javascript" src="<?php echo base_url();?>datepicker/datetimepicker_css.js"></script>
-<link href="../../../css/style.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" type="text/css" media="all" href="<?php echo base_url();?>css/jquery.autocomplete.css" />
+<?php ME()->add_more_javascript(); ?>
+
 </head>
 <body>
 
