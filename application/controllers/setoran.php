@@ -18,6 +18,17 @@ function __construct()
 		 $this->load->view('site/footer_view');
 	}
 	
+	/**
+	 * Method untuk menambahkan javascript datepicker pada HEAD
+	 *
+	 * @author Rio Astamal <me@rioastamal.net>
+	 *
+	 * @return void
+	 */
+	public function add_more_javascript() {
+		printf('<script type="text/javascript" src="%s"></script>', base_url() . 'datepicker/datetimepicker_css.js');
+	}
+	
 }
 
 /* End of file welcome.php */
