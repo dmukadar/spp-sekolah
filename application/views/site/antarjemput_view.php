@@ -75,7 +75,7 @@
     </span></td>
   </tr>
   <tr>
-    <td><div align="center"><font size="+1" face="times">REKAP TUNGGAKAN DAN LAIN-LAIN </font></div></td>
+    <td><div align="center"><font size="+1" face="times">REKAP TUNGGAKAN LAIN-LAIN </font></div></td>
   </tr>
   <tr>
     <td><div align="center"><font size="+2"><strong>TAHUN PELAJARAN</strong></font><strong> <span class="style5"><?php echo $ajaran;?></span></strong></div></td>
@@ -88,7 +88,7 @@
     <td>&nbsp;</td>
   </tr>
   <tr>
-    <td width="62%">UNIT: ANTAR JEMPUT SISWA</td>
+    <td width="62%">UNIT: ANTAR JEMPUT SISWA </td>
     <td width="38%">&nbsp;</td>
   </tr>
   <tr>
