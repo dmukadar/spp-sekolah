@@ -1,26 +1,11 @@
 
-		<h1 align="center">Tambah Tarif Khusus </h1>
+		<h1 align="center">Data Tarif Khusus </h1>
 
 		<?php ME()->print_flash_message(); ?>	
 		
 		<div class="clear"></div>
 		<form action="<?php echo (@$action_url);?>" method="post">
 			<table style="width:100%" cellspacing="4">
-				<tr>
-					<td><dt><label for="tagihan">Tagihan</label></dt></td>
-					<td>
-						<dl>
-							<dd>
-								<select name="tagihan" id="tagihan">
-									<option value=''>-- Pilih --</option>
-									<?php foreach ($list_tarif as $tarif) : ?>
-									<option <?php echo (mr_selected_if(@$sess->tagihan, $tarif->get_id()));?> value="<?php echo ($tarif->get_id());?>"><?php echo ($tarif->get_name());?></option>
-									<?php endforeach; ?>
-								</select>
-							</dd>
-						</dl>
-					</td>
-				</tr>
 				<tr>
 					<td style="font-weight:bold;"><dt><label for="siswa">Siswa</label></dt></td>
 					<td style="font-weight:bold;">
@@ -38,27 +23,48 @@
 					<td style="font-weight:bold;"><dl><dd id="siswa-induk-col"><?php echo (@$sess->no_induk);?></dd></dl></label></td>
 				</tr>
 				<tr>
-					<td style="font-weight:bold;"><dt><label for="jumlah">Jumlah</label></dt></td>
-					<td style="font-weight:bold;">
-						<dl>
-							<dd><input style="text-align:right;" id="jumlah" type="text" name="jumlah" value="<?php echo (@$sess->jumlah);?>" /></dd>
-						<dl>
-					</td>
-				</tr>
-				<tr>
 					<td></td>
 					<td>
 						<p>
-							<input type="submit" class="button gray" name="savebtn" id="savebtn" value="SIMPAN" />
+							<input type="button" class="button gray" name="showbtn" id="showbtn" value="TAMPILKAN" />
 						</p>
 					</td>
 				</tr>
 			</table>
 			<!-- helper untuk repopulate -->
+			<input type="hidden" name="post-url" id="post-url" value="<?php echo ($action_url);?>" />
 			<input type="hidden" name="rep-siswa-kelas" id="rep-siswa-kelas" value="<?php echo (@$sess->kelas_jenjang);?>" />
 			<input type="hidden" name="rep-siswa-induk" id="rep-siswa-induk" value="<?php echo (@$sess->no_induk);?>" />
 			<input type="hidden" name="siswa_id" id="siswa_id" value="<?php echo (@$sess->id);?>" />
 		</form>
+		
+		<?php if (count($list_tarif_khusus) > 0): ?>	
+		<br/>
+		<span style="color:#c60000;">Developer Note: Ajax, dialog window, icon ubah dan hapus menyusul</span>
+		<table id="tabel" class="gtable">
+				<thead>
+				<tr>
+				  <th><div align="left"><strong>Kategori</strong></div></th>
+					<th><div align="left"><strong>Tagihan</strong></div></th>
+					<th><div align="right"><strong>Jumlah (Rp)</strong></div></th>
+					<th><div align="center"><strong>Pilihan</strong></div></th>
+				</tr>
+				</thead>
+				<tbody>
+				<?php foreach ($list_tarif_khusus as $tarif): ?>
+				<tr>
+					<td><?php echo ($tarif->rate->get_category());?></td>
+					<td><?php echo ($tarif->rate->get_name());?></td>
+					<td style="text-align:right;"><?php echo ($tarif->get_fare(TRUE));?></td>
+					<td style="text-align:center;">
+						<a href="<?php echo (ME()->get_edit_link($tarif));?>" class="reply">ubah</a>
+						<a href="<?php echo (ME()->get_delete_link($tarif));?>" class="delete delete-link">Hapus</a>
+					</td>
+				</tr>
+				<?php endforeach; ?>	
+				</tbody>
+		</table>
+		<?php endif; ?>	
 
 		<script>
 		jQuery("#jumlah").keydown(function(event) {
@@ -72,6 +78,16 @@
 					event.preventDefault(); 
 				}   
 			}
+		});
+		
+		jQuery('.delete-link').click(function(el) {
+			var tanya = confirm("Apakah anda yakin ingin menghapus?");
+			if (!tanya) {
+				// hentikan event
+				return false;
+			}
+			
+			// lanjutkan dengan menuju link sesuai href...
 		});
 
 		jQuery('#siswa').jsonSuggest({
@@ -90,7 +106,6 @@
 				
 				document.getElementById('siswa-kelas-col').innerHTML = item.kelas + " (" + item.jenjang + ")";
 				document.getElementById('siswa-induk-col').innerHTML = item.noinduk;
-				document.getElementById('jumlah').focus();
 			},
 			onEnter: function() {
 				// cegah form submit
@@ -102,5 +117,19 @@
 		if (document.getElementById('rep-siswa-induk').value.length > 0) {
 			document.getElementById('siswa-kelas').style.display = '';
 			document.getElementById('siswa-induk').style.display = '';
+		}
+		
+		document.getElementById('showbtn').onclick = function() {
+			// jika input hidden siswa nilainya lebih dari NOL maka, 
+			// arahkan ke list tagihan
+			var id_siswa = parseInt(document.getElementById('siswa_id').value);
+			
+			if (id_siswa <= 0 || isNaN(id_siswa)) {
+				alert('Mohon masukkan nama siswa terlebih dahulu.');
+				return false;
+			}
+			
+			// redirect
+			document.location.href = document.getElementById('post-url').value + '/' + id_siswa;
 		}
 		</script>

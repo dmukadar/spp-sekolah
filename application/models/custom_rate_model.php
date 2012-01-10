@@ -42,7 +42,10 @@ class Custom_Rate {
 		$this->fare = $fare;
 	}
 
-	public function get_fare() {
+	public function get_fare($format=FALSE) {
+		if ($format === TRUE) {
+			return number_format($this->fare);
+		}
 		return $this->fare;
 	}
 
@@ -91,10 +94,19 @@ class Custom_Rate {
 			$tmp->set_created($result->created);
 			$tmp->set_modified($result->modified);
 			$tmp->set_modified_by($result->modified_by);
+			
+			// inject object Rate
+			$rate = new Rate();
+			$rate->set_id($result->id_rate);
+			$rate->set_category($result->rate_category);
+			$rate->set_name($result->rate_name);
+			$tmp->rate = clone $rate;
+			
 			$objects[$i] = clone $tmp;
 		}
 		
 		$tmp = NULL;
+		$rate = NULL;
 		
 		return $objects;
 	}
@@ -157,6 +169,8 @@ class Custom_Rate_model extends CI_Model {
 	}
 	
 	public function get_all_custom_rate($where=array(), $limit=-1, $offset=0) {
+		$this->db->select('ar_custom_rate.*, ar_rate.category rate_category, ar_rate.name rate_name');
+		$this->db->join('ar_rate', 'ar_rate.id=ar_custom_rate.id_rate', 'left');
 		if ($limit > 0) {
 			$this->db->limit($limit, $offset);
 		}

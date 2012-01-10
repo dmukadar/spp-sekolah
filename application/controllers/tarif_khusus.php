@@ -21,7 +21,7 @@ class Tarif_khusus extends Alazka_Controller {
 		$this->load->helper('mr_form');
 		
 		// Page title untuk HTML
-		$this->data['page_title'] = 'Daftar Tarif Khusus';
+		$this->data['page_title'] = 'Data Tarif Khusus';
 		
 		// URL untuk Ajax
 		$this->data['ajax_siswa_url'] = site_url('tarif_khusus/get_ajax_siswa/10/');
@@ -119,6 +119,154 @@ class Tarif_khusus extends Alazka_Controller {
 		}
 		
 		$this->index();
+	}
+	
+	/**
+	 * Method untuk menampilkan form edit pada data tarif khusus
+	 *
+	 * @author Rio Astamal <me@rioastamal.net>
+	 *
+	 * @param int $id_tarif - ID dari tarif khusus yang akan diedit
+	 * @return void
+	 */
+	public function edit($id_tarif) {
+		$this->load->model('Rate_model');
+		$this->load->model('Custom_Rate_model');
+		
+		// helper untuk melakukan repopulate checkbox, radio atau select
+		$this->load->helper('mr_form');
+		
+		// Page title untuk HTML
+		$this->data['page_title'] = 'Edit Tarif Khusus';
+		
+		// URL untuk Ajax
+		$this->data['ajax_siswa_url'] = site_url('tarif_khusus/get_ajax_siswa/10/');
+		
+		// digunakan pada form action
+		// membiarkan form action kosong bukanlah ide yang baik, dan itu
+		// tergantung masing-masing browser implementasinya
+		$this->data['action_url'] = site_url('tarif_khusus/proses_edit');
+		
+		if ($this->input->post('tagihan') === FALSE) {
+			$sess = new stdClass();
+			$sess->tagihan = 0;
+			$this->data['sess'] = $sess;
+		}
+		
+		try {
+			$where = array('ar_custom_rate.id' => $id_tarif);
+			$custrate = $this->Custom_Rate_model->get_single_custom_rate($where);
+			
+			$this->load->model('Kelas_model');
+			$this->load->model('Siswa_model');
+			
+			$where = array('sis_siswa.id' => $custrate->get_id_student());
+			$siswa = $this->Siswa_model->get_single_siswa($where);
+		} catch (Custom_RateNotFoundException $e) {
+			// data tarif tidak ditemukan, tampilkan form insert
+			$this->set_flash_message('FATAL ERROR: Tarif khusus yang akan diedit tidak ditemukan.', 'error msg');
+			
+			$this->index();
+			
+			return FALSE;
+		} catch (SiswaNotFoundException $e) {
+			// data tarif tidak ditemukan, tampilkan form insert
+			$this->set_flash_message('FATAL ERROR: Siswa yang memiliki data tarif khusus ini tidak ditemukan.', 'error msg');
+			
+			$this->index();
+			
+			return FALSE;
+		}
+		
+		// repopulate old data
+		$sess = new stdClass();
+		$sess->custom_rate_id = $custrate->get_id();
+		$sess->id = $siswa->get_id();
+		$sess->tagihan = $custrate->get_id_rate();
+		$sess->nama_siswa = $siswa->get_namalengkap();;
+		$sess->jumlah = round($custrate->get_fare());
+		$sess->no_induk = $siswa->get_noinduk();
+		$sess->kelas_jenjang = sprintf('%s (%s)', $siswa->kelas->get_kelas(), $siswa->kelas->get_jenjang());
+		$this->data['sess'] = $sess;
+		
+		// dapatkan semua tarif
+		try {
+			$this->data['list_tarif'] = $this->Rate_model->get_all_rate();
+		} catch (Exception $e) {
+			$this->data['list_tarif'] = array();
+		}
+		
+		$this->load->view('site/header_view');
+		$this->load->view('site/tarif_khusus_update_view', $this->data);
+		$this->load->view('site/footer_view');
+	}
+	
+	/**
+	 * Method untuk memproses form edit tarif khusus
+	 *
+	 * @author Rio Astamal <me@rioastamal.net>
+	 *
+	 * @return void
+	 */
+	public function proses_edit() {
+		// lakukan form validasi
+		$this->load->library('form_validation');
+		
+		$this->form_validation->set_rules('tagihan', 'Tagihan', 'required|numeric');
+		$this->form_validation->set_rules('siswa', 'Siswa', 'required');
+		$this->form_validation->set_rules('jumlah', 'Jumlah', 'required|numeric');
+		
+		$sess = new stdClass();
+		$sess->custom_rate_id = $this->input->post('custom-rate-id');
+		$sess->id = $this->input->post('siswa_id');
+		$sess->tagihan = $this->input->post('tagihan');
+		$sess->nama_siswa = $this->input->post('siswa');
+		$sess->jumlah = $this->input->post('jumlah');
+		$sess->no_induk = $this->input->post('rep-siswa-induk');
+		$sess->kelas_jenjang = $this->input->post('rep-siswa-kelas');
+		$this->data['sess'] = $sess;
+		
+		// jalankan pengecekan
+		if ($this->form_validation->run() == FALSE) {
+			// oops, sepertinya salah satu field tidak memenuhi kriteria
+			// tampilkan pesannya ke user
+			$this->set_flash_message(validation_errors('<span>', '</span><br/>'), 'error msg');
+			
+			// kembalikan ke index()
+			$this->edit($sess->custom_rate_id);
+			
+			// karena ada sesuatu yang salah, tidak perlu melanjutkan ke 
+			// proses penyimpanan
+			return FALSE;
+		}
+		
+		try {
+			$this->load->model('Rate_model');
+			$this->load->model('Custom_Rate_model');
+			
+			// check 
+			$where = array('ar_custom_rate.id' => $sess->custom_rate_id);
+			$custrate = $this->Custom_Rate_model->get_single_custom_rate($where);
+			
+			$custrate->set_id_student($sess->id);
+			$custrate->set_id_rate($sess->tagihan);
+			$custrate->set_fare($sess->jumlah);
+			
+			// exlude property rate pada object karena tidak diperlukan saat update
+			$exclude = array('rate');	
+			
+			// update custom_rate
+			$this->Custom_Rate_model->update($custrate, $exclude);
+			
+			$mesg = sprintf('Data tarif khusus untuk siswa %s berhasil diupdate.', $sess->nama_siswa);
+			$this->set_flash_message($mesg, 'information msg');
+		} catch (Custom_RateNotFoundException $e) {
+			$this->set_flash_message('FATAL ERROR: Tarif khusus yang akan diupdate tidak ditemukan.', 'error msg');
+		} catch (Exception $e) {
+			$this->set_flash_message('Mohon maaf, terjadi error saat penyimpan, coba lagi.', 'error msg');
+		}
+		
+		$this->edit($sess->custom_rate_id);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 
-		<h1 align="center">Tambah Tarif Khusus </h1>
+		<h1 align="center">Edit Tarif Khusus </h1>
 
 		<?php ME()->print_flash_message(); ?>	
 		
@@ -58,6 +58,7 @@
 			<input type="hidden" name="rep-siswa-kelas" id="rep-siswa-kelas" value="<?php echo (@$sess->kelas_jenjang);?>" />
 			<input type="hidden" name="rep-siswa-induk" id="rep-siswa-induk" value="<?php echo (@$sess->no_induk);?>" />
 			<input type="hidden" name="siswa_id" id="siswa_id" value="<?php echo (@$sess->id);?>" />
+			<input type="hidden" name="custom-rate-id" value="<?php echo (@$sess->custom_rate_id);?>" id="custom-rate-id" />
 		</form>
 
 		<script>
