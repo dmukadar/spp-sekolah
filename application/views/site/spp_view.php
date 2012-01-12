@@ -127,9 +127,9 @@ $i=1;
     <td width="27%" height="32"><div align="left"><span class="style6">_</span><?php echo $row->namalengkap;?></div></td>
     <td width="11%" height="32"><div align="center"><?php echo $row->kelas;?></div></td>
     <td width="14%" height="32"><div align="center"><?php echo $row->bulan;?></div></td>
-    <td width="13%" height="32"><div align="right"><?php echo $row->SPP;?><span class="style6">_</span></div>
+    <td width="13%" height="32"><div align="right"><?php echo $row->uang_spp;?><span class="style6">.</span></div>
     </td>
-    <td width="14%"><div align="right"><?php echo $row->BPPS;?><span class="style6">_</span></div></td>
+    <td width="14%"><div align="right"><?php echo $row->uang_bpps;?><span class="style6">.</span></div></td>
     <td width="16%" height="32"><div align="right"><span class="style6"><span class="style7"><?php echo $row->total;?></span>.</span></div></td>
   </tr>
 </table>
