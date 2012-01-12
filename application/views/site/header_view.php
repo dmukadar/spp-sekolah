@@ -64,6 +64,11 @@
 						<li><a href="<?php echo (site_url('data_tarif_khusus/index'));?>">Data Tarif Khusus</a></li>
 					</ul>
 				</li>
+				<li><a href="#" onClick="return false;">Tagihan</a>
+					<ul>
+						<li><a href="<?php echo (site_url('pembayaran/index'));?>">Input Pembayaran</a></li>
+					</ul>
+				</li>
 				<li><a href="#" onClick="return false;">Laporan</a>
 					<ul>
 						<li><a href="<?php echo (site_url('rekap/index'));?>">Data Tagihan</a></li>
