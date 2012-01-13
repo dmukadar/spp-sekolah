@@ -102,10 +102,18 @@
                       <td>&nbsp;</td>
                       <td>&nbsp;</td>
                       <td>&nbsp;</td>
-                      <td colspan="4"><?
+                      <td colspan="4">
+<?
+date_default_timezone_set('UTC');
+$bulan= date('F');	
+$send_bulan= strtoupper ($bulan) ;
+//echo $send_bulan;?>
+<input name="tx_bulan" type="hidden" id="tx_bulan" value="<? echo $send_bulan; ?>"></td></tr>				<?  
 $date = getdate();
 $year = $date['year'];
-$month = $date['mon'];
+$month = $date['mon'];?>
+
+<?
 
 if ($month=1|2|3|4|5|6){
 $thn_ajaran=($year-1)."-".$year;
@@ -133,5 +141,4 @@ $thn_ajaran= ($year)."-".($year+1);
                       <td>&nbsp;</td>
                     </tr>
                   </table>
-				  <label></label>
 				</form>

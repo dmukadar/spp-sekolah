@@ -441,8 +441,11 @@ class Tlain2 extends Alazka_Controller {
 		$tanggal_mulai=$this->input->post('tx_mulai'); 
 		$tanggal_akhir=$this->input->post('tx_akhir'); 
 		$ajaran=$this->input->post('tx_ajaran');	
+		$bulan=$this->input->post('tx_bulan');
 		$jenjang=$this->input->post('tx_unit');
-	    $data['ajaran']=$ajaran;
+	    
+		$data['ajaran']=$ajaran;
+		$data['bulan']=$bulan;
 		$data ['per_tanggal']=$tanggal_mulai;
 		$data ['nm_jenjang']=$jenjang;
 
