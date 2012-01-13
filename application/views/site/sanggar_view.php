@@ -100,7 +100,15 @@
 	else if ($nm_jenjang==4){ echo "SMP";}
 	?>
     </span></td>
-    <td>PER TANGGAL : <span class="style5"><?php echo $per_tanggal;?> </span></td>
+    <td>PER TANGGAL :<span class="style5">
+      <?php  
+	
+	 $time=strtotime($per_tanggal);
+    echo date("m/d/Y",$time);
+	
+	
+	?>
+    </span></td>
   </tr>
   <tr>
     <td>&nbsp;</td>
@@ -116,8 +124,8 @@
     <td width="13%" align="center" valign="middle"><div align="center"><strong>JENIS KEGIATAN </strong></div></td>
     <td width="18%" align="center" valign="middle"><div align="center"><strong>PENDAFTARAN</strong></div></td>
     <td width="9%" align="center" valign="middle"><div align="center"><strong>KEG BULAN </strong></div></td>
-    <td width="12%" align="center" valign="middle"><div align="center"><strong>BIAYA(RP) </strong></div></td>
-    <td width="11%" align="center" valign="middle"><div align="center"><strong>JUMLAH</strong></div></td>
+    <td width="12%" align="center" valign="middle"><div align="center"><strong>BIAYA (Rupiah)</strong></div></td>
+    <td width="11%" align="center" valign="middle"><div align="center"><strong>JUMLAH</strong> <strong>(Rupiah)</strong></div></td>
   </tr>
 </table>
 <?php 
@@ -132,8 +140,9 @@
     <td width="13%" height="32"><div align="center"><?php echo $row->description;?></div></td>
     <td width="18%" height="32"><div align="center"><?php echo $row->tahun;?></div></td>
     <td width="9%"><div align="center"><?php echo $row->bulan;?></div></td>
-    <td width="12%"><div align="right"><?php echo $row->amount;?><span class="style6">.</span></div></td>
-    <td width="11%" height="32"><div align="right"><?php echo $row->tagihan;?><span class="style6"></span></div>   </td>
+    <td width="12%"><div align="right"><?php $amount=$row->amount;$clean = str_replace(".00", ",-",$amount);echo $clean;?><span class="style6">.</span></div></td>
+    <td width="11%" height="32"><div align="right">
+      <?php $tagihan=$row->tagihan;$clean = str_replace(".00", ",-",$tagihan);echo $clean;?><span class="style6">.</span>      </div>   </td>
   </tr>
 </table>
 <?php }?>
@@ -145,11 +154,12 @@
       <?php foreach($data_total->result() as $row){?>
     </div></td>
     <td width="12%"><div align="right" class="style6">
-      <?php echo $row->total;?>
+      <?php $total=$row->total;$clean = str_replace(".00", ",-",$total);echo $clean;?>
       <?php }?>
       <?php foreach($data_total->result() as $row){?>
     </div></td>
-    <td width="11%"><div align="right"><?php echo $row->total;?></div></td>
+    <td width="11%"><div align="right"><?php $total=$row->total;$clean = str_replace(".00", ",-",$total);echo $clean;?>
+      <span class="style6">.</span></div></td>
   </tr>
 </table>
 <?php }?>
