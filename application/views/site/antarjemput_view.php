@@ -98,7 +98,15 @@
 	else if ($nm_jenjang==3){ echo "SD";}
 	else if ($nm_jenjang==4){ echo "SMP";}
 	?></span></td>
-    <td>PER TANGGAL : <span class="style5"><?php echo $per_tanggal;?> </span></td>
+    <td>PER TANGGAL :<span class="style5">
+      <?php  
+	
+	 $time=strtotime($per_tanggal);
+    echo date("m/d/Y",$time);
+	
+	
+	?>
+    </span></td>
   </tr>
   <tr>
     <td>&nbsp;</td>
@@ -112,8 +120,8 @@
     <td width="27%"><div align="center"><strong>NAMA</strong></div></td>
     <td width="11%"><div align="center"><strong>KELAS</strong></div></td>
     <td width="14%"><div align="center"><strong>BULAN</strong></div></td>
-    <td width="27%"><div align="center"><strong>ANT JEMPUT </strong></div></td>
-    <td width="16%"><div align="center"><strong>JUMLAH</strong></div></td>
+    <td width="27%"><div align="center"><strong>ANT JEMPUT</strong></div></td>
+    <td width="16%"><div align="center"><strong>JUMLAH</strong><strong>(Rupiah)</strong></div></td>
   </tr>
 </table>
 <?php 
@@ -127,7 +135,7 @@ $i=1;
     <td width="11%" height="32"><div align="center"><?php echo $row->kelas;?></div></td>
     <td width="14%" height="32"><div align="center"><?php echo $row->bulan;?></div></td>
     <td width="27%" height="32"><div align="center"><?php echo $row->description;?></div></td>
-    <td width="16%" height="32"><div align="right"><?php echo $row->tagihan;?><span class="style6">.</span></div>   </td>
+    <td width="16%" height="32"><div align="right"><?php $tagihan=$row->tagihan;$clean = str_replace(".00", ",-",$tagihan);echo $clean;?><span class="style6">.</span></div>   </td>
   </tr>
 </table>
 <?php }?>
@@ -139,7 +147,7 @@ $i=1;
     <td width="27%"><div align="center"></div></td>
     <td width="16%"><div align="right">
       <?php foreach($data_total->result() as $row){?>
-      <?php echo $row->total;?>
+      <?php $total=$row->total;$clean = str_replace(".00", ",-",$total);echo $clean;?>
       <?php }?>
     </div></td>
   </tr>
