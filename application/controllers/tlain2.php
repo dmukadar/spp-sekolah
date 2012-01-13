@@ -119,25 +119,34 @@ class Tlain2 extends Alazka_Controller {
 		$jenjang=$this->input->post('tx_unit');
 	    $data['ajaran']=$ajaran;
 		$data ['per_tanggal']=$tanggal_mulai;
+		$data ['nm_jenjang']=$jenjang;
 		
 		if ($jenjang==0 && empty($tanggal_akhir)){
-		$data['data_antarjemput']=$this->Alat_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));		
-		$data['data_total']=$this->Alat_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));
+		$data['data_alat']=$this->Alat_model->get_all(array('due_date >='=>$tanggal_mulai ));		
+		$data['data_total']=$this->Alat_model->get_total(array('due_date >='=>$tanggal_mulai ));
+		$data['data_total_alat']=$this->Alat_model->get_total_alat(array('due_date >='=>$tanggal_mulai ));		
+		$data['data_total_bukulain']=$this->Alat_model->get_total_bukulain(array('due_date >='=>$tanggal_mulai ));
 		}
 		
 		else if ($jenjang==0 && !empty($tanggal_akhir)){
-		$data['data_antarjemput']=$this->Alat_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
-		$data['data_total']=$this->Alat_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		$data['data_alat']=$this->Alat_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir ));	
+		$data['data_total']=$this->Alat_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir ));	
+		$data['data_total_alat']=$this->Alat_model->get_total_alat(array('due_date >='=>$tanggal_mulai ,'due_date <='=>$tanggal_akhir));		
+		$data['data_total_bukulain']=$this->Alat_model->get_total_bukulain(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir ));
 		}
 		
 		else if ($jenjang!=0 && empty($tanggal_akhir)){
-		$data['data_antarjemput']=$this->Alat_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_total']=$this->Alat_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_alat']=$this->Alat_model->get_all(array('due_date >='=>$tanggal_mulai , 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Alat_model->get_total(array('due_date >='=>$tanggal_mulai , 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_total_alat']=$this->Alat_model->get_total_alat(array('due_date >='=>$tanggal_mulai, 'sis_siswa.dm_jenjang_id'=>$jenjang ));		
+		$data['data_total_bukulain']=$this->Alat_model->get_total_bukulain(array('due_date >='=>$tanggal_mulai, 'sis_siswa.dm_jenjang_id'=>$jenjang ));
 		}
 		
 		else if ($jenjang!=0 && !empty($tanggal_akhir)){
-		$data['data_antarjemput']=$this->Alat_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_total']=$this->Alat_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_alat']=$this->Alat_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir , 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Alat_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir , 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_total_alat']=$this->Alat_model->get_total_alat(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir , 'sis_siswa.dm_jenjang_id'=>$jenjang ));		
+		$data['data_total_bukulain']=$this->Alat_model->get_total_bukulain(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir , 'sis_siswa.dm_jenjang_id'=>$jenjang ));
 		} 
 		
 		$data['page']='index';
@@ -248,7 +257,7 @@ class Tlain2 extends Alazka_Controller {
 	
 	function uang_buku()
     {       
-		  $this->load->library('pdf');
+		$this->load->library('pdf');
         $this->pdf->SetSubject('Laporan Tunggakan Lain-lain');
         $this->pdf->SetKeywords('TCPDF, PDF');      
         $this->pdf->SetFont('times', '', 12);   
@@ -266,24 +275,38 @@ class Tlain2 extends Alazka_Controller {
 	    $data['ajaran']=$ajaran;
 		$data ['per_tanggal']=$tanggal_mulai;
 		$data ['nm_jenjang']=$jenjang;
+		
 		if ($jenjang==0 && empty($tanggal_akhir)){
-		$data['data_antarjemput']=$this->Buku_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));		
-		$data['data_total']=$this->Buku_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));
+		$data['data_buku']=$this->Buku_model->get_all(array('due_date >='=>$tanggal_mulai));		
+		$data['data_total']=$this->Buku_model->get_total(array('due_date >='=>$tanggal_mulai ));
+		$data['data_paket']=$this->Buku_model->get_total_paket(array('due_date >='=>$tanggal_mulai));		
+		$data['data_nonpaket']=$this->Buku_model->get_total_nonpaket(array('due_date >='=>$tanggal_mulai ));
+		$data['data_lks']=$this->Buku_model->get_total_lks(array('due_date >='=>$tanggal_mulai ));
+		
 		}
 		
 		else if ($jenjang==0 && !empty($tanggal_akhir)){
-		$data['data_antarjemput']=$this->Buku_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
-		$data['data_total']=$this->Buku_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		$data['data_buku']=$this->Buku_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir ));	
+		$data['data_total']=$this->Buku_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir));	
+		$data['data_paket']=$this->Buku_model->get_total_paket(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir));		
+		$data['data_nonpaket']=$this->Buku_model->get_total_nonpaket(array('due_date >='=>$tanggal_mulai ,'due_date <='=>$tanggal_akhir));
+		$data['data_lks']=$this->Buku_model->get_total_lks(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir ));
 		}
 		
 		else if ($jenjang!=0 && empty($tanggal_akhir)){
-		$data['data_antarjemput']=$this->Buku_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_total']=$this->Buku_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_buku']=$this->Buku_model->get_all(array('due_date >='=>$tanggal_mulai, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Buku_model->get_total(array('due_date >='=>$tanggal_mulai, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_paket']=$this->Buku_model->get_total_paket(array('due_date >='=>$tanggal_mulai, 'sis_siswa.dm_jenjang_id'=>$jenjang));		
+		$data['data_nonpaket']=$this->Buku_model->get_total_nonpaket(array('due_date >='=>$tanggal_mulai, 'sis_siswa.dm_jenjang_id'=>$jenjang ));
+		$data['data_lks']=$this->Buku_model->get_total_lks(array('due_date >='=>$tanggal_mulai, 'sis_siswa.dm_jenjang_id'=>$jenjang ));
 		}
 		
 		else if ($jenjang!=0 && !empty($tanggal_akhir)){
-		$data['data_antarjemput']=$this->Buku_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_total']=$this->Buku_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_buku']=$this->Buku_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Buku_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_paket']=$this->Buku_model->get_total_paket(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));		
+		$data['data_nonpaket']=$this->Buku_model->get_total_nonpaket(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang ));
+		$data['data_lks']=$this->Buku_model->get_total_lks(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang ));
 		} 
 		
 		$data['page']='index';

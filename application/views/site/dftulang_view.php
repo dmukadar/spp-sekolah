@@ -90,7 +90,14 @@
   </tr>
   
   <tr>
-    <td>UNIT: TK - SD- SMP</td>
+    <td>UNIT: <span class="style5">
+      <?php //echo $nm_jenjang;
+	if ($nm_jenjang==0){ echo "TK-SD-SMP";}
+	else if ($nm_jenjang==2){ echo "TK";}
+	else if ($nm_jenjang==3){ echo "SD";}
+	else if ($nm_jenjang==4){ echo "SMP";}
+	?>
+    </span></td>
     <td>PER TANGGAL : <span class="style5"><?php echo $per_tanggal;?> </span></td>
   </tr>
   <tr>
