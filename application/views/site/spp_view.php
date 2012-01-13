@@ -75,7 +75,10 @@
     <td><div align="center"></div></td>
   </tr>
   <tr>
-    <td><div align="center"><strong><font size="+2">REKAP TUNGGAKAN SPP DAN BPPS BULAN </font> <span class="style5"><?php echo $ajaran;?></span></strong></div></td>
+    <td><div align="center"><strong><font size="+2">REKAP TUNGGAKAN SPP DAN BPPS BULAN</font><span class="style5"> <?php echo $bulan;?></span></strong></div></td>
+  </tr>
+  <tr>
+    <td><div align="center"><strong><font size="+2">TAHUN PELAJARAN </font><span class="style5"><?php echo $ajaran;?></span></strong></div></td>
   </tr>
 </table>
 
@@ -97,7 +100,13 @@
 	else if ($nm_jenjang==4){ echo "SMP";}
 	?>
     </span></td>
-    <td>PER TANGGAL : <span class="style5"><?php echo $per_tanggal;?> </span></td>
+    <td>PER TANGGAL : <span class="style5"><?php  
+	
+	 $time=strtotime($per_tanggal);
+    echo date("m/d/Y",$time);
+	
+	
+	?> </span></td>
   </tr>
   <tr>
     <td>&nbsp;</td>
@@ -111,12 +120,22 @@
     <td width="27%"><div align="center"><strong>NAMA</strong></div></td>
     <td width="11%"><div align="center"><strong>KELAS</strong></div></td>
     <td width="14%"><div align="center"><strong>BULAN</strong></div></td>
-    <td width="13%"><div align="center"><strong>SPP </strong></div></td>
-    <td width="14%"><div align="center"><strong>BPPS</strong></div></td>
-    <td width="16%"><div align="center"><strong>JUMLAH</strong></div></td>
+    <td width="13%"><div align="center"><strong>SPP (Rupiah) </strong></div></td>
+    <td width="14%"><div align="center"><strong>BPPS</strong><strong>(Rupiah)</strong></div></td>
+    <td width="16%"><div align="center"><strong>JUMLAH</strong><strong>(Rupiah)</strong></div></td>
   </tr>
 </table>
 <?php 
+
+function DisplayDouble($value)
+  {
+  list($whole, $decimals) = split ('[.,]', $value, 2);
+  if (intval($decimals) > 0)
+    return number_format($value,2,".",",");
+  else
+    return number_format($value,0,".",",") .",-";
+  }
+
 $i=1;
 		foreach($data_sppbpps->result() as $row){
 		
@@ -127,10 +146,10 @@ $i=1;
     <td width="27%" height="32"><div align="left"><span class="style6">_</span><?php echo $row->namalengkap;?></div></td>
     <td width="11%" height="32"><div align="center"><?php echo $row->kelas;?></div></td>
     <td width="14%" height="32"><div align="center"><?php echo $row->bulan;?></div></td>
-    <td width="13%" height="32"><div align="right"><?php echo $row->uang_spp;?><span class="style6">.</span></div>
+    <td width="13%" height="32"><div align="right"><?php $uang_spp=$row->uang_spp; $clean = str_replace(".00", ",-",$uang_spp);echo $clean;?><span class="style6">.</span></div>
     </td>
-    <td width="14%"><div align="right"><?php echo $row->uang_bpps;?><span class="style6">.</span></div></td>
-    <td width="16%" height="32"><div align="right"><span class="style6"><span class="style7"><?php echo $row->total;?></span>.</span></div></td>
+    <td width="14%"><div align="right"><?php $uang_bpps=$row->uang_bpps; $clean1 = str_replace(".00", ",-",$uang_bpps);echo $clean1;?><span class="style6">.</span></div></td>
+    <td width="16%" height="32"><div align="right"><span class="style6"><span class="style7"><?php  $total=$row->total;$clean2 = str_replace(".00", ",-",$total);echo $clean2;?></span>.</span></div></td>
   </tr>
 </table>
 <?php }?>
@@ -141,18 +160,18 @@ $i=1;
     <td width="14%"><div align="center"></div></td>
     <td width="13%"><div align="right">
       <?php foreach($data_spp->result() as $row){?>
-      <?php echo $row->total;?>
+      <?php $total=$row->total;$clean2 = str_replace(".00", ",-",$total);echo $clean2;?>
       <?php }?>
     </div>
     </td>
     <td width="14%"><div align="right">
       <?php foreach($data_bpps->result() as $row){?>
-      <?php echo $row->total;?>
+      <?php $total=$row->total;$clean2 = str_replace(".00", ",-",$total);echo $clean2;?>
       <?php }?>
     </div></td>
     <td width="16%"><div align="right">
       <?php foreach($data_total->result() as $row){?>
-      <?php echo $row->total;?>
+      <?php $total=$row->total;$clean2 = str_replace(".00", ",-",$total);echo $clean2;?>
       <?php }?>
     </div></td>
   </tr>
