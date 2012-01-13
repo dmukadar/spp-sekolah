@@ -111,11 +111,11 @@
 <table width="100%" border="1">
   <tr>
     <td width="5%" height="32"><div align="center"><strong>NO</strong></div></td>
-    <td width="27%"><div align="center"><strong>NAMA</strong></div></td>
-    <td width="11%"><div align="center"><strong>KELAS</strong></div></td>
-    <td width="14%"><div align="center"><strong>TH PEL </strong></div></td>
-    <td width="27%"><div align="center"><strong>UANG KEGIATAN </strong></div></td>
-    <td width="16%"><div align="center"><strong>JUMLAH</strong></div></td>
+    <td width="31%"><div align="center"><strong>NAMA</strong></div></td>
+    <td width="14%"><div align="center"><strong>KELAS</strong></div></td>
+    <td width="13%"><div align="center"><strong>TH PEL </strong></div></td>
+    <td width="21%"><div align="center"><strong>UANG KEGIATAN </strong> <strong>(Rupiah)</strong></div></td>
+    <td width="16%"><div align="center"><strong>JUMLAH</strong> <strong>(Rupiah)</strong></div></td>
   </tr>
 </table>
 <?php $i=1;
@@ -124,23 +124,28 @@
 <table width="100%" border="1">
   <tr>
     <td width="5%" height="32"><div align="center"><?php echo $i++;?></div></td>
-    <td width="27%" height="32"><div align="left"><span class="style6">_</span><?php echo $row->namalengkap;?></div></td>
-    <td width="11%" height="32"><div align="center"><?php echo $row->kelas;?></div></td>
-    <td width="14%" height="32"><div align="center"><?php echo $row->tahun;?></div></td>
-    <td width="27%" height="32"><div align="left"><span class="style6">_</span><?php echo $row->description;?></div></td>
-    <td width="16%" height="32"><div align="right"><?php echo $row->tagihan;?><span class="style6">.</span></div>   </td>
+    <td width="31%" height="32"><div align="left"><span class="style6">_</span><?php echo $row->namalengkap;?></div></td>
+    <td width="14%" height="32"><div align="center"><?php echo $row->kelas;?></div></td>
+    <td width="13%" height="32"><div align="center"><?php echo $row->tahun;?></div></td>
+    <td width="21%" height="32"><div align="right"><span class="style6">_</span>
+      <?php $tagihan=$row->tagihan;$clean = str_replace(".00", ",-",$tagihan);echo $clean;?><span class="style6">.</span>    </div></td>
+    <td width="16%" height="32"><div align="right"><?php $tagihan=$row->tagihan;$clean = str_replace(".00", ",-",$tagihan);echo $clean;?><span class="style6">.</span></div>   </td>
   </tr>
 </table>
 <?php }?>
 <table width="100%" border="1">
   <tr>
     <td width="5%" height="32"><div align="center"></div></td>
-    <td width="38%"><div align="center">TOTAL JUMLAH </div></td>
-    <td width="14%"><div align="center"></div></td>
-    <td width="27%"><div align="center"></div></td>
+    <td width="45%"><div align="center">TOTAL JUMLAH </div></td>
+    <td width="13%"><div align="center"></div></td>
+    <td width="21%"><div align="right">
+      <?php foreach($data_total->result() as $row){?>
+      <?php $total=$row->total;$clean = str_replace(".00", ",-",$tagihan);echo $clean;?>
+      <?php }?>
+    </div></td>
     <td width="16%"><div align="right">
       <?php foreach($data_total->result() as $row){?>
-      <?php echo $row->total;?>
+      <?php $total=$row->total;$clean = str_replace(".00", ",-",$tagihan);echo $clean;?>
       <?php }?>
     </div></td>
   </tr>
