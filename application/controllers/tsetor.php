@@ -63,8 +63,10 @@ class Tsetor extends Alazka_Controller {
 		$tanggal_akhir=$this->input->post('tx_akhir'); 
 		$ajaran=$this->input->post('tx_ajaran');	
 		$jenjang=$this->input->post('tx_unit');
+		
 	    $data['ajaran']=$ajaran;
 		$data ['per_tanggal']=$tanggal_mulai;
+		$data ['nm_jenjang']=$jenjang;
 		
 		if ($jenjang==0 && empty($tanggal_akhir)){
 		$data['data_antarjemput']=$this->Santarjemput_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));		
@@ -87,10 +89,11 @@ class Tsetor extends Alazka_Controller {
 		} 
 		
 		$data['page']='index';
-		$html = $this->load->view('site/v_santarjemput', $data, true);
+		
+		$html = $this->load->view('site/santarjemput_view', $data, true);
 		$this->pdf->writeHTML($html, true, true, true, true, '');		
 		$this->pdf->lastPage();		
-		$this->pdf->Output("rekapsetoran_antjmput.pdf", 'I');       
+		$this->pdf->Output("rekaptg_antjmput.pdf", 'I');       
     }
 	
 

@@ -104,6 +104,12 @@
                       <td>&nbsp;</td>
                       <td>&nbsp;</td>
                       <td colspan="4"><?
+date_default_timezone_set('UTC');
+$bulan= date('F');	
+$send_bulan= strtoupper ($bulan) ;
+?>
+<input name="tx_bulan" type="hidden" id="tx_bulan" value="<? echo $send_bulan; ?>"></td></tr>
+<?
 $date = getdate();
 $year = $date['year'];
 $month = $date['mon'];
