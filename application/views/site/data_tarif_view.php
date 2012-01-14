@@ -21,6 +21,8 @@
 				  <th><div align="left"><strong>Kategori</strong></div></th>
 					<th><div align="left"><strong>Tagihan</strong></div></th>
 					<th><div align="right"><strong>Jumlah (Rp)</strong></div></th>
+					<th><div align="right"><strong>Dibayar</strong></div></th>
+					<th><div align="right"><strong>Cicilan</strong></div></th>
 					<th><div align="center"><strong>Pilihan</strong></div></th>
 				</tr>
 				</thead>
@@ -30,6 +32,8 @@
 					<td><?php echo ($tarif->get_category());?></td>
 					<td><?php echo ($tarif->get_name());?></td>
 					<td style="text-align:right;"><?php echo ($tarif->get_fare(TRUE));?></td>
+					<td style="text-align:right;"><?php echo ($tarif->get_recurrence(TRUE));?></td>
+					<td style="text-align:right;"><?php echo ($tarif->get_installment());?>x</td>
 					<td style="text-align:center;"><a href="<?php echo (ME()->get_edit_link($tarif));?>" class="reply">ubah</a></td>
 				</tr>
 				<?php endforeach; ?>	

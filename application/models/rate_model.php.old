@@ -8,10 +8,6 @@ class Rate {
 	private $name = NULL;
 	private $description = NULL;
 	private $fare = NULL;
-	private $id_kelas = NULL;
-	private $due_after = NULL;
-	private $recurrence = NULL;
-	private $installment = NULL;
 	private $created = NULL;
 	private $modified = NULL;
 	private $modified_by = NULL;
@@ -62,61 +58,6 @@ class Rate {
 		return $this->fare;
 	}
 
-	public function set_id_kelas($id_kelas) {
-		$this->id_kelas = $id_kelas;
-	}
-
-	public function get_id_kelas() {
-		return $this->id_kelas;
-	}
-
-	public function set_due_after($due_after) {
-		$this->due_after = $due_after;
-	}
-
-	public function get_due_after() {
-		return $this->due_after;
-	}
-
-	public function set_recurrence($recurrence) {
-		$this->recurrence = $recurrence;
-	}
-
-	public function get_recurrence($bahasa_format=FALSE) {
-		// output ke dalam bentuk bahasa yang baku
-		if ($bahasa_format === TRUE) {
-			switch ($this->recurrence) {
-				case 'sekali':
-					return 'Satu Kali';
-				break;
-				case 'semester':
-					return 'Per Semester';
-				break;
-				case 'tahun':
-					return 'Per Tahun';
-				break;
-				case 'cawu':
-					return 'Per Cawu';
-				break;
-				case 'bulan':
-					return 'Per Bulan';
-				break;
-				default:
-					return $this->recurrence;
-				break;
-			}
-		}
-		return $this->recurrence;
-	}
-
-	public function set_installment($installment) {
-		$this->installment = $installment;
-	}
-
-	public function get_installment() {
-		return $this->installment;
-	}
-
 	public function set_created($created) {
 		$this->created = $created;
 	}
@@ -160,10 +101,6 @@ class Rate {
 			$tmp->set_name($result->name);
 			$tmp->set_description($result->description);
 			$tmp->set_fare($result->fare);
-			$tmp->set_id_kelas($result->id_kelas);
-			$tmp->set_due_after($result->due_after);
-			$tmp->set_recurrence($result->recurrence);
-			$tmp->set_installment($result->installment);
 			$tmp->set_created($result->created);
 			$tmp->set_modified($result->modified);
 			$tmp->set_modified_by($result->modified_by);
@@ -311,7 +248,6 @@ class Rate_model extends CI_Model {
 		$this->db->delete(RATE_TABLE, $where);
 	}
 }
-
 
 class RateNotFoundException extends Exception {
 	public function __construct($mesg, $code=101) {
