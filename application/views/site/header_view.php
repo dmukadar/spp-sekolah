@@ -34,7 +34,7 @@
 <script type="text/javascript" src="js/custom.js"></script>
 <script type="text/javascript" src="js/facebox.js"></script>
 <?php ME()->add_more_javascript(); ?>
-
+<script type="text/javascript" src="<?php echo base_url();?>datepicker/datetimepicker_css.js"></script>
 </head>
 <body>
 
