@@ -9,9 +9,9 @@ class Tsetor extends Alazka_Controller {
     }
     
 	
-	/*fungsi buat pilih sub-jenis report dari tunggakan* */
+	/*fungsi buat pilih sub-jenis report dari Setoran* */
 	 
-	function pilih_report_tunggakan(){
+	function pilih_report_setoran(){
 		$pilihan=$this->input->post('bt_laporan');
 		if($pilihan==8){
 			//echo "alat";
@@ -49,7 +49,7 @@ class Tsetor extends Alazka_Controller {
     function antarjemput()
     {      
 		$this->load->library('pdf');
-        $this->pdf->SetSubject('Laporan Tunggakan Lain-lain');
+        $this->pdf->SetSubject('Laporan Setoran Lain-lain');
         $this->pdf->SetKeywords('TCPDF, PDF');      
         $this->pdf->SetFont('times', '', 12);   
 		$this->pdf->setHeaderFont(Array('times', '', '14'));
@@ -93,7 +93,7 @@ class Tsetor extends Alazka_Controller {
 		$html = $this->load->view('site/santarjemput_view', $data, true);
 		$this->pdf->writeHTML($html, true, true, true, true, '');		
 		$this->pdf->lastPage();		
-		$this->pdf->Output("rekaptg_antjmput.pdf", 'I');       
+		$this->pdf->Output("rekapsetor_antjmput.pdf", 'I');       
     }
 	
 
@@ -102,7 +102,7 @@ class Tsetor extends Alazka_Controller {
 	function alat()
     {       
 		$this->load->library('pdf');
-        $this->pdf->SetSubject('Laporan Tunggakan Lain-lain');
+        $this->pdf->SetSubject('Laporan Setoran Lain-lain');
         $this->pdf->SetKeywords('TCPDF, PDF');      
         $this->pdf->SetFont('times', '', 12);   
 		$this->pdf->setHeaderFont(Array('times', '', '14'));
@@ -167,7 +167,7 @@ class Tsetor extends Alazka_Controller {
 	function seragam()
     {       
 		$this->load->library('pdf');
-        $this->pdf->SetSubject('Laporan Tunggakan Lain-lain Unit Sanggar');
+        $this->pdf->SetSubject('Laporan Setoran Lain-lain');
         $this->pdf->SetKeywords('TCPDF, PDF');      
         $this->pdf->SetFont('times', '', 12);   
 		$this->pdf->setHeaderFont(Array('times', '', '14'));
@@ -181,34 +181,37 @@ class Tsetor extends Alazka_Controller {
 		$tanggal_akhir=$this->input->post('tx_akhir'); 
 		$ajaran=$this->input->post('tx_ajaran');	
 		$jenjang=$this->input->post('tx_unit');
+		
 	    $data['ajaran']=$ajaran;
 		$data ['per_tanggal']=$tanggal_mulai;
+		$data ['nm_jenjang']=$jenjang;
 		
-		if ($jenjang==0 && $tanggal_akhir==0){
-		$data['data_antarjemput']=$this->Sseragam_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));		
+		if ($jenjang==0 && empty($tanggal_akhir)){
+		$data['data_seragam']=$this->Sseragam_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));		
 		$data['data_total']=$this->Sseragam_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));
 		}
 		
-		else if ($jenjang==0 && $tanggal_akhir!=0){
-		$data['data_antarjemput']=$this->Sseragam_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		else if ($jenjang==0 && !empty($tanggal_akhir)){
+		$data['data_seragam']=$this->Sseragam_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
 		$data['data_total']=$this->Sseragam_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
 		}
 		
-		else if ($jenjang!=0 && $tanggal_akhir==0){
-		$data['data_antarjemput']=$this->Sseragam_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		else if ($jenjang!=0 && empty($tanggal_akhir)){
+		$data['data_seragam']=$this->Sseragam_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
 		$data['data_total']=$this->Sseragam_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
 		}
 		
-		else if ($jenjang!=0 && $tanggal_akhir!=0){
-		$data['data_antarjemput']=$this->Sseragam_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		else if ($jenjang!=0 && !empty($tanggal_akhir)){
+		$data['data_seragam']=$this->Sseragam_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
 		$data['data_total']=$this->Sseragam_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
 		} 
 		
 		$data['page']='index';
-		$html = $this->load->view('site/v_sseragam', $data, true);
+		
+		$html = $this->load->view('site/sseragam_view', $data, true);
 		$this->pdf->writeHTML($html, true, true, true, true, '');		
 		$this->pdf->lastPage();		
-		$this->pdf->Output("rekapsetoran_sseragam.pdf", 'I');          
+		$this->pdf->Output("rekapst_seragam.pdf", 'I');      
     }
 	
 	
@@ -216,7 +219,7 @@ class Tsetor extends Alazka_Controller {
 	function sanggar()
     {       
 		$this->load->library('pdf');
-        $this->pdf->SetSubject('Laporan Tunggakan Lain-lain Unit Sanggar');
+        $this->pdf->SetSubject('Laporan Setoran Lain-lain');
         $this->pdf->SetKeywords('TCPDF, PDF');      
         $this->pdf->SetFont('times', '', 12);   
 		$this->pdf->setHeaderFont(Array('times', '', '14'));
@@ -230,41 +233,44 @@ class Tsetor extends Alazka_Controller {
 		$tanggal_akhir=$this->input->post('tx_akhir'); 
 		$ajaran=$this->input->post('tx_ajaran');	
 		$jenjang=$this->input->post('tx_unit');
+		
 	    $data['ajaran']=$ajaran;
 		$data ['per_tanggal']=$tanggal_mulai;
+		$data ['nm_jenjang']=$jenjang;
 		
-		if ($jenjang==0 && $tanggal_akhir==0){
-		$data['data_antarjemput']=$this->Ssanggar_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));		
+		if ($jenjang==0 && empty($tanggal_akhir)){
+		$data['data_ssanggar']=$this->Ssanggar_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));		
 		$data['data_total']=$this->Ssanggar_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));
 		}
 		
-		else if ($jenjang==0 && $tanggal_akhir!=0){
-		$data['data_antarjemput']=$this->Ssanggar_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		else if ($jenjang==0 && !empty($tanggal_akhir)){
+		$data['data_ssanggar']=$this->Ssanggar_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
 		$data['data_total']=$this->Ssanggar_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
 		}
 		
-		else if ($jenjang!=0 && $tanggal_akhir==0){
-		$data['data_antarjemput']=$this->Ssanggar_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		else if ($jenjang!=0 && empty($tanggal_akhir)){
+		$data['data_ssanggar']=$this->Ssanggar_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
 		$data['data_total']=$this->Ssanggar_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
 		}
 		
-		else if ($jenjang!=0 && $tanggal_akhir!=0){
-		$data['data_antarjemput']=$this->Ssanggar_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		else if ($jenjang!=0 && !empty($tanggal_akhir)){
+		$data['data_ssanggar']=$this->Ssanggar_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
 		$data['data_total']=$this->Ssanggar_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
 		} 
 		
 		$data['page']='index';
-		$html = $this->load->view('site/v_ssanggar', $data, true);
+		
+		$html = $this->load->view('site/ssanggar_view', $data, true);
 		$this->pdf->writeHTML($html, true, true, true, true, '');		
 		$this->pdf->lastPage();		
-		$this->pdf->Output("rekapsetoran_sanggar.pdf", 'I');       
+		$this->pdf->Output("rekapsetor_setor.pdf", 'I');       
     }
 	
 	
 	function uang_buku()
     {       
 		$this->load->library('pdf');
-        $this->pdf->SetSubject('Laporan Tunggakan Lain-lain');
+        $this->pdf->SetSubject('Laporan Setoran Lain-lain');
         $this->pdf->SetKeywords('TCPDF, PDF');      
         $this->pdf->SetFont('times', '', 12);   
 		$this->pdf->setHeaderFont(Array('times', '', '14'));
@@ -329,7 +335,7 @@ class Tsetor extends Alazka_Controller {
 	function uang_kegiatan()
     {       
 		$this->load->library('pdf');
-        $this->pdf->SetSubject('Laporan Tunggakan Lain-lain Unit Sanggar');
+        $this->pdf->SetSubject('Laporan Setoran Lain-lain');
         $this->pdf->SetKeywords('TCPDF, PDF');      
         $this->pdf->SetFont('times', '', 12);   
 		$this->pdf->setHeaderFont(Array('times', '', '14'));
@@ -343,34 +349,37 @@ class Tsetor extends Alazka_Controller {
 		$tanggal_akhir=$this->input->post('tx_akhir'); 
 		$ajaran=$this->input->post('tx_ajaran');	
 		$jenjang=$this->input->post('tx_unit');
+		
 	    $data['ajaran']=$ajaran;
 		$data ['per_tanggal']=$tanggal_mulai;
+		$data ['nm_jenjang']=$jenjang;
 		
-		if ($jenjang==0 && $tanggal_akhir==0){
-		$data['data_antarjemput']=$this->Skegiatan_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));		
+		if ($jenjang==0 && empty($tanggal_akhir)){
+		$data['data_kegiatan']=$this->Skegiatan_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));		
 		$data['data_total']=$this->Skegiatan_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));
 		}
 		
-		else if ($jenjang==0 && $tanggal_akhir!=0){
-		$data['data_antarjemput']=$this->Skegiatan_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		else if ($jenjang==0 && !empty($tanggal_akhir)){
+		$data['data_kegiatan']=$this->Skegiatan_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
 		$data['data_total']=$this->Skegiatan_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
 		}
 		
-		else if ($jenjang!=0 && $tanggal_akhir==0){
-		$data['data_antarjemput']=$this->Skegiatan_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		else if ($jenjang!=0 && empty($tanggal_akhir)){
+		$data['data_kegiatan']=$this->Skegiatan_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
 		$data['data_total']=$this->Skegiatan_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
 		}
 		
-		else if ($jenjang!=0 && $tanggal_akhir!=0){
-		$data['data_antarjemput']=$this->Skegiatan_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		else if ($jenjang!=0 && !empty($tanggal_akhir)){
+		$data['data_kegiatan']=$this->Skegiatan_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
 		$data['data_total']=$this->Skegiatan_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
 		} 
 		
 		$data['page']='index';
-		$html = $this->load->view('site/v_skegiatan', $data, true);
+		
+		$html = $this->load->view('site/skegiatan_view', $data, true);
 		$this->pdf->writeHTML($html, true, true, true, true, '');		
 		$this->pdf->lastPage();		
-		$this->pdf->Output("rekapsetoran_kegiatan.pdf", 'I');         
+		$this->pdf->Output("rekaptg_kegiatan.pdf", 'I');  
     }
 	
 	
@@ -378,7 +387,7 @@ class Tsetor extends Alazka_Controller {
 	function uang_masuk()
     {       
 		$this->load->library('pdf');
-        $this->pdf->SetSubject('Laporan Tunggakan Lain-lain Unit Sanggar');
+        $this->pdf->SetSubject('Laporan Setoran Lain-lain Unit Sanggar');
         $this->pdf->SetKeywords('TCPDF, PDF');      
         $this->pdf->SetFont('times', '', 12);   
 		$this->pdf->setHeaderFont(Array('times', '', '14'));
@@ -425,7 +434,7 @@ class Tsetor extends Alazka_Controller {
 	function spp()
     {       
 		$this->load->library('pdf');
-        $this->pdf->SetSubject('Laporan Tunggakan Lain-lain');
+        $this->pdf->SetSubject('Laporan Setoran Lain-lain');
         $this->pdf->SetKeywords('TCPDF, PDF');      
         $this->pdf->SetFont('times', '', 12);   
 		$this->pdf->setHeaderFont(Array('times', '', '14'));
@@ -482,7 +491,7 @@ class Tsetor extends Alazka_Controller {
 		$html = $this->load->view('site/sspp_view', $data, true);
   		$this->pdf->writeHTML($html, true, true, true, true, '');		
 		$this->pdf->lastPage();		
-		$this->pdf->Output("rekaptg_spp.pdf", 'I');  
+		$this->pdf->Output("rekapsetor_spp.pdf", 'I');  
     }
 }  
 
