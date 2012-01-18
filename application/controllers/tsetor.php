@@ -387,7 +387,7 @@ class Tsetor extends Alazka_Controller {
 	function uang_masuk()
     {       
 		$this->load->library('pdf');
-        $this->pdf->SetSubject('Laporan Setoran Lain-lain Unit Sanggar');
+        $this->pdf->SetSubject('Laporan Setoran Lain-lain');
         $this->pdf->SetKeywords('TCPDF, PDF');      
         $this->pdf->SetFont('times', '', 12);   
 		$this->pdf->setHeaderFont(Array('times', '', '14'));
@@ -400,35 +400,53 @@ class Tsetor extends Alazka_Controller {
 		$tanggal_mulai=$this->input->post('tx_mulai'); 
 		$tanggal_akhir=$this->input->post('tx_akhir'); 
 		$ajaran=$this->input->post('tx_ajaran');	
+		$bulan=$this->input->post('tx_bulan');
 		$jenjang=$this->input->post('tx_unit');
-	    $data['ajaran']=$ajaran;
+	    
+		$data['ajaran']=$ajaran;
+		$data['bulan']=$bulan;
 		$data ['per_tanggal']=$tanggal_mulai;
-		
-		if ($jenjang==0 && $tanggal_akhir==0){
-		$data['data_antarjemput']=$this->Sdftulang_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));		
-		$data['data_total']=$this->Sdftulang_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));
+		$data ['nm_jenjang']=$jenjang;
+
+		if ($jenjang==0 && empty($tanggal_akhir)){
+		$data['data_dfulang']=$this->Sdftulang_model->get_all(array('due_date >='=>$tanggal_mulai));		
+		$data['data_total']=$this->Sdftulang_model->get_total(array('due_date >='=>$tanggal_mulai));
+		$data['data_um']=$this->Sdftulang_model->get_total_um(array('due_date >='=>$tanggal_mulai));
+		$data['data_du']=$this->Sdftulang_model->get_total_du(array('due_date >='=>$tanggal_mulai));
+		//echo "1";
 		}
 		
-		else if ($jenjang==0 && $tanggal_akhir!=0){
-		$data['data_antarjemput']=$this->Sdftulang_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
-		$data['data_total']=$this->Sdftulang_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		else if ($jenjang==0 && !empty($tanggal_akhir)){
+		$data['data_dfulang']=$this->Sdftulang_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir));	
+		$data['data_total']=$this->Sdftulang_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir));	
+		$data['data_um']=$this->Sdftulang_model->get_total_um(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir));	
+		$data['data_du']=$this->Sdftulang_model->get_total_du(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir));	
+	//	echo "2";
 		}
 		
-		else if ($jenjang!=0 && $tanggal_akhir==0){
-		$data['data_antarjemput']=$this->Sdftulang_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_total']=$this->Sdftulang_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		else if ($jenjang!=0 && empty($tanggal_akhir)){
+		$data['data_dfulang']=$this->Sdftulang_model->get_all(array('due_date >='=>$tanggal_mulai, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Sdftulang_model->get_total(array('due_date >='=>$tanggal_mulai,'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_um']=$this->Sdftulang_model->get_total_um(array('due_date >='=>$tanggal_mulai, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_du']=$this->Sdftulang_model->get_total_du(array('due_date >='=>$tanggal_mulai,'sis_siswa.dm_jenjang_id'=>$jenjang));
+		//echo "3";
 		}
 		
-		else if ($jenjang!=0 && $tanggal_akhir!=0){
-		$data['data_antarjemput']=$this->Sdftulang_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_total']=$this->Sdftulang_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		else if ($jenjang!=0 && !empty($tanggal_akhir)){
+		$data['data_dfulang']=$this->Sdftulang_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Sdftulang_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_um']=$this->Sdftulang_model->get_total_um(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_du']=$this->Sdftulang_model->get_total_du(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		//echo "4";
 		} 
 		
 		$data['page']='index';
-		$html = $this->load->view('site/v_sdftulang', $data, true);
-		$this->pdf->writeHTML($html, true, true, true, true, '');		
+		$html = $this->load->view('site/sdftulang_view', $data, true);
+		
+  		$this->pdf->writeHTML($html, true, true, true, true, '');		
 		$this->pdf->lastPage();		
-		$this->pdf->Output("rekapsetoran_dftulang.pdf", 'I');        
+		$this->pdf->Output("rekapsetor_spp.pdf", 'I');  
+    
     }
 	
 	function spp()
