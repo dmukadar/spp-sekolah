@@ -114,6 +114,26 @@ class Payment {
 			$tmp->set_created($result->created);
 			$tmp->set_modified($result->modified);
 			$tmp->set_modified_by($result->modified_by);
+			
+			// inject object siswa dan kelas on-the-fly
+			$siswa = new Siswa();
+			$siswa->set_id($result->id_student);
+			$siswa->set_namalengkap($result->namalengkap);
+			$siswa->set_noinduk($result->noinduk);
+			
+			$kelas = new Kelas();
+			$kelas->set_id($result->kelas_id);
+			$kelas->set_kelas($result->kelas);
+			$kelas->set_jenjang($result->kelas_jenjang);
+			$kelas->set_angka($result->kelas_angka);
+			$kelas->kelas_lengkap = sprintf('%s (%s)', $result->kelas, $result->kelas_jenjang);
+			
+			$tmp->kelas = clone $kelas;
+			$tmp->siswa = clone $siswa;
+			
+			$siswa = NULL;
+			$kelas = NULL;
+			
 			$objects[$i] = clone $tmp;
 		}
 		
@@ -138,6 +158,8 @@ class Payment {
 		// properti yang akan diexclude dalam hasil
 		// sehingga tidak digunakan pada saat akan insert atau update
 		$def_exclude = array(
+			'siswa',
+			'kelas'
 		);
 		$exclude = $def_exclude + $param_exclude;
 		
@@ -180,6 +202,12 @@ class Payment_model extends CI_Model {
 	}
 	
 	public function get_all_payment($where=array(), $limit=-1, $offset=0) {
+		$this->db->select('ar_payment.*, ar_invoice.id_student, sis_siswa.noinduk, sis_siswa.namalengkap, dm_kelas.id kelas_id, dm_kelas.kelas, dm_kelas.jenjang kelas_jenjang, dm_kelas.angka kelas_angka');
+		$this->db->join('ar_payment_details', 'ar_payment_details.id_payment=ar_payment.id', 'left');
+		$this->db->join('ar_invoice', 'ar_invoice.id=ar_payment_details.id_invoice', 'left');
+		$this->db->join('sis_siswa', 'sis_siswa.id=ar_invoice.id_student', 'left');
+		$this->db->join('dm_kelas', 'dm_kelas.id=sis_siswa.dm_kelas_id', 'left');
+		$this->db->group_by('ar_payment.id');
 		if ($limit > 0) {
 			$this->db->limit($limit, $offset);
 		}

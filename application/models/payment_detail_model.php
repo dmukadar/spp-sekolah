@@ -7,6 +7,7 @@ class Payment_Detail {
 	private $id_payment = NULL;
 	private $id_invoice = NULL;
 	private $amount = NULL;
+	private $remaining_amount = NULL;
 	private $installment = NULL;
 	private $status = NULL;
 	private $created = NULL;
@@ -49,6 +50,17 @@ class Payment_Detail {
 			return number_format($this->amount);
 		}
 		return $this->amount;
+	}
+	
+	public function set_remaining_amount($amount) {
+		$this->remaining_amount = $amount;
+	}
+
+	public function get_remaining_amount($format=FALSE) {
+		if ($format === TRUE) {
+			return number_format($this->remaining_amount);
+		}
+		return $this->remaining_amount;
 	}
 
 	public function set_installment($installment) {
@@ -109,11 +121,24 @@ class Payment_Detail {
 			$tmp->set_id_payment($result->id_payment);
 			$tmp->set_id_invoice($result->id_invoice);
 			$tmp->set_amount($result->amount);
+			$tmp->set_remaining_amount($result->remaining_amount);
 			$tmp->set_installment($result->installment);
 			$tmp->set_status($result->status);
 			$tmp->set_created($result->created);
 			$tmp->set_modified($result->modified);
 			$tmp->set_modified_by($result->modified_by);
+			
+			// inject object invoice on the fly
+			$invoice = new Invoice();
+			$invoice->set_id($result->id_invoice);
+			$invoice->set_amount($result->amount_invoice);
+			$invoice->set_received_amount($result->received_amount_invoice);
+			$invoice->set_description($result->description_invoice);
+			$invoice->set_status($result->status_invoice);
+			
+			$tmp->invoice = clone $invoice;
+			$invoice = NULL;
+			
 			$objects[$i] = clone $tmp;
 		}
 		
@@ -138,6 +163,7 @@ class Payment_Detail {
 		// properti yang akan diexclude dalam hasil
 		// sehingga tidak digunakan pada saat akan insert atau update
 		$def_exclude = array(
+			'invoice'
 		);
 		$exclude = $def_exclude + $param_exclude;
 		
@@ -180,6 +206,8 @@ class Payment_Detail_model extends CI_Model {
 	}
 	
 	public function get_all_payment_detail($where=array(), $limit=-1, $offset=0) {
+		$this->db->select('ar_payment_details.*, ar_invoice.amount amount_invoice, ar_invoice.received_amount received_amount_invoice, ar_invoice.status status_invoice, ar_invoice.description description_invoice');
+		$this->db->join('ar_invoice', 'ar_invoice.id=ar_payment_details.id_invoice', 'left');
 		if ($limit > 0) {
 			$this->db->limit($limit, $offset);
 		}
