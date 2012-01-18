@@ -323,6 +323,8 @@ class Pembayaran extends Alazka_Controller {
 		// URL untuk Ajax auto complete
 		$this->data['ajax_siswa_url'] = site_url('tarif_khusus/get_ajax_siswa/10/');
 		
+		$this->data['ajax_payment_detail_url'] = site_url('pembayaran/ajax_payment_detail');
+		
 		$this->show_payments($sess);
 		
 		$this->data['sess'] = $sess;
@@ -366,13 +368,12 @@ class Pembayaran extends Alazka_Controller {
 	}
 	
 	public function payment_detail_link($payment) {
-		$link = '<a href="%s" class="reply detail-%d">%s</a> <a href="%s" class="reply print-%d">%s</a>';
+		$link = '<a href="%s" onclick="return ajax_payment_detail(%d);" class="reply">%s</a> <a href="%s" class="reply">%s</a>';
 		printf($link, 
 				site_url() . '/pembayaran/detail/'  . $payment->get_id(),
 				$payment->get_id(),
 				'Detail',
 				site_url() . '/pembayaran/cetak/' . $payment->get_id(),
-				$payment->get_id(),
 				'Cetak'
 		);
 	}
@@ -394,6 +395,8 @@ class Pembayaran extends Alazka_Controller {
 			$where = array('ar_payment_details.id_payment' => $payment->get_id());
 			$this->data['list_pembayaran'] = $this->Payment_Detail_model->get_all_payment_detail($where);
 			
+			$this->data['total_bayar'] = 0;
+			
 			$html = $this->load->view('site/cetak_pembayaran_view', $this->data, TRUE);
 			// echo $html;
 			
@@ -413,21 +416,11 @@ class Pembayaran extends Alazka_Controller {
 	}
 	
 	public static function lunas_belumlunas($payment_details) {
-		if (self::sisa_bayar($payment_details) == 0) {
+		if ($payment_details->get_remaining_amount() == 0) {
 			return '<strong>LUNAS</strong>';
 		}
 		
 		return '<strong>BELUM LUNAS</strong>';
-	}
-	
-	public static function sisa_bayar($payment_details, $format=FALSE) {
-		$sisa = $payment_details->invoice->get_amount() - $payment_details->get_amount();
-		
-		if ($format === TRUE) {
-			return number_format($sisa);
-		}
-		
-		return $sisa;
 	}
 	
 	public function ajax_payment_detail($payment_id) {
@@ -446,6 +439,8 @@ class Pembayaran extends Alazka_Controller {
 			
 			$where = array('ar_payment_details.id_payment' => $payment->get_id());
 			$this->data['list_pembayaran'] = $this->Payment_Detail_model->get_all_payment_detail($where);
+			
+			$this->data['total_bayar'] = 0;
 			
 			$this->load->view('site/ajax_pembayaran_view', $this->data);
 		} catch (PaymentNotFoundException $e) {
@@ -531,6 +526,11 @@ class Pembayaran extends Alazka_Controller {
 		<script type="text/javascript" src="%s"></script>
 		<script type="text/javascript" src="%s"></script>
 		';
-		printf($script, base_url() . 'js/json.suggest.js', base_url() . 'js/jquery.chained.min.js');
+		printf($script, base_url() . 'js/json.suggest.js', base_url() . 'js/jquery.simplemodal.1.4.2.min.js');
+	}
+	
+	public function add_more_css() {
+		$css = '<link rel="stylesheet" type="text/css" href="%s" />';
+		printf($css, base_url() . 'css/simplemodal_basic.css');
 	}
 }

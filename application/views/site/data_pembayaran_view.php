@@ -64,6 +64,8 @@
 		</table>
 		<?php endif;?>
 		
+		<div id="basic-modal-content"></div>
+		
 		<script>
 			// ---- Auto complete
 			jQuery('#siswa').jsonSuggest({
@@ -93,5 +95,28 @@
 			if (document.getElementById('rep-siswa-induk').value.length > 0) {
 				document.getElementById('siswa-kelas').style.display = '';
 				document.getElementById('siswa-induk').style.display = '';
+			}
+			
+			function ajax_payment_detail(payment_id) {
+				var url = '<?php echo ($ajax_payment_detail_url);?>/' + payment_id;
+				var modal = document.getElementById('basic-modal-content');
+				modal.innerHTML = '<h3>Mohon tunggu...</h3>';
+				jQuery('#basic-modal-content').modal({
+					dataCss: {
+						width: '800px'
+					},
+					minWidth: 820
+				});
+				
+				jQuery.ajax({
+					url: url,
+					cache: false,
+					success: function(data) {
+						// console.log(data);
+						modal.innerHTML = data;
+					}
+				});
+				
+				return false;
 			}
 		</script>

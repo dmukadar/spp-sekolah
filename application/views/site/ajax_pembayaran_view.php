@@ -22,6 +22,7 @@
 </table>
 
 <table style="width:100%" class="gtable">
+<thead>
 <tr style="font-weight:bold;">
 	<th style="text-align:center;width:5%">#</th>
 	<th style="text-align:left;width:28%">Keterangan</th>
@@ -30,7 +31,9 @@
 	<th style="text-align:right;width:12%">Sisa (Rp)</th>
 	<th style="text-align:center;width:20%">Status</th>
 </tr>
-	<?php foreach ($list_pembayaran as $i=>$pembayaran) : ?>
+</thead>
+<tbody>
+	<?php foreach ($list_pembayaran as $i=>$pembayaran) : $total_bayar += $pembayaran->get_amount(); ?>
 	<tr>
 		<td style="text-align:center;width:5%"><?php echo (++$i);?></td>
 		<td style="text-align:left;width:28%"><?php echo strtoupper($pembayaran->invoice->get_description());?></td>
@@ -40,4 +43,12 @@
 		<td style="text-align:center;width:20%"><?php echo (ME()->lunas_belumlunas($pembayaran));?></td>
 	</tr>
 	<?php endforeach; ?>
+	<tr style="font-weight:bold;">
+		<td colspan="2" style="text-align:right;width:33%">TOTAL</td>
+		<td style="text-align:right;width:15%"><?php echo (number_format($total_bayar));?></td>
+		<td style="text-align:right;width:20%"></td>
+		<td style="text-align:right;width:12%"></td>
+		<td></td>
+	</td>
+</tbody>
 </table>
