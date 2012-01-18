@@ -103,7 +103,15 @@ class Invoice {
 	}
 
 	public function get_status() {
-		return $this->status;
+		/* sorry hardcode dulu, kejar waktu */
+		switch ($this->status) {
+			case 1: $result = 'open'; break;
+			case 2: $result = 'paid'; break;
+			case 3: $result = 'closed'; break;
+			case 4: $result = 'cancel'; break;
+			default: $result = $this->status;
+		}
+		return $result;
 	}
 
 	public function set_notes($notes) {
