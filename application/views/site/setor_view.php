@@ -1,6 +1,6 @@
 				<h1 align="center">Cetak Rekap Setoran </h1>
 			
-				<form name="form1" method="post" action="<?php echo site_url("tsetor/pilih_report_tunggakan/");?>">
+				<form name="form1" method="post" action="<?php echo site_url("tsetor/pilih_report_setoran/");?>">
 				  <label>				  </label>
 				  <table width="100%" border="0" align="center">
                     <tr>
