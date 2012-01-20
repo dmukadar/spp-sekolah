@@ -138,7 +138,7 @@
     <td width="25%" height="32"><div align="left"><?php echo $row->namalengkap;?></div></td>
     <td width="8%" height="32"><div align="center"><?php echo $row->kelas;?></div></td>
     <td width="13%" height="32"><div align="center"><?php echo $row->description;?></div></td>
-    <td width="18%" height="32"><div align="center"><?php echo $row->tahun;?></div></td>
+    <td width="18%" height="32"><div align="center"><span class="style5"><?php echo $ajaran;?></span></div></td>
     <td width="9%"><div align="center"><?php echo $row->bulan;?></div></td>
     <td width="12%"><div align="right"><?php $amount=$row->amount;$clean = str_replace(".00", ",-",$amount);echo $clean;?><span class="style6">.</span></div></td>
     <td width="11%" height="32"><div align="right">

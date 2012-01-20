@@ -116,8 +116,8 @@
 
 <table width="100%" border="1">
   <tr>
-    <td width="5%" height="32"><div align="center"><strong>NO</strong></div></td>
-    <td width="38%"><div align="center"><strong>NAMA</strong></div></td>
+    <td width="6%" height="32"><div align="center"><strong>NO</strong></div></td>
+    <td width="37%"><div align="center"><strong>NAMA</strong></div></td>
     <td width="10%"><div align="center"><strong>KELAS</strong></div></td>
     <td width="15%"><div align="center"><strong>BUKU</strong> <strong>(Rupiah)</strong></div></td>
     <td width="16%"><div align="center"><strong>ALAT </strong> <strong>(Rupiah)</strong></div></td>

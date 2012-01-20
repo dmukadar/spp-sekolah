@@ -126,10 +126,10 @@
     <td width="5%" height="32"><div align="center"><?php echo $i++;?></div></td>
     <td width="31%" height="32"><div align="left"><span class="style6">_</span><?php echo $row->namalengkap;?></div></td>
     <td width="14%" height="32"><div align="center"><?php echo $row->kelas;?></div></td>
-    <td width="13%" height="32"><div align="center"><?php echo $row->tahun;?></div></td>
+    <td width="13%" height="32"><div align="center"><span class="style5"><?php echo $ajaran;?></span></div></td>
     <td width="21%" height="32"><div align="right"><span class="style6">_</span>
-      <?php $tagihan=$row->tagihan;$clean = str_replace(".00", ",-",$tagihan);echo $clean;?><span class="style6">.</span>    </div></td>
-    <td width="16%" height="32"><div align="right"><?php $tagihan=$row->tagihan;$clean = str_replace(".00", ",-",$tagihan);echo $clean;?><span class="style6">.</span></div>   </td>
+      <?php $tagihan=$row->total;$clean = str_replace(".00", ",-",$tagihan);echo $clean;?><span class="style6">.</span>    </div></td>
+    <td width="16%" height="32"><div align="right"><?php $tagihan=$row->total;$clean = str_replace(".00", ",-",$tagihan);echo $clean;?><span class="style6">.</span></div>   </td>
   </tr>
 </table>
 <?php }?>
@@ -140,12 +140,12 @@
     <td width="13%"><div align="center"></div></td>
     <td width="21%"><div align="right">
       <?php foreach($data_total->result() as $row){?>
-      <?php $total=$row->total;$clean = str_replace(".00", ",-",$tagihan);echo $clean;?>
+      <?php $total=$row->total;$clean = str_replace(".00", ",-",$total);echo $clean;?>
       <?php }?>
     </div></td>
     <td width="16%"><div align="right">
       <?php foreach($data_total->result() as $row){?>
-      <?php $total=$row->total;$clean = str_replace(".00", ",-",$tagihan);echo $clean;?>
+      <?php $total=$row->total;$clean = str_replace(".00", ",-",$total);echo $clean;?>
       <?php }?>
     </div></td>
   </tr>
