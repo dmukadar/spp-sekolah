@@ -1,5 +1,5 @@
 <?php
-class Santarjemput_model extends CI_Model{ // Buat class 
+class Santarjemput_model extends Alazka_Controller{ // Buat class 
 function __construct()
     {
         parent::__construct();

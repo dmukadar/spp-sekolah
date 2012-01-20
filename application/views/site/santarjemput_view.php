@@ -98,7 +98,7 @@
 	else if ($nm_jenjang==3){ echo "SD";}
 	else if ($nm_jenjang==4){ echo "SMP";}
 	?></span></td>
-    <td>PER TANGGAL :<span class="style5">
+    <td>TANGGAL :<span class="style5">
       <?php  
 	
 	 $time=strtotime($per_tanggal);
@@ -114,14 +114,14 @@
   </tr>
 </table>
 
-<table width="100%" border="1">
+<table width="100%" border="1" align="center">
   <tr>
     <td width="5%" height="32"><div align="center"><strong>NO</strong></div></td>
     <td width="27%"><div align="center"><strong>NAMA</strong></div></td>
     <td width="11%"><div align="center"><strong>KELAS</strong></div></td>
     <td width="14%"><div align="center"><strong>BULAN</strong></div></td>
-    <td width="27%"><div align="center"><strong>ANT JEMPUT</strong></div></td>
-    <td width="16%"><div align="center"><strong>JUMLAH</strong><strong>(Rupiah)</strong></div></td>
+    <td width="27%" align="center" valign="middle"><div align="center"><strong>ANT JEMPUT</strong></div></td>
+    <td width="16%"><div align="center"><strong>JUMLAH</strong><strong><br>(Rupiah)</strong></div></td>
   </tr>
 </table>
 <?php 
