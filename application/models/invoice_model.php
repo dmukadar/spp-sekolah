@@ -31,8 +31,14 @@ class Invoice {
 		return $this->id;
 	}
 
+	//code atau invoice number bisa berupa string atau array. input array digunakan untuk generate inv. number harus berisi 
+	//param: bulan, cawu, semester dan tahun
 	public function set_code($code) {
-		$this->code = $code;
+	  if (is_array($code)) {
+			$this->code = $this->generate_code($code['bulan'], $code['cawu'], $code['semester'], $code['tahun']);
+		} else {
+		  $this->code = $code;
+		}
 	}
 
 	public function get_code() {
@@ -234,7 +240,7 @@ class Invoice {
 			'sisa_bayar',
 			'rate'
 		);
-		$exclude = $def_exclude + $param_exclude;
+		$exclude = array_merge($def_exclude, $param_exclude);
 		
 		// export dengan tipe array
 		if ($export_type === 'array') {
@@ -264,6 +270,33 @@ class Invoice {
 		
 		// seharusnya tidak sampai disini jika parameter yang diberikan benar
 		throw new Exception('Sepertinya argumen yang anda berikan pada method Invoice::export tidak benar.');
+	}
+
+	public function generate_code($bulan, $cawu, $semester, $tahun_akademik) {
+		$bulanRoma = array(1=>'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII');
+
+		$noinduk = $this->siswa->get_noinduk();
+		$id_rate = $this->rate->get_id();
+		$kategori = strtoupper($this->rate->get_category());
+		$kategori = str_replace(array('UANG ', ' '), '', $kategori);
+		$kategori = substr($kategori, 0, 6);
+		$tahun = str_replace('/', '.', $tahun_akademik);
+
+		switch ($this->rate->get_recurrence()) {
+			case 'bulan': 
+				$result = sprintf('%s/%s.%d/%s/%s', $noinduk, $kategori, $id_rate, $bulanRoma[$bulan], $tahun);
+			break;
+			case 'cawu': 
+				$result = sprintf('%s/%s.%d/%s/%s', $noinduk, $kategori, $id_rate, $cawu, $tahun);
+			break;
+			case 'semester': 
+				$result = sprintf('%s/%s.%d/%s/%s', $noinduk, $kategori, $id_rate, $semester, $tahun);
+			break;
+			default:
+				$result = sprintf('%s/%s.%d/%s', $noinduk, $kategori, $id_rate, $tahun);
+		}
+
+		return $result;
 	}
 }
 
@@ -331,7 +364,7 @@ class Invoice_model extends CI_Model {
 			throw new Exception('Argumen yang diberikan untuk method Invoice_model::insert harus berupa instance dari object Invoice.');
 		}
 		
-		$data = $invoice->export();
+		$data = $invoice->export('array', array('siswa', 'rate'));
 		$this->db->insert(INVOICE_TABLE, $data);
 		
 		if ($this->db->affected_rows() == 0) {

@@ -221,6 +221,7 @@ class Tagihan extends Alazka_Controller {
 		} else {
 			$this->load->model('Kelas_model');
 			$this->load->model('Siswa_model');
+			$this->load->model('Rate_model');
 			$this->load->model('Invoice_model');
 			$this->load->library('form_validation');
 
@@ -230,28 +231,33 @@ class Tagihan extends Alazka_Controller {
 			$this->form_validation->set_rules('siswa', 'Siswa', 'required|numeric');
 
 			//get user data
+			$now = date('Y-m-d H:i:s');
 			$model = new Invoice;
 			$model->set_id($this->input->post('id'));
 			$model->set_description($this->input->post('keterangan'));
 			//$model->set_due_date($this->input->post(''));
-			$model->set_created(date('Y-m-d H:i:s'));
+			$model->set_created($now);
+			$model->set_created_date($now);
 			$model->set_id_student($this->input->post('siswa_id'));
 			$model->set_id_rate($this->input->post('tagihan'));
 			$model->set_amount($this->input->post('jumlah'));
 			$model->set_notes($this->input->post('catatan'));
-			$model->set_status(0);
+			$model->set_status(1);
 			$model->set_last_installment(0);
 			$model->set_received_amount(0);
 
+			$model->siswa = $this->Siswa_model->find_by_pk($model->get_id_student());
+			$model->rate = $this->Rate_model->find_by_pk($model->get_id_rate());
+			$model->set_code(array('bulan'=>1, 'cawu'=>null, 'semester'=>'gasal', 'tahun'=>'2010/2011'));
 			//var_dump($model);
 			$this->Invoice_model->insert($model);
 
-			$model->siswa = $this->Siswa_model->find_by_pk($model->get_id_student());
 
 			$mesg = sprintf('Tagihan "%s" untuk siswa <strong>%s</strong> berhasil ditambahkan.', $model->get_description(), $model->siswa->get_namalengkap());
 			$this->set_flash_message($mesg, 'information msg');
 
-			redirect(site_url('tagihan/index/' . $model->siswa->get_id()));
+			$this->index($model->siswa->get_id());
+			//redirect(site_url('tagihan/index/' . $model->siswa->get_id()));
 		}
 	}
 }
