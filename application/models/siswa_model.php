@@ -366,6 +366,7 @@ class Siswa {
 		// properti yang akan diexclude dalam hasil
 		// sehingga tidak digunakan pada saat akan insert atau update
 		$def_exclude = array(
+			'kelas'
 		);
 		$exclude = $def_exclude + $param_exclude;
 		

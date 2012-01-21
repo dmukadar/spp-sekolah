@@ -24,7 +24,7 @@ class Invoice {
 	}
 
 	public function set_id($id) {
-		$this->id = $id;
+		$this->id = (double)$id;
 	}
 
 	public function get_id() {
@@ -64,7 +64,7 @@ class Invoice {
 	}
 
 	public function set_id_employee($id_employee) {
-		$this->id_employee = $id_employee;
+		$this->id_employee = (int)$id_employee;
 	}
 
 	public function get_id_employee() {
@@ -72,7 +72,7 @@ class Invoice {
 	}
 
 	public function set_id_student($id_student) {
-		$this->id_student = $id_student;
+		$this->id_student = (int)$id_student;
 	}
 
 	public function get_id_student() {
@@ -80,7 +80,7 @@ class Invoice {
 	}
 
 	public function set_id_rate($id_rate) {
-		$this->id_rate = $id_rate;
+		$this->id_rate = (int)$id_rate;
 	}
 
 	public function get_id_rate() {
@@ -88,7 +88,7 @@ class Invoice {
 	}
 
 	public function set_amount($amount) {
-		$this->amount = $amount;
+		$this->amount = (double)$amount;
 	}
 
 	public function get_amount($format=FALSE) {
@@ -99,7 +99,7 @@ class Invoice {
 	}
 
 	public function set_status($status) {
-		$this->status = $status;
+		$this->status = (int)$status;
 	}
 
 	public function get_status() {
@@ -123,7 +123,7 @@ class Invoice {
 	}
 
 	public function set_received_amount($received_amount) {
-		$this->received_amount = $received_amount;
+		$this->received_amount = (double)$received_amount;
 	}
 
 	public function get_received_amount($format=FALSE) {

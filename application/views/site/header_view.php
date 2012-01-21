@@ -67,6 +67,7 @@
 				<li><a href="#" onClick="return false;">Tagihan</a>
 					<ul>
 						<li><a href="<?php echo (site_url('pembayaran/index'));?>">Input Pembayaran</a></li>
+						<li><a href="<?php echo (site_url('pembayaran/data_pembayaran'));?>">Data Pembayaran</a></li>
 					</ul>
 				</li>
 				<li><a href="#" onClick="return false;">Laporan</a>
