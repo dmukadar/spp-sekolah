@@ -310,6 +310,10 @@ class Rate_model extends CI_Model {
 	public function custom_delete($where) {
 		$this->db->delete(RATE_TABLE, $where);
 	}
+
+	public function find_by_pk($id) {
+		return $this->get_single_rate(array('ar_rate.id'=>$id));
+	}
 }
 
 

@@ -161,4 +161,97 @@ class Tagihan extends Alazka_Controller {
 		';
 		printf($script, base_url() . 'js/json.suggest.js', base_url() . 'js/jquery.chained.min.js');
 	}
+
+	public function create($loadId=null) {
+		$this->load->model('Kelas_model');
+		$this->load->model('Siswa_model');
+		$this->load->model('Rate_model');
+
+		$this->load->helper('mr_form');
+
+		$this->data['sess'] = null;
+		$this->data['action'] = 'new';
+		$this->data['page_title'] = 'Input Tagihan';
+		$this->data['action_url'] = site_url('tagihan/simpan');
+		$this->data['info_url'] = site_url('tagihan/info');
+
+		$this->data['ajax_siswa_url'] = site_url('tarif_khusus/get_ajax_siswa/10/');
+
+		try {
+			$this->data['list_tarif'] = $this->Rate_model->get_all_rate();
+		} catch (Exception $e) {
+			$this->data['list_tarif'] = array();
+		}
+
+		if (! empty($loadId)) {
+			$this->data['sess'] = $this->Siswa_model->find_by_pk($loadId);
+		}
+		
+		$this->load->view('site/header_view');
+		$this->load->view('site/form_entri_tagihan_view', $this->data);
+		$this->load->view('site/footer_view');
+	}
+
+	public function info() {
+		$this->load->model('Kelas_model');
+		$this->load->model('Siswa_model');
+		$this->load->model('Rate_model');
+		$this->load->model('Invoice_model');
+
+		$id_student = $this->input->post('id', false);
+		$id_rate    = $this->input->post('rate', false);
+
+		if (empty($id_student) || empty($id_rate)) $data = null;
+		else {
+			$tagihan = $this->Rate_model->find_by_pk($id_rate);
+
+			$data = array();
+			$data['tagihan'] = $tagihan->get_name();
+			$data['jumlah']  = $tagihan->get_fare();
+			$data['waktu']   = 'Gasal 2010';
+		}
+
+		header('Content-type: application/json');
+		echo json_encode($data);
+	}
+
+	public function simpan() {
+		if ($this->input->server("REQUEST_METHOD") != 'POST') {
+			redirect(site_url('tagihan'));
+		} else {
+			$this->load->model('Kelas_model');
+			$this->load->model('Siswa_model');
+			$this->load->model('Invoice_model');
+			$this->load->library('form_validation');
+
+			//set validation rule
+			$this->form_validation->set_rules('jumlah', 'Jumlah', 'required|numeric');
+			$this->form_validation->set_rules('tagihan', 'Tagihan', 'required|numeric');
+			$this->form_validation->set_rules('siswa', 'Siswa', 'required|numeric');
+
+			//get user data
+			$model = new Invoice;
+			$model->set_id($this->input->post('id'));
+			$model->set_description($this->input->post('keterangan'));
+			//$model->set_due_date($this->input->post(''));
+			$model->set_created(date('Y-m-d H:i:s'));
+			$model->set_id_student($this->input->post('siswa_id'));
+			$model->set_id_rate($this->input->post('tagihan'));
+			$model->set_amount($this->input->post('jumlah'));
+			$model->set_notes($this->input->post('catatan'));
+			$model->set_status(0);
+			$model->set_last_installment(0);
+			$model->set_received_amount(0);
+
+			//var_dump($model);
+			$this->Invoice_model->insert($model);
+
+			$model->siswa = $this->Siswa_model->find_by_pk($model->get_id_student());
+
+			$mesg = sprintf('Tagihan "%s" untuk siswa <strong>%s</strong> berhasil ditambahkan.', $model->get_description(), $model->siswa->get_namalengkap());
+			$this->set_flash_message($mesg, 'information msg');
+
+			redirect(site_url('tagihan/index/' . $model->siswa->get_id()));
+		}
+	}
 }
