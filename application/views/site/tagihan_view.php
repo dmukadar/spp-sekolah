@@ -1,5 +1,5 @@
 
-		<h1 align="center">Daftar Tagihan</h1>
+		<h1 align="center">Daftar Tagihan Per Siswa</h1>
 
 		<?php ME()->print_flash_message(); ?>	
 		

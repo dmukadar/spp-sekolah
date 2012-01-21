@@ -25,6 +25,7 @@ class Tagihan extends Alazka_Controller {
 		
 		// untuk repopulate combo box filter
 		$sess = new stdClass();
+		$sess->id_siswa = $sess->nama_siswa = $sess->no_induk = $sess->kelas_jenjang = null;
 
 		$this->data['list_tagihan'] = array();
 		$this->data['reload'] = 0;
