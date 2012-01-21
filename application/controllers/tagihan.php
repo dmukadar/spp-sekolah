@@ -101,7 +101,7 @@ class Tagihan extends Alazka_Controller {
 				throw new Exception ('Hash yang dimasukkan tidak cocok.');
 			}
 			
-			if ($invoice->get_status != 'open') throw new Exception('Hanya tagihan dengan status "open" yang bisa dihapus');
+			if ($invoice->get_status() != 'open') throw new Exception('Hanya tagihan dengan status "open" yang bisa dihapus');
 			// semua masih ok2 saja, jadi lakukan penghapusan sekarang
 			$this->Invoice_model->delete($invoice);
 			
