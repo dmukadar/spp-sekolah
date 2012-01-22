@@ -34,10 +34,12 @@ class Invoice {
 	//code atau invoice number bisa berupa string atau array. input array digunakan untuk generate inv. number harus berisi 
 	//param: bulan, cawu, semester dan tahun
 	public function set_code($code) {
-	  if (is_array($code)) {
-			$this->code = $this->generate_code($code['bulan'], $code['cawu'], $code['semester'], $code['tahun']);
+		if (empty($code)) throw new Exception('Nomor tagihan tidak boleh kosong');
+
+		if ($code instanceof TahunAkademik) {
+			$this->code = $this->generate_code($code);
 		} else {
-		  $this->code = $code;
+			$this->code = $code;
 		}
 	}
 
@@ -272,29 +274,15 @@ class Invoice {
 		throw new Exception('Sepertinya argumen yang anda berikan pada method Invoice::export tidak benar.');
 	}
 
-	public function generate_code($bulan, $cawu, $semester, $tahun_akademik) {
-		$bulanRoma = array(1=>'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII');
-
+	public function generate_code($tahunAkademik) {
 		$noinduk = $this->siswa->get_noinduk();
 		$id_rate = $this->rate->get_id();
 		$kategori = strtoupper($this->rate->get_category());
 		$kategori = str_replace(array('UANG ', ' '), '', $kategori);
 		$kategori = substr($kategori, 0, 6);
-		$tahun = str_replace('/', '.', $tahun_akademik);
+		$frekuensi = $this->rate->get_recurrence();
 
-		switch ($this->rate->get_recurrence()) {
-			case 'bulan': 
-				$result = sprintf('%s/%s.%d/%s/%s', $noinduk, $kategori, $id_rate, $bulanRoma[$bulan], $tahun);
-			break;
-			case 'cawu': 
-				$result = sprintf('%s/%s.%d/%s/%s', $noinduk, $kategori, $id_rate, $cawu, $tahun);
-			break;
-			case 'semester': 
-				$result = sprintf('%s/%s.%d/%s/%s', $noinduk, $kategori, $id_rate, $semester, $tahun);
-			break;
-			default:
-				$result = sprintf('%s/%s.%d/%s', $noinduk, $kategori, $id_rate, $tahun);
-		}
+		$result = sprintf('%s/%s.%d/%s', $noinduk, $kategori, $id_rate, $tahunAkademik->get_stamp($frekuensi));
 
 		return $result;
 	}
@@ -363,8 +351,17 @@ class Invoice_model extends CI_Model {
 		if (FALSE === ($invoice instanceof Invoice)) {
 			throw new Exception('Argumen yang diberikan untuk method Invoice_model::insert harus berupa instance dari object Invoice.');
 		}
+
+		//berikut ini adalah default value saat membuat tagihan baru
+		$now = date('Y-m-d H:i:s');
+		$invoice->set_created($now);
+		$invoice->set_modified($now);
+		$invoice->set_created_date($now);
+		$invoice->set_status(1);
+		$invoice->set_last_installment(0);
+		$invoice->set_received_amount(0);
 		
-		$data = $invoice->export('array', array('siswa', 'rate'));
+		$data = $invoice->export('array', array('siswa', 'rate', 'isNew'));
 		$this->db->insert(INVOICE_TABLE, $data);
 		
 		if ($this->db->affected_rows() == 0) {
@@ -378,6 +375,8 @@ class Invoice_model extends CI_Model {
 		if (FALSE === ($invoice instanceof Invoice)) {
 			throw new Exception('Argumen yang diberikan untuk method Invoice_model::update harus berupa instance dari object Invoice.');
 		}
+
+		$invoice->set_modified(date('Y-m-d H:i:s'));
 		
 		$data = $invoice->export('array', $exclude);
 		$where = array('id' => $invoice->get_id());
@@ -387,6 +386,8 @@ class Invoice_model extends CI_Model {
 		if ($this->db->affected_rows() == 0) {
 			// do nothing
 		}
+
+		return $this->db->affected_rows();
 	}
 	
 	public function custom_update($where, $data) {
@@ -469,6 +470,10 @@ class Invoice_model extends CI_Model {
 		}
 		
 		throw new Exception ('Argument nama status yang diberikan pada method Invoice_model::get_status_by_name tidak ada.');
+	}
+
+	public function find_by_pk($id) {
+		return $this->get_single_invoice(array('ar_invoice.id'=>$id));
 	}
 }
 

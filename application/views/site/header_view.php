@@ -66,6 +66,7 @@
 				</li>
 				<li><a href="#" onClick="return false;">Tagihan</a>
 					<ul>
+						<li><a href="<?php echo (site_url('tagihan/create'));?>">Input Tagihan Siswa</a></li>
 						<li><a href="<?php echo (site_url('tagihan'));?>">Data Tagihan Per Siswa</a></li>
 						<li><a href="<?php echo (site_url('pembayaran/index'));?>">Input Pembayaran</a></li>
 					</ul>

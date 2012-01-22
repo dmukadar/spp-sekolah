@@ -162,16 +162,29 @@ class Tagihan extends Alazka_Controller {
 		printf($script, base_url() . 'js/json.suggest.js', base_url() . 'js/jquery.chained.min.js');
 	}
 
-	public function create($loadId=null) {
+	public function create($loadId=null, $invoiceEdited=null) {
 		$this->load->model('Kelas_model');
 		$this->load->model('Siswa_model');
 		$this->load->model('Rate_model');
 
 		$this->load->helper('mr_form');
 
+		if (empty($invoiceEdited)) {
+			$this->data['action'] = 'new';
+			$this->data['page_title'] = 'Input Tagihan';
+		} else {
+			$this->data['action'] = 'edit';
+			$this->data['page_title'] = 'Ubah Tagihan';
+			$this->data['model'] = $invoiceEdited;
+			$loadId = $invoiceEdited->get_id_student();
+
+			if ($invoiceEdited->get_status() == 'paid')
+				$this->set_flash_message('Anda mengubah tagihan yang sedang dicicil.');
+			else if ($invoiceEdited->get_status() == 'closed') 
+				$this->set_flash_message('Tidak bisa mengubah tagihan yang telah dilunasi. Silahkan batalkan dulu pembayaran.', 'error msg');
+			
+		}
 		$this->data['sess'] = null;
-		$this->data['action'] = 'new';
-		$this->data['page_title'] = 'Input Tagihan';
 		$this->data['action_url'] = site_url('tagihan/simpan');
 		$this->data['info_url'] = site_url('tagihan/info');
 
@@ -197,6 +210,7 @@ class Tagihan extends Alazka_Controller {
 		$this->load->model('Siswa_model');
 		$this->load->model('Rate_model');
 		$this->load->model('Invoice_model');
+		$this->load->model('TahunAkademik_model');
 
 		$id_student = $this->input->post('id', false);
 		$id_rate    = $this->input->post('rate', false);
@@ -208,7 +222,16 @@ class Tagihan extends Alazka_Controller {
 			$data = array();
 			$data['tagihan'] = $tagihan->get_name();
 			$data['jumlah']  = $tagihan->get_fare();
-			$data['waktu']   = 'Gasal 2010';
+
+			switch ($tagihan->get_recurrence()) {
+				case 'bulan': 
+					$data['waktu']   = $this->TahunAkademik_model->berjalan->get_bulan('nama') . ' ' . $this->TahunAkademik_model->berjalan->get_tahun();
+					break;
+				case 'semester': 
+					$data['waktu']   = $this->TahunAkademik_model->berjalan->get_semester('label') . ' ' . $this->TahunAkademik_model->berjalan->get_tahun();
+					break;
+				default: $data['waktu']  =  $this->TahunAkademik_model->berjalan->get_tahun();
+			}
 		}
 
 		header('Content-type: application/json');
@@ -223,6 +246,7 @@ class Tagihan extends Alazka_Controller {
 			$this->load->model('Siswa_model');
 			$this->load->model('Rate_model');
 			$this->load->model('Invoice_model');
+			$this->load->model('TahunAkademik_model');
 			$this->load->library('form_validation');
 
 			//set validation rule
@@ -231,33 +255,68 @@ class Tagihan extends Alazka_Controller {
 			$this->form_validation->set_rules('siswa', 'Siswa', 'required|numeric');
 
 			//get user data
-			$now = date('Y-m-d H:i:s');
 			$model = new Invoice;
-			$model->set_id($this->input->post('id'));
-			$model->set_description($this->input->post('keterangan'));
-			//$model->set_due_date($this->input->post(''));
-			$model->set_created($now);
-			$model->set_created_date($now);
-			$model->set_id_student($this->input->post('siswa_id'));
-			$model->set_id_rate($this->input->post('tagihan'));
-			$model->set_amount($this->input->post('jumlah'));
-			$model->set_notes($this->input->post('catatan'));
-			$model->set_status(1);
-			$model->set_last_installment(0);
-			$model->set_received_amount(0);
 
-			$model->siswa = $this->Siswa_model->find_by_pk($model->get_id_student());
-			$model->rate = $this->Rate_model->find_by_pk($model->get_id_rate());
-			$model->set_code(array('bulan'=>1, 'cawu'=>null, 'semester'=>'gasal', 'tahun'=>'2010/2011'));
+			try {
+				$editId = $this->input->post('id');
+
+				if ($editId > 0) {
+					$model = $this->Invoice_model->find_by_pk($editId);
+					$model->isNew = false;
+					$model->siswa = $this->Siswa_model->find_by_pk($model->get_id_student());
+
+				} else {
+					$model->isNew = true;
+
+					$model->set_id_rate($this->input->post('tagihan'));
+					$model->set_id_student($this->input->post('siswa_id'));
+					$model->rate = $this->Rate_model->find_by_pk($model->get_id_rate());
+					$model->siswa = $this->Siswa_model->find_by_pk($model->get_id_student());
+					$model->set_code($this->TahunAkademik_model->berjalan);
+				}
+				//info yg boleh diubah cuman ini
+				$model->set_notes($this->input->post('catatan'));
+				$model->set_amount($this->input->post('jumlah'));
+				$model->set_id_rate($this->input->post('tagihan'));
+				$model->set_description($this->input->post('keterangan'));
+
+
+
+				if ($this->save($model)) {
+					$mesg = sprintf('Tagihan "%s" untuk siswa <strong>%s</strong> berhasil disimpan.', $model->get_description(), $model->siswa->get_namalengkap());
+					$this->set_flash_message($mesg, 'information msg');
+				}
+
+
+
+			} catch (InvoiceNotFoundException $e) {
+				$this->set_flash_message('Data tagihan tidak ditemukan', 'error msg');
+			}
+
 			//var_dump($model);
-			$this->Invoice_model->insert($model);
-
-
-			$mesg = sprintf('Tagihan "%s" untuk siswa <strong>%s</strong> berhasil ditambahkan.', $model->get_description(), $model->siswa->get_namalengkap());
-			$this->set_flash_message($mesg, 'information msg');
-
-			$this->index($model->siswa->get_id());
 			//redirect(site_url('tagihan/index/' . $model->siswa->get_id()));
+			$this->index($model->get_id_student());
+		}
+	}
+
+	private function save($invoice) {
+		if ($invoice->isNew) $result = $this->Invoice_model->insert($invoice);
+		else $result = $this->Invoice_model->update($invoice, array('isNew', 'rate', 'siswa', 'id_rate', 'id_student', 'code', 'status', 'due_date', 'created', 'created_date', 'received_amount', 'last_installment'));
+
+		return $result;
+	}
+
+	public function edit($loadId) {
+		$this->load->model('Rate_model');
+		$this->load->model('Invoice_model');
+
+		try {
+			$invoice = $this->Invoice_model->find_by_pk($loadId);
+			$this->create($invoice->get_id_student(), $invoice);
+		}	catch (InvoiceNotFoundException $e) {
+			$this->set_flash_message('Data tagihan tidak ditemukan.', 'error msg');
+			$this->data['list_tagihan'] = array();
+			$this->create();
 		}
 	}
 }

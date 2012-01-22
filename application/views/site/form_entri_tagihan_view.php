@@ -1,12 +1,17 @@
 
-		<h1 align="center">Form Input Tagihan</h1>
+		<h1 align="center">Form <?php echo $page_title; ?></h1>
 
 		<?php ME()->print_flash_message(); ?>	
 		
 		<div class="clear"></div>
-		<form action="<?php echo (@$action_url);?>" method="post" class="uniform">
+		<form action="<?php echo (@$action_url);?>" method="post" class="uniform" id="myform">
 			<fieldset>
 			<dl class="inline">
+					<?php if (!empty($model)) : ?>
+					<dt><label for="code">Nomor</label></dt>
+					<dd><strong><?php echo $model->get_code(); ?></strong></dd>
+					<?php endif; ?>
+
 					<?php if (empty($sess)) : ?>
 					<dt><label for="siswa">Siswa</label></dt>
 					<dd><input id="siswa" type="text" name="siswa" value="cari nama..." size="30" /></dd>
@@ -34,23 +39,26 @@
 					<dd>
 						<select name="tagihan" id="tagihan" class="medium">
 							<option value=''>-- Pilih --</option>
+							<?php $id_rate = empty($model) ? 0 : $model->get_id_rate(); ?>
 							<?php foreach ($list_tarif as $tarif) : ?>
-								<option <?php echo (mr_selected_if(@$sess->tagihan, $tarif->get_id()));?> value="<?php echo ($tarif->get_id());?>"><?php echo ($tarif->get_name());?></option>
+								<option <?php echo (mr_selected_if($id_rate, $tarif->get_id()));?> value="<?php echo ($tarif->get_id());?>"><?php echo ($tarif->get_name());?></option>
 							<?php endforeach; ?>
 						</select>
 					</dd>
 
 					<dt><label for="keterangan">Keterangan</label></dt>
-					<dd><input id="keterangan" type="text" class="medium" name="keterangan" value="<?php echo (@$sess->keterangan);?>" /></dd>
+					<dd><input id="keterangan" type="text" class="medium" name="keterangan" value="<?php echo (empty($model) ? '' : $model->get_description());?>" /></dd>
 
 					<dt><label for="jumlah">Jumlah</label></dt>
-					<dd><input style="text-align:right;" id="jumlah" type="text" name="jumlah" value="<?php echo (@$sess->jumlah);?>" /></dd>
+					<dd><input style="text-align:right;" id="jumlah" type="text" name="jumlah" value="<?php echo (empty($model) ? '' : $model->get_amount());?>" /></dd>
 
 					<dt><label for="catatan">Catatan</label></dt>
-					<dd><textarea id="catatan" class="medium" name="catatan"><?php echo (@$sess->catatan);?> </textarea></dd>
+					<dd><textarea id="catatan" class="medium" name="catatan"><?php echo (empty($model) ? '' : $model->get_notes());?> </textarea></dd>
 			</dl>
 			<div class="buttons">
+							<?php if (empty($model) || ($model->get_status() != 'closed')) : ?>
 							<button type="submit" class="button gray" name="savebtn" id="savebtn">Simpan</button>
+							<?php endif; ?>
 							<button type="button" class="button white" name="cancel-button" id="cancel-button">Batal</button>
 			</div>
 			</fieldset>
@@ -62,6 +70,7 @@
 		</form>
 
 		<script>
+		var modified = 0;
 		jQuery("#jumlah").keydown(function(event) {
 			// Allow only backspace, delete, tab, and enter
 			if ( event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 13) {
@@ -107,10 +116,25 @@
 				},
 				function(data) {
 					console.log(data);
-					jQuery('#keterangan').val(data.tagihan + ' periode ' + data.waktu);
+					jQuery('#keterangan').val(data.tagihan + ' ' +  data.waktu);
 					jQuery('#jumlah').val(data.jumlah);
 					jQuery('#jumlah').focus();
 			});
+			modified++;
+		});
+		jQuery('#jumlah').change(function() {
+			modified++;
+		});
+
+		jQuery('#myform').submit(function() {
+			var stat = '<?php echo empty($model) ? 0 : $model->get_status(); ?>';
+			var go = (modified > 0);
+
+			if ((stat == 'paid') && (modified)) {
+				go = confirm('Tagihan ini sudah mulai dicicil.\nSimpan perubahan?');
+			}
+
+			return go;
 		});
 		
 		</script>
