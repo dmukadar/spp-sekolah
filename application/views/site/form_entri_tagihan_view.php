@@ -137,6 +137,9 @@
 			return go;
 		});
 
+		jQuery('#cancel-button').click(function() {
+			history.go(-1);
+		});
 		jQuery('#savebtn').click(function() {
 			jQuery.post(
 				'<?php echo site_url("tagihan/simpan/1"); ?>',
