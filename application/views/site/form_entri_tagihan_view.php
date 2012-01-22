@@ -37,7 +37,7 @@
 
 					<dt><label for="tagihan">Tagihan</label></dt>
 					<dd>
-						<select name="tagihan" id="tagihan" class="medium">
+						<select name="tagihan" id="tagihan" class="medium" <?php echo empty($model) ? '' : ' disabled="disabled"'; ?>>
 							<option value=''>-- Pilih --</option>
 							<?php $id_rate = empty($model) ? 0 : $model->get_id_rate(); ?>
 							<?php foreach ($list_tarif as $tarif) : ?>

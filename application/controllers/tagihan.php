@@ -244,7 +244,11 @@ class Tagihan extends Alazka_Controller {
 		} else if ($validasi == 1) {
 			$errors = array();
 
-			$required = explode(',', 'jumlah,tagihan,siswa_id,keterangan');
+			if ($this->input->post('action') == 'new')
+				$required = explode(',', 'jumlah,tagihan,siswa_id,keterangan');
+			else
+				$required = explode(',', 'jumlah,keterangan');
+
 			foreach ($required as $r) {
 				$$r = trim($this->input->post($r));
 				if (empty($$r)) array_push($errors, $r . ' belum diisi');
@@ -315,7 +319,7 @@ class Tagihan extends Alazka_Controller {
 				//info yg boleh diubah cuman ini
 				$model->set_notes($this->input->post('catatan'));
 				$model->set_amount($this->input->post('jumlah'));
-				$model->set_id_rate($this->input->post('tagihan'));
+				//$model->set_id_rate($this->input->post('tagihan'));
 				$model->set_description($this->input->post('keterangan'));
 
 				if ($this->save($model)) {
