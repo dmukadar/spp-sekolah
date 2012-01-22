@@ -336,8 +336,15 @@ class Tagihan extends Alazka_Controller {
 	}
 
 	private function save($invoice) {
-		if ($invoice->isNew) $result = $this->Invoice_model->insert($invoice);
-		else $result = $this->Invoice_model->update($invoice, array('isNew', 'rate', 'siswa', 'id_rate', 'id_student', 'code', 'status', 'due_date', 'created', 'created_date', 'received_amount', 'last_installment'));
+		$result = false;
+
+		if ($invoice->isNew) {
+			try {
+				$this->Invoice_model->get_single_invoice(array('ar_invoice.code'=>$invoice->get_code()));
+			} catch (InvoiceNotFoundException $e) {
+				$result = $this->Invoice_model->insert($invoice);
+			}
+		} else $result = $this->Invoice_model->update($invoice, array('isNew', 'rate', 'siswa', 'id_rate', 'id_student', 'code', 'status', 'due_date', 'created', 'created_date', 'received_amount', 'last_installment'));
 
 		return $result;
 	}
