@@ -199,7 +199,7 @@ class Tagihan extends Alazka_Controller {
 		if (! empty($loadId)) {
 			$this->data['sess'] = $this->Siswa_model->find_by_pk($loadId);
 		}
-		
+
 		$this->load->view('site/header_view');
 		$this->load->view('site/form_entri_tagihan_view', $this->data);
 		$this->load->view('site/footer_view');
@@ -238,21 +238,59 @@ class Tagihan extends Alazka_Controller {
 		echo json_encode($data);
 	}
 
-	public function simpan() {
+	public function simpan($validasi = null) {
 		if ($this->input->server("REQUEST_METHOD") != 'POST') {
 			redirect(site_url('tagihan'));
+		} else if ($validasi == 1) {
+			$errors = array();
+
+			$required = explode(',', 'jumlah,tagihan,siswa_id,keterangan');
+			foreach ($required as $r) {
+				$$r = trim($this->input->post($r));
+				if (empty($$r)) array_push($errors, $r . ' belum diisi');
+			}
+
+			if (! is_numeric($jumlah)) array_push($errors, 'jumlah hanya bisa diisi angka');
+			else if ($this->input->post('action') == 'new') {
+				$this->load->model('Kelas_model');
+				$this->load->model('Siswa_model');
+				$this->load->model('Rate_model');
+				$this->load->model('Invoice_model');
+				$this->load->model('TahunAkademik_model');
+
+				try {
+				$siswa = $this->Siswa_model->find_by_pk($siswa_id);
+				$rate  = $this->Rate_model->find_by_pk($tagihan);
+				} 
+				catch (SiswaNotFoundException $e) { array_push($errors, 'data siswa tidak ditemukan'); }
+				catch (RateNotFoundException $e) { array_push($errors, 'data tagihan tidak ditemukan'); }
+
+				if (empty($errors)) {
+					$model = new Invoice;
+					$model->rate = $rate;
+					$model->siswa = $siswa;
+
+					$code = $model->generate_code($this->TahunAkademik_model->berjalan);
+
+					try {
+						$invoice = $this->Invoice_model->get_single_invoice(array('ar_invoice.code'=>$code));
+						if (!empty($invoice)) array_push($errors, $rate->get_name() . ' sudah pernah ditagih dengan nomor invoice "' . $invoice->get_code()  . '"');
+					} catch (InvoiceNotFoundException $e) {
+						//good to go
+					}
+				}
+			}
+
+			if (empty($errors)) echo 'SUCCESS';
+			else {
+				echo '<span> - ' . implode('</span><br/><span> - ', $errors) . '</span>';
+			}
 		} else {
 			$this->load->model('Kelas_model');
 			$this->load->model('Siswa_model');
 			$this->load->model('Rate_model');
 			$this->load->model('Invoice_model');
 			$this->load->model('TahunAkademik_model');
-			$this->load->library('form_validation');
-
-			//set validation rule
-			$this->form_validation->set_rules('jumlah', 'Jumlah', 'required|numeric');
-			$this->form_validation->set_rules('tagihan', 'Tagihan', 'required|numeric');
-			$this->form_validation->set_rules('siswa', 'Siswa', 'required|numeric');
 
 			//get user data
 			$model = new Invoice;
@@ -279,8 +317,6 @@ class Tagihan extends Alazka_Controller {
 				$model->set_amount($this->input->post('jumlah'));
 				$model->set_id_rate($this->input->post('tagihan'));
 				$model->set_description($this->input->post('keterangan'));
-
-
 
 				if ($this->save($model)) {
 					$mesg = sprintf('Tagihan "%s" untuk siswa <strong>%s</strong> berhasil disimpan.', $model->get_description(), $model->siswa->get_namalengkap());

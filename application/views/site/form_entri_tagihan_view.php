@@ -57,7 +57,7 @@
 			</dl>
 			<div class="buttons">
 							<?php if (empty($model) || ($model->get_status() != 'closed')) : ?>
-							<button type="submit" class="button gray" name="savebtn" id="savebtn">Simpan</button>
+							<button type="button" class="button gray" name="savebtn" id="savebtn">Simpan</button>
 							<?php endif; ?>
 							<button type="button" class="button white" name="cancel-button" id="cancel-button">Batal</button>
 			</div>
@@ -135,6 +135,25 @@
 			}
 
 			return go;
+		});
+
+		jQuery('#savebtn').click(function() {
+			jQuery.post(
+				'<?php echo site_url("tagihan/simpan/1"); ?>',
+				jQuery('#myform').serialize(),
+				function (response) {
+					if (response.search('SUCCESS') > -1) {
+						jQuery('#myform').submit();
+					} else {
+						jQuery('h1').after('<div class="error msg" id="msg-box">' + response + '</div>');
+						setTimeout(function() { 
+							jQuery('#msg-box').fadeOut(); 
+							jQuery('#msg-box').remove(); 
+						}
+						, 10000);
+					}
+				}
+			);
 		});
 		
 		</script>
