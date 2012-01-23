@@ -21,7 +21,7 @@ class Data_Tarif_khusus extends Alazka_Controller {
 		$this->load->helper('mr_form');
 		
 		// Page title untuk HTML
-		$this->data['page_title'] = 'Data Tarif Khusus';
+		$this->data['page_title'] = 'Data Dispensasi';
 		
 		// URL untuk Ajax
 		$this->data['ajax_siswa_url'] = site_url('tarif_khusus/get_ajax_siswa/10/');
@@ -51,7 +51,7 @@ class Data_Tarif_khusus extends Alazka_Controller {
 				$this->set_flash_message('Siswa dengan ID yang dicari tidak ditemukan.', 'warning msg');
 				$this->data['sess'] = new stdClass();
 			} catch (Custom_RateNotFoundException $e) {
-				$this->set_flash_message('Belum ada tagihan khusus untuk siswa ini.', 'warning msg');
+				$this->set_flash_message('Belum ada dispensasi untuk siswa ini.', 'warning msg');
 				$this->data['list_tarif_khusus'] = array();
 			}
 		} else {
