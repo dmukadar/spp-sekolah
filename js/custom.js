@@ -137,3 +137,13 @@ jQuery(function($) {
 	Cufon.replace('article > h6');
 
 });
+
+//flash message
+function flashDialog(elementId, message, duration) {
+	duration = duration * 1000;
+	obj = jQuery('#' + elementId);
+
+	obj.html(message);
+	obj.slideDown();
+	setTimeout(function() {obj.slideUp();}, duration);
+}

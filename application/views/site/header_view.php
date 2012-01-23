@@ -59,9 +59,10 @@
 				<li><a href="#" onClick="return false;">Tarif</a>
 					<ul>
 						<li><a href="<?php echo (site_url('data_tarif/index'));?>">Data Tarif</a></li>
-						<li><a onClick="alert('Feature in progress'); return false;" href="<?php echo (site_url('data_tarif/index'));?>">Input Tarif</a></li>
 						<li><a href="<?php echo (site_url('tarif_khusus/index'));?>">Input Tarif Khusus</a></li>
 						<li><a href="<?php echo (site_url('data_tarif_khusus/index'));?>">Data Tarif Khusus</a></li>
+						<li><a href="<?php echo (site_url('oto/group'));?>">Kelompok Tagihan</a></li>
+						<li><a href="<?php echo (site_url('oto/import-group'));?>">Impor Kelompok Tagihan</a></li>
 					</ul>
 				</li>
 				<li><a href="#" onClick="return false;">Tagihan</a>

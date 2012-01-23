@@ -49,6 +49,8 @@ class Data_tarif extends Alazka_Controller {
 		} catch (Exception $e) {
 			$this->data['list_tarif'] = array();
 		}
+
+		$this->data['list_rate_category'] = array('SPP', 'Uang Masuk', 'Uang Buku', 'Uang Kegiatan', 'Uang Seragam', 'Uang Alat', 'Uang Antar Jemput', 'Uang Sanggar', 'BPPS');
 		
 		$this->load->view('site/header_view');
 		$this->load->view('site/data_tarif_view', $this->data);
@@ -181,6 +183,10 @@ class Data_tarif extends Alazka_Controller {
 	 */
 	public function get_edit_link($tarif) {
 		return site_url('data_tarif/edit/' . $tarif->get_id());
+	}
+
+	public function get_delete_link($tarif) {
+		return site_url('data_tarif/delete/' . $tarif->get_id() . '/' . md5($tarif->get_id()));
 	}
 }
 
