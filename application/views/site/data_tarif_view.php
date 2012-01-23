@@ -3,14 +3,35 @@
 				<?php ME()->print_flash_message(); ?>	
 			<div id="err-msg" class="error msg" style="display:none">tes</div>
 			<div id="info-msg" class="information msg" style="display:none">tes</div>
+			<div id="success-msg" class="success msg" style="display:none">tes</div>
 
 			<div id="form-layer" style="display: none">
+			<script language="javascript">
+				function repop_form(rate) {
+					jQuery('#id').val(rate.id);
+					jQuery('#kategori').val(rate.category);
+					jQuery('#nama').val(rate.name);
+					jQuery('#jumlah').autoNumericSet(rate.fare);
+					jQuery('#keterangan').val(rate.description);
+					jQuery('#recurrence').val(rate.recurrence);
+					jQuery('#due_date').val(rate.due_after);
+					jQuery('#installment').val(rate.installment);
+
+					//jQuery('#notify').val(rate.notification);
+					/*
+					jQuery(':checkbox').each(function() {
+						this.checked = (rate.notification == "1");
+					});
+					*/
+				}
+			</script>
 			<form id="myform" class="uniform" action="<?php echo (@$action_url);?>">
 				<fieldset>
 					<legend>Form Master Tarif</legend>
 					<dl class="inline">
 						<dt><label for="kategori">Kategori</label></dt>
 						<dd>
+							<input type="hidden" name="id" value="0" id="id" />
 							<select id="kategori" name="kategori" class="medium">
 								<?php foreach ($list_rate_category as $r) : ?>
 								<option><?php echo $r; ?></option>
@@ -22,7 +43,7 @@
 						<dd><input id="nama" type="text" name="nama" class="medium" value="<?php echo (@$sess->nama);?>" /></dd>
 
 						<dt><label for="jumlah">Jumlah</label></dt>
-						<dd><input style="text-align:right;" id="jumlah" type="text" name="jumlah" value="<?php echo (@$sess->jumlah);?>" /></dd>
+						<dd><input class="angka duit" id="jumlah" type="text" name="jumlah" value="<?php echo (@$sess->jumlah);?>" /></dd>
 
 						<dt><label for="">Keterangan</label></dt>
 						<dd> <textarea id="keterangan" name="keterangan" class="medium"><?php echo (@$sess->keterangan);?></textarea> </dd>
@@ -39,8 +60,8 @@
 
 						<dt><label for="due_date">Jatuh Tempo</label></dt>
 						<dd>
-							<input style="text-align:right;" id="due_date" type="text" name="due_date" value="1" class="small" /> hari<br/>
-							<input type="checkbox" name="notification" value="1" /> kirim SMS jika terjadi tunggakan
+							<input class="angka" id="due_date" type="text" name="due_after" value="1" class="small" /> hari<br/>
+							<input type="checkbox" name="notification" value="1" id="notify" checked="checked" /> <label for="notify">kirim SMS jika terjadi tunggakan</label>
 						</dd>
 
 						<dt><label for="installment">Angsuran</label></dt>
@@ -71,7 +92,7 @@
 			</div>
 
 			<div id="list-layer">
-			<form name="frm-filter-cat" id="frm-filter-cat" method="post" action="<?php echo (@$action_url);?>">
+			<form name="frm-filter-cat" id="frm-filter-cat" method="post" action="<?php echo (@$filter_url);?>">
 					<div style="float:left">
 				  <label> <strong>Tampilkan Kategori :</strong> </label>
 				  <select name="mn_kategori" id="mn_kategori">
@@ -108,9 +129,9 @@
 					<td style="text-align:right;"><?php echo ($tarif->get_recurrence(TRUE));?></td>
 					<td style="text-align:right;"><?php echo ($tarif->get_installment());?>x</td>
 					<td style="text-align:center;">
-						<a title="Edit" href="<?php echo ME()->get_edit_link($tarif); ?>"><img alt="Edit" src="images/icons/edit.png"></a>
+						<a title="Edit" href="<?php echo $tarif->get_id(); ?>" class="edit-data"><img alt="Edit" src="images/icons/edit.png"></a>
 						<?php if (true) : ?>
-						<a title="Delete" href="<?php echo ME()->get_delete_link($tarif); ?>" class="delete-row"><img alt="Delete" src="images/icons/cross.png"></a>
+						<a title="Delete" href="<?php echo $tarif->get_id() . '/' . md5($tarif->get_id()); ?>" class="delete-data"><img alt="Delete" src="images/icons/cross.png"></a>
 						<?php endif; ?>
 					</td>
 				</tr>
@@ -141,6 +162,7 @@
 				document.getElementById('mn_kategori').onchange = function() {
 					document.getElementById('frm-filter-cat').submit();
 				}
+				jQuery('.duit').autoNumeric();
 				jQuery('#new-button').click(function() {
 					jQuery('#form-layer').slideDown();
 					jQuery('#list-layer').hide();
@@ -150,7 +172,59 @@
 					jQuery('#list-layer').show();
 				});
 				jQuery('#save-button').click(function() {
-					flashDialog('err-msg', 'Fitur ini masih dalam pengembangan', 5);
+					//flashDialog('err-msg', 'Fitur ini masih dalam pengembangan', 5);
+					var url = jQuery('#myform').attr('action');
+					var data = jQuery('#myform').serialize();
+					data += '&fare=' + jQuery('#jumlah').autoNumericGet();
+
+					jQuery.post(
+						url,
+						data,
+						function (response) {
+
+							if (response.search('berhasil') == -1) flashDialog('err-msg', response, 10);
+							else {
+								flashDialog('success-msg', response, 2);
+								setTimeout(function() { document.location.href=document.location.href; }, 3000);
+							}
+						}
+					);
 				});
 
+				jQuery('a.edit-data').click(function(e) {
+					var id = jQuery(this).attr('href');
+
+					jQuery.post(
+						"<?php echo site_url('data_tarif/info'); ?>",
+						{"id": id},
+						function (response) {
+							if (! response.success) flashDialog('err-msg', response, 10);
+							else {
+								repop_form(response.item);
+								jQuery('#new-button').click();
+							}
+						}
+					);
+					
+					e.preventDefault();
+				});
+
+				jQuery('a.delete-data').click(function(e) {
+					var id = jQuery(this).attr('href');
+
+					if (confirm('Anda yakin akan menghapus data ini ?')) {
+					jQuery.post(
+						"<?php echo site_url('data_tarif/delete'); ?>/" + id,
+						function (response) {
+							if (! response.success) flashDialog('err-msg', response, 10);
+							else {
+								flashDialog('info-msg', response, 2);
+								setTimeout(function() { document.location.href = document.location.href; }, 3000);
+							}
+						}
+					);
+					}
+					
+					e.preventDefault();
+				});
 			</script>

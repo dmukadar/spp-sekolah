@@ -33,7 +33,8 @@ class Data_tarif extends Alazka_Controller {
 		// digunakan pada form action
 		// membiarkan form action kosong bukanlah ide yang baik, dan itu
 		// tergantung masing-masing browser implementasinya
-		$this->data['action_url'] = site_url('data_tarif/index');
+		$this->data['action_url'] = site_url('data_tarif/simpan');
+		$this->data['filter_url'] = site_url('data_tarif/index');
 		
 		// untuk repopulate combo box filter
 		$sess = new stdClass();
@@ -187,6 +188,118 @@ class Data_tarif extends Alazka_Controller {
 
 	public function get_delete_link($tarif) {
 		return site_url('data_tarif/delete/' . $tarif->get_id() . '/' . md5($tarif->get_id()));
+	}
+
+	public function simpan() {
+		$this->load->model('Rate_model');
+
+		$errors = array();
+		$fields = array('id', 'kategori', 'nama', 'fare', 'recurrence', 'due_after', 'installment', 'notification', 'keterangan');
+		$required = array('kategori'=>'Kategori', 'nama'=>'Nama Tagihan', 'fare'=>'Jumlah', 'recurrence'=>'Frekuensi Tagih', 'due_after'=>'Jatuh Tempo', 'installment'=>'Angsuran');
+
+		foreach ($fields as $k) {
+			$$k = trim($this->input->post($k));
+			if (isset($required[$k])) {
+				if (empty($$k)) array_push($errors, $required[$k] . ' harap diisi.');
+			}
+		}
+
+		$fare = (double) $fare;
+		$due_after = (int) $due_after;
+		$installment = (int) $installment;
+		$notification = (int) $notification;
+
+		if (! in_array($recurrence, $this->Rate_model->get_all_recurrence())) array_push($errors, sprintf('Frekuensi tagih "%s" tidak dikenali', $recurrence));
+		if ($installment < 1) array_push($errors, 'Jumlah angsuran tidak bisa negatif');
+		if ($due_after < 1) array_push($errors, 'Jatuh tempo tidak bisa negatif');
+
+		if ($notification < 1) $notification = 0;
+
+		if (! empty($errors)) echo '<span>' . implode('</span><br/><span>', $errors) . '</span>';
+		else {
+			$rate = new Rate;
+			$rate->set_category($kategori);
+			$rate->set_name($nama);
+			$rate->set_description($keterangan);
+			$rate->set_fare($fare);
+			$rate->set_installment($installment);
+			$rate->set_recurrence($recurrence);
+			$rate->set_notification($notification);
+			$rate->set_due_after($due_after);
+
+			if (empty($id)) $ok = $this->Rate_model->insert($rate);
+			else {
+				$rate->set_id($id);
+				$ok = $this->Rate_model->update($rate);
+			}
+
+			echo sprintf(($ok ? 'Tarif "%s" berhasil disimpan' : 'Tarif "%s" gagal disimpan'), $nama);
+		}
+	}
+
+	public function add_more_javascript() {
+		$script = '
+		<script type="text/javascript" src="%s"></script>
+		<script type="text/javascript" src="%s"></script>
+		<script type="text/javascript" src="%s"></script>
+		';
+		printf($script, 
+			base_url() . 'js/json.suggest.js', 
+			base_url() . 'js/jquery.chained.min.js',
+			base_url() . 'js/autoNumeric-1.7.4.js'
+			);
+	}
+
+	public function info() {
+		$this->load->model('Rate_model');
+
+		$id = $this->input->post('id');
+
+		header('Content-type: application/json');
+		$response = array();
+		if (empty($id)) {
+			$response['success'] = false;
+			$response['message'] = 'invalid id_rate';
+		} else {
+			try {
+				$rate = $this->Rate_model->find_by_pk($id);
+
+				$response['success'] = true;
+				$response['message'] = 'found 1 record';
+				$response['item']['id'] = $rate->get_id();
+				$response['item']['category'] = $rate->get_category();
+				$response['item']['name'] = $rate->get_name();
+				$response['item']['fare'] = $rate->get_fare();
+				$response['item']['description'] = $rate->get_description();
+				$response['item']['recurrence'] = $rate->get_recurrence();
+				$response['item']['installment'] = $rate->get_installment();
+				$response['item']['due_after'] = $rate->get_due_after();
+				$response['item']['notification'] = $rate->get_notification();
+			} catch (RateNotFoundException $e) { 
+				$response['success'] = false;
+				$response['message'] = 'cant find specified id_rate';
+			}
+		}
+		echo json_encode($response);
+	}
+	public function delete($id, $md5) {
+		$this->load->model('Rate_model');
+
+		header('Content-type: application/json');
+		$response = array();
+		$response['success'] = false;
+		if (empty($id)) $response['message'] = 'invalid id_rate'; 
+		else if (md5($id) != $md5) $response['message'] = 'invalid checksum'; 
+		else {
+			$rate = new Rate;
+			$rate->set_id($id);
+
+			$this->Rate_model->delete($rate);
+			$response['success'] = true;
+			$response['message'] = 'Data tarif berhasil dihapus';
+		}
+
+		echo json_encode($response);
 	}
 }
 

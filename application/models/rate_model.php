@@ -12,6 +12,7 @@ class Rate {
 	private $due_after = NULL;
 	private $recurrence = NULL;
 	private $installment = NULL;
+	private $notification = NULL;
 	private $created = NULL;
 	private $modified = NULL;
 	private $modified_by = NULL;
@@ -141,6 +142,14 @@ class Rate {
 		return $this->modified_by;
 	}
 
+	public function set_notification($notification) {
+		$this->notification = $notification;
+	}
+
+	public function get_notification() {
+		return $this->notification;
+	}
+
 	/**
 	 * Method untuk melakukan mapping dari standard object ke rate.
 	 * Cara yang lebih efektif sebenarnya adalah dengan memodifikasi 
@@ -164,6 +173,7 @@ class Rate {
 			$tmp->set_due_after($result->due_after);
 			$tmp->set_recurrence($result->recurrence);
 			$tmp->set_installment($result->installment);
+			$tmp->set_notification($result->notification);
 			$tmp->set_created($result->created);
 			$tmp->set_modified($result->modified);
 			$tmp->set_modified_by($result->modified_by);
@@ -266,12 +276,18 @@ class Rate_model extends CI_Model {
 			throw new Exception('Argumen yang diberikan untuk method Rate_model::insert harus berupa instance dari object Rate.');
 		}
 		
+		$now = date('Y-m-d H:i:s');
+		$rate->set_created($now);
+		$rate->set_modified($now);
+
 		$data = $rate->export();
 		$this->db->insert(RATE_TABLE, $data);
 		
 		if ($this->db->affected_rows() == 0) {
 			throw new Exception(sprintf('Gagal memasukkan data rate.'));
 		}
+
+		return $this->db->insert_id();
 	}
 	
 	public function update($rate, $exclude=array()) {
@@ -279,6 +295,9 @@ class Rate_model extends CI_Model {
 			throw new Exception('Argumen yang diberikan untuk method Rate_model::update harus berupa instance dari object Rate.');
 		}
 		
+		$now = date('Y-m-d H:i:s');
+		$rate->set_modified($now);
+
 		$data = $rate->export('array', $exclude);
 		$where = array('id' => $rate->get_id());
 		$this->db->where($where);
@@ -287,6 +306,7 @@ class Rate_model extends CI_Model {
 		if ($this->db->affected_rows() == 0) {
 			// do nothing
 		}
+		return $this->db->affected_rows();
 	}
 	
 	public function custom_update($where, $data) {
@@ -313,6 +333,10 @@ class Rate_model extends CI_Model {
 
 	public function find_by_pk($id) {
 		return $this->get_single_rate(array('ar_rate.id'=>$id));
+	}
+
+	public function get_all_recurrence() {
+		return array('sekali', 'tahun', 'semester', 'cawu', 'bulan');
 	}
 }
 
