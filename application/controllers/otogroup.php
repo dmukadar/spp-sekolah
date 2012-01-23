@@ -4,6 +4,10 @@ class Otogroup extends Alazka_Controller {
 	public function __construct() {
 		parent::__construct();
 		// $this->output->enable_profiler(FALSE);
+
+		$this->load->model('Kelas_model');
+		$this->load->model('Siswa_model');
+		$this->load->model('Rate_model');
 	}
 	
 	public function index() {
@@ -72,9 +76,6 @@ class Otogroup extends Alazka_Controller {
 	}
 
 	public function form($loadId=null) {
-		$this->load->model('Kelas_model');
-		$this->load->model('Siswa_model');
-		$this->load->model('Rate_model');
 
 		$this->load->helper('mr_form');
 
@@ -100,6 +101,15 @@ class Otogroup extends Alazka_Controller {
 	}
 
 	public function import() {
+		try {
+			$this->data['list_tarif'] = $this->Rate_model->get_all_rate();
+		} catch (Exception $e) {
+			$this->data['list_tarif'] = array();
+		}
+
+		$this->load->view('site/header_view');
+		$this->load->view('site/impor_kelompok_tagihan_view', $this->data);
+		$this->load->view('site/footer_view');
 	}
 
 }

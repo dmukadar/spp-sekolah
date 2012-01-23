@@ -3,7 +3,7 @@
 			<div id="err-msg" class="error msg" style="display:none">tes</div>
 			<div id="info-msg" class="information msg" style="display:none">tes</div>
 
-			<div id="form-layer">
+			<div id="form-layer" style="display:none">
 			<form id="myform" class="uniform" action="<?php echo (@$action_url);?>">
 				<fieldset>
 					<legend>Form Master Kelompok Tagih</legend>
@@ -20,7 +20,7 @@
 						<dt><label for="nama">Peserta</label></dt>
 						<dd>
 								<p>
-								<input id="group_kelas" name="grouping" value="kelas" type="radio" checked="checked"> Kelas <br/>
+								<input id="group_kelas" name="grouping" value="kelas" type="radio"> Kelas <br/>
 								<select id="kelas" name="kelas" class="small">
 									<option value="99">Semua</option>
 									<option value="0">TK</option>
@@ -36,7 +36,7 @@
 								</select>
 								</p>
 								<p>
-								<input id="group_siswa" name="grouping" value="siswa" type="radio"> Siswa <br/>
+								<input id="group_siswa" name="grouping" value="siswa" type="radio" checked="checked"> Siswa <br/>
 								<input id="nama" type="text" name="nama" class="medium" value="<?php echo (@$sess->nama);?>" />
 								<div class="success msg">
 									Daftar sementara (klik tombol Simpan untuk menyimpan permanen):
