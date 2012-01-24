@@ -1,5 +1,5 @@
 
-		<h1 align="center">Edit Tarif Khusus </h1>
+		<h1 align="center">Edit Data Dispensasi </h1>
 
 		<?php ME()->print_flash_message(); ?>	
 		
