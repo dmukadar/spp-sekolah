@@ -1,2 +1,3 @@
+*.swp
 application/config/database.php
 application/controllers/rio/*

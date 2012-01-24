@@ -1059,3 +1059,5 @@ article h1,
 .accordion h3 {
 	behavior: url(js/PIE.htc);
 } */
+
+input.angka { text-align: right }
