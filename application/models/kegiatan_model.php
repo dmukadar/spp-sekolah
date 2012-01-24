@@ -12,11 +12,11 @@ AND ar_rate.category IN (SELECT ar_rate.category FROM ar_rate WHERE ar_rate.id =
 	function get_all($filter=array()){
 	$this->load->model("Kegiatan_model");
 	$status=$this->get_status("open");
-		$this->db->select("ar_invoice.id AS inv_id, ar_invoice.created_date, ar_invoice.due_date, ar_invoice.amount, ar_invoice.received_amount, (ar_invoice.amount - ar_invoice.received_amount) AS tagihan, dm_tahunpelajaran.tahun, sis_siswa.id AS id_siswa, sis_siswa.namalengkap, dm_kelas.kelas, ar_invoice.description,MONTHNAME( ar_invoice.due_date ) AS bulan, sis_siswa.dm_jenjang_id,ar_rate.category");	
+		$this->db->select("ar_invoice.id AS inv_id, ar_invoice.created_date, ar_invoice.due_date, ar_invoice.amount, ar_invoice.received_amount, (ar_invoice.amount - ar_invoice.received_amount) AS total,  sis_siswa.id AS id_siswa, sis_siswa.namalengkap, dm_kelas.kelas, ar_invoice.description,MONTHNAME( ar_invoice.due_date ) AS bulan, sis_siswa.dm_jenjang_id,ar_rate.category");	
 		$this->db->where("sis_siswa.id = ar_invoice.id_student AND sis_siswa.dm_kelas_id = dm_kelas.id AND sis_siswa.dm_jenjang_id = dm_kelas.dm_jenjang_id and ar_invoice.status='".$status."'  AND ar_invoice.id_rate = ar_rate.id AND ar_rate.category IN (SELECT ar_rate.category FROM ar_rate WHERE ar_rate.id = '8' OR ar_rate.id = '15' OR ar_rate.id = '16' OR ar_rate.id = '17') ");	
 		$this->db->where($filter);
 		$this->db->order_by("ar_invoice.id");
-		$query = $this->db->get("ar_invoice, dm_tahunpelajaran, sis_siswa, dm_kelas,ar_rate");
+		$query = $this->db->get("ar_invoice, sis_siswa, dm_kelas,ar_rate");
 		return $query;
 	}
 	
@@ -25,12 +25,35 @@ AND ar_rate.category IN (SELECT ar_rate.category FROM ar_rate WHERE ar_rate.id =
 	function get_total($filter=array()){
 	$this->load->model("Kegiatan_model");
 	$status=$this->get_status("open");
-		$this->db->select("SUM( ar_invoice.amount - ar_invoice.received_amount ) AS total,ar_invoice.created_date, ar_invoice.due_date,dm_tahunpelajaran.tahun, sis_siswa.dm_jenjang_id");	
-		$this->db->where("sis_siswa.id = ar_invoice.id_student AND sis_siswa.dm_kelas_id = dm_kelas.id AND sis_siswa.dm_jenjang_id = dm_kelas.dm_jenjang_id and ar_invoice.status='".$status."'  AND ar_invoice.id_rate = ar_rate.id AND ar_rate.category IN (SELECT ar_rate.category FROM ar_rate WHERE ar_rate.id = '8' OR ar_rate.id = '15' OR ar_rate.id = '16' OR ar_rate.id = '17')");	
+		$this->db->select("SUM( ar_invoice.amount - ar_invoice.received_amount ) AS total,ar_invoice.created_date, ar_invoice.due_date, sis_siswa.dm_jenjang_id");	
+		$this->db->where("sis_siswa.id = ar_invoice.id_student AND sis_siswa.dm_kelas_id = dm_kelas.id AND sis_siswa.dm_jenjang_id = dm_kelas.dm_jenjang_id and ar_invoice.status='".$status."'  AND ar_invoice.id_rate = ar_rate.id AND ar_rate.category IN (SELECT ar_rate.category FROM ar_rate WHERE ar_rate.id = '8' OR ar_rate.id = '15' OR ar_rate.id = '16' OR ar_rate.id = '17') ");	
 		$this->db->where($filter);		
-		$query = $this->db->get("ar_invoice, dm_tahunpelajaran, sis_siswa, dm_kelas,ar_rate");
+		$query = $this->db->get("ar_invoice, sis_siswa, dm_kelas,ar_rate");
 		return $query;
 	}
+	
+	function get_allnew($filter=array(),$tanggal_mulai,$tanggal_akhir){
+	$this->load->model("Kegiatan_model");
+	$status=$this->get_status("open");
+		$this->db->select("ar_invoice.id AS inv_id, ar_invoice.created_date, ar_invoice.due_date, ar_invoice.amount, ar_invoice.received_amount, (ar_invoice.amount - ar_invoice.received_amount) AS total, sis_siswa.id AS id_siswa, sis_siswa.namalengkap, dm_kelas.kelas, ar_invoice.description,MONTHNAME( ar_invoice.due_date ) AS bulan, sis_siswa.dm_jenjang_id,ar_rate.category,ar_invoice.created_date,ar_invoice.due_date");	
+		$this->db->where("sis_siswa.id = ar_invoice.id_student AND sis_siswa.dm_kelas_id = dm_kelas.id AND sis_siswa.dm_jenjang_id = dm_kelas.dm_jenjang_id and ar_invoice.status='".$status."'  AND ar_invoice.id_rate = ar_rate.id AND ar_rate.category IN (SELECT ar_rate.category FROM ar_rate WHERE ar_rate.id = '8' OR ar_rate.id = '15' OR ar_rate.id = '16' OR ar_rate.id = '17') and ar_invoice.due_date in (select ar_invoice.`due_date` from ar_invoice where ar_invoice.`due_date` >= '".$tanggal_mulai."'   or ar_invoice.`due_date` <= '".$tanggal_akhir."' ) ");	
+		$this->db->where($filter);
+		$this->db->order_by("ar_invoice.id");
+		$query = $this->db->get("ar_invoice, sis_siswa, dm_kelas,ar_rate");
+		return $query;
+	}
+	
+		
+	function get_totalnew($filter=array(),$tanggal_mulai,$tanggal_akhir){
+	$this->load->model("Kegiatan_model");
+	$status=$this->get_status("open");
+		$this->db->select("SUM( ar_invoice.amount - ar_invoice.received_amount ) AS total,ar_invoice.created_date, ar_invoice.due_date, sis_siswa.dm_jenjang_id,ar_invoice.created_date,ar_invoice.due_date");	
+		$this->db->where("sis_siswa.id = ar_invoice.id_student AND sis_siswa.dm_kelas_id = dm_kelas.id AND sis_siswa.dm_jenjang_id = dm_kelas.dm_jenjang_id and ar_invoice.status='".$status."'  AND ar_invoice.id_rate = ar_rate.id AND ar_rate.category IN (SELECT ar_rate.category FROM ar_rate WHERE ar_rate.id = '8' OR ar_rate.id = '15' OR ar_rate.id = '16' OR ar_rate.id = '17') and ar_invoice.due_date in (select ar_invoice.`due_date` from ar_invoice where ar_invoice.`due_date` >= '".$tanggal_mulai."'   or ar_invoice.`due_date` <= '".$tanggal_akhir."' ) ");	
+		$this->db->where($filter);		
+		$query = $this->db->get("ar_invoice, sis_siswa, dm_kelas,ar_rate");
+		return $query;
+	}
+	
 	
 	function get_status($status){
 		$status_return=0;

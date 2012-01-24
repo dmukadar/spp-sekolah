@@ -147,7 +147,7 @@
     <td width="40%"><div align="center">TOTAL JUMLAH </div></td>
     <td width="14%"><div align="right">
       <?php foreach($data_paket->result() as $row){?>
-      <?php echo $row->total;?>
+      <?php $total=$row->total;$clean = str_replace(".00", ",-",$total);echo $clean;?>
       <?php }?>
     </div></td>
     <td width="15%"><div align="right">

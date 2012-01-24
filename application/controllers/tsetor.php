@@ -69,31 +69,31 @@ class Tsetor extends Alazka_Controller {
 		$data ['nm_jenjang']=$jenjang;
 		
 		if ($jenjang==0 && empty($tanggal_akhir)){
-		$data['data_antarjemput']=$this->Santarjemput_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));		
-		$data['data_total']=$this->Santarjemput_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));
+		$data['data_antarjemput']=$this->Santarjemput_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai,'tahun'=>$ajaran));		
+		$data['data_total']=$this->Santarjemput_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'tahun'=>$ajaran));
 		}
 		
 		else if ($jenjang==0 && !empty($tanggal_akhir)){
-		$data['data_antarjemput']=$this->Santarjemput_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
-		$data['data_total']=$this->Santarjemput_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		$data['data_antarjemput']=$this->Santarjemput_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		$data['data_total']=$this->Santarjemput_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir,'tahun'=>$ajaran));	
 		}
 		
 		else if ($jenjang!=0 && empty($tanggal_akhir)){
-		$data['data_antarjemput']=$this->Santarjemput_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_total']=$this->Santarjemput_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_antarjemput']=$this->Santarjemput_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Santarjemput_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
 		}
 		
 		else if ($jenjang!=0 && !empty($tanggal_akhir)){
-		$data['data_antarjemput']=$this->Santarjemput_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_total']=$this->Santarjemput_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_antarjemput']=$this->Santarjemput_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Santarjemput_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
 		} 
 		
 		$data['page']='index';
-		
+		// $this->load->view('site/santarjemput_view', $data);
 		$html = $this->load->view('site/santarjemput_view', $data, true);
 		$this->pdf->writeHTML($html, true, true, true, true, '');		
 		$this->pdf->lastPage();		
-		$this->pdf->Output("rekapsetor_antjmput.pdf", 'I');       
+		$this->pdf->Output("rekapsetor_antjmput.pdf", 'I');  
     }
 	
 
@@ -124,34 +124,34 @@ class Tsetor extends Alazka_Controller {
 		$data ['nm_jenjang']=$jenjang;
 
 		if ($jenjang==0 && empty($tanggal_akhir)){
-		$data['data_salat']=$this->Salat_model->get_all(array('due_date >='=>$tanggal_mulai));		
-		$data['data_total']=$this->Salat_model->get_total(array('due_date >='=>$tanggal_mulai));
-		$data['data_buku']=$this->Salat_model->get_total_buku(array('due_date >='=>$tanggal_mulai));
-		$data['data_alat']=$this->Salat_model->get_total_alat(array('due_date >='=>$tanggal_mulai));
+		$data['data_salat']=$this->Salat_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai));		
+		$data['data_total']=$this->Salat_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai));
+		$data['data_buku']=$this->Salat_model->get_total_buku(array('ar_payment_details.created >='=>$tanggal_mulai));
+		$data['data_alat']=$this->Salat_model->get_total_alat(array('ar_payment_details.created >='=>$tanggal_mulai));
 		//echo "1";
 		}
 		
 		else if ($jenjang==0 && !empty($tanggal_akhir)){
-		$data['data_salat']=$this->Salat_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir));	
-		$data['data_total']=$this->Salat_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir));	
-		$data['data_buku']=$this->Salat_model->get_total_buku(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir));	
-		$data['data_alat']=$this->Salat_model->get_total_alat(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir));	
+		$data['data_salat']=$this->Salat_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir));	
+		$data['data_total']=$this->Salat_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir));	
+		$data['data_buku']=$this->Salat_model->get_total_buku(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir));	
+		$data['data_alat']=$this->Salat_model->get_total_alat(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir));	
 	//	echo "2";
 		}
 		
 		else if ($jenjang!=0 && empty($tanggal_akhir)){
-		$data['data_salat']=$this->Salat_model->get_all(array('due_date >='=>$tanggal_mulai, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_total']=$this->Salat_model->get_total(array('due_date >='=>$tanggal_mulai,'sis_siswa.dm_jenjang_id'=>$jenjang));
-		$data['data_buku']=$this->Salat_model->get_total_buku(array('due_date >='=>$tanggal_mulai, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_alat']=$this->Salat_model->get_total_alat(array('due_date >='=>$tanggal_mulai,'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_salat']=$this->Salat_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Salat_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_buku']=$this->Salat_model->get_total_buku(array('ar_payment_details.created >='=>$tanggal_mulai, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_alat']=$this->Salat_model->get_total_alat(array('ar_payment_details.created >='=>$tanggal_mulai,'sis_siswa.dm_jenjang_id'=>$jenjang));
 		//echo "3";
 		}
 		
 		else if ($jenjang!=0 && !empty($tanggal_akhir)){
-		$data['data_salat']=$this->Salat_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_total']=$this->Salat_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));
-		$data['data_buku']=$this->Salat_model->get_total_buku(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_alat']=$this->Salat_model->get_total_alat(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_salat']=$this->Salat_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Salat_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_buku']=$this->Salat_model->get_total_buku(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_alat']=$this->Salat_model->get_total_alat(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));
 		//echo "4";
 		} 
 		
@@ -187,23 +187,23 @@ class Tsetor extends Alazka_Controller {
 		$data ['nm_jenjang']=$jenjang;
 		
 		if ($jenjang==0 && empty($tanggal_akhir)){
-		$data['data_seragam']=$this->Sseragam_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));		
-		$data['data_total']=$this->Sseragam_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));
+		$data['data_seragam']=$this->Sseragam_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai,'tahun'=>$ajaran));		
+		$data['data_total']=$this->Sseragam_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'tahun'=>$ajaran));
 		}
 		
 		else if ($jenjang==0 && !empty($tanggal_akhir)){
-		$data['data_seragam']=$this->Sseragam_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
-		$data['data_total']=$this->Sseragam_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		$data['data_seragam']=$this->Sseragam_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		$data['data_total']=$this->Sseragam_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir,'tahun'=>$ajaran));	
 		}
 		
 		else if ($jenjang!=0 && empty($tanggal_akhir)){
-		$data['data_seragam']=$this->Sseragam_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_total']=$this->Sseragam_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_seragam']=$this->Sseragam_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Sseragam_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
 		}
 		
 		else if ($jenjang!=0 && !empty($tanggal_akhir)){
-		$data['data_seragam']=$this->Sseragam_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_total']=$this->Sseragam_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_seragam']=$this->Sseragam_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Sseragam_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
 		} 
 		
 		$data['page']='index';
@@ -239,23 +239,23 @@ class Tsetor extends Alazka_Controller {
 		$data ['nm_jenjang']=$jenjang;
 		
 		if ($jenjang==0 && empty($tanggal_akhir)){
-		$data['data_ssanggar']=$this->Ssanggar_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));		
-		$data['data_total']=$this->Ssanggar_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));
+		$data['data_ssanggar']=$this->Ssanggar_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai,'tahun'=>$ajaran));		
+		$data['data_total']=$this->Ssanggar_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'tahun'=>$ajaran));
 		}
 		
 		else if ($jenjang==0 && !empty($tanggal_akhir)){
-		$data['data_ssanggar']=$this->Ssanggar_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
-		$data['data_total']=$this->Ssanggar_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		$data['data_ssanggar']=$this->Ssanggar_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		$data['data_total']=$this->Ssanggar_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir,'tahun'=>$ajaran));	
 		}
 		
 		else if ($jenjang!=0 && empty($tanggal_akhir)){
-		$data['data_ssanggar']=$this->Ssanggar_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_total']=$this->Ssanggar_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_ssanggar']=$this->Ssanggar_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Ssanggar_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
 		}
 		
 		else if ($jenjang!=0 && !empty($tanggal_akhir)){
-		$data['data_ssanggar']=$this->Ssanggar_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_total']=$this->Ssanggar_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_ssanggar']=$this->Ssanggar_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Ssanggar_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
 		} 
 		
 		$data['page']='index';
@@ -292,34 +292,34 @@ class Tsetor extends Alazka_Controller {
 		$data ['nm_jenjang']=$jenjang;
 
 		if ($jenjang==0 && empty($tanggal_akhir)){
-		$data['data_buku']=$this->Sbuku_model->get_all(array('due_date >='=>$tanggal_mulai));		
-		$data['data_total']=$this->Sbuku_model->get_total(array('due_date >='=>$tanggal_mulai));
-		$data['data_paket']=$this->Sbuku_model->get_total_paket(array('due_date >='=>$tanggal_mulai));
-		$data['data_nonpaket']=$this->Sbuku_model->get_total_nonpaket(array('due_date >='=>$tanggal_mulai));
+		$data['data_buku']=$this->Sbuku_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai));		
+		$data['data_total']=$this->Sbuku_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai));
+		$data['data_paket']=$this->Sbuku_model->get_total_paket(array('ar_payment_details.created >='=>$tanggal_mulai));
+		$data['data_nonpaket']=$this->Sbuku_model->get_total_nonpaket(array('ar_payment_details.created >='=>$tanggal_mulai));
 		//echo "1";
 		}
 		
 		else if ($jenjang==0 && !empty($tanggal_akhir)){
-		$data['data_buku']=$this->Sbuku_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir));	
-		$data['data_total']=$this->Sbuku_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir));	
-		$data['data_paket']=$this->Sbuku_model->get_total_paket(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir));	
-		$data['data_nonpaket']=$this->Sbuku_model->get_total_nonpaket(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir));	
+		$data['data_buku']=$this->Sbuku_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir));	
+		$data['data_total']=$this->Sbuku_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir));	
+		$data['data_paket']=$this->Sbuku_model->get_total_paket(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir));	
+		$data['data_nonpaket']=$this->Sbuku_model->get_total_nonpaket(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir));	
 	//	echo "2";
 		}
 		
 		else if ($jenjang!=0 && empty($tanggal_akhir)){
-		$data['data_buku']=$this->Sbuku_model->get_all(array('due_date >='=>$tanggal_mulai, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_total']=$this->Sbuku_model->get_total(array('due_date >='=>$tanggal_mulai,'sis_siswa.dm_jenjang_id'=>$jenjang));
-		$data['data_paket']=$this->Sbuku_model->get_total_paket(array('due_date >='=>$tanggal_mulai, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_nonpaket']=$this->Sbuku_model->get_total_nonpaket(array('due_date >='=>$tanggal_mulai,'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_buku']=$this->Sbuku_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Sbuku_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_paket']=$this->Sbuku_model->get_total_paket(array('ar_payment_details.created >='=>$tanggal_mulai, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_nonpaket']=$this->Sbuku_model->get_total_nonpaket(array('ar_payment_details.created >='=>$tanggal_mulai,'sis_siswa.dm_jenjang_id'=>$jenjang));
 		//echo "3";
 		}
 		
 		else if ($jenjang!=0 && !empty($tanggal_akhir)){
-		$data['data_buku']=$this->Sbuku_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_total']=$this->Sbuku_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));
-		$data['data_paket']=$this->Sbuku_model->get_total_paket(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_nonpaket']=$this->Sbuku_model->get_total_nonpaket(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_buku']=$this->Sbuku_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Sbuku_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_paket']=$this->Sbuku_model->get_total_paket(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_nonpaket']=$this->Sbuku_model->get_total_nonpaket(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));
 		//echo "4";
 		} 
 		
@@ -355,23 +355,23 @@ class Tsetor extends Alazka_Controller {
 		$data ['nm_jenjang']=$jenjang;
 		
 		if ($jenjang==0 && empty($tanggal_akhir)){
-		$data['data_kegiatan']=$this->Skegiatan_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));		
-		$data['data_total']=$this->Skegiatan_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran));
+		$data['data_kegiatan']=$this->Skegiatan_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai,'tahun'=>$ajaran));		
+		$data['data_total']=$this->Skegiatan_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'tahun'=>$ajaran));
 		}
 		
 		else if ($jenjang==0 && !empty($tanggal_akhir)){
-		$data['data_kegiatan']=$this->Skegiatan_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
-		$data['data_total']=$this->Skegiatan_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		$data['data_kegiatan']=$this->Skegiatan_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir,'tahun'=>$ajaran));	
+		$data['data_total']=$this->Skegiatan_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir,'tahun'=>$ajaran));	
 		}
 		
 		else if ($jenjang!=0 && empty($tanggal_akhir)){
-		$data['data_kegiatan']=$this->Skegiatan_model->get_all(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_total']=$this->Skegiatan_model->get_total(array('due_date >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_kegiatan']=$this->Skegiatan_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Skegiatan_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
 		}
 		
 		else if ($jenjang!=0 && !empty($tanggal_akhir)){
-		$data['data_kegiatan']=$this->Skegiatan_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_total']=$this->Skegiatan_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_kegiatan']=$this->Skegiatan_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Skegiatan_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir,'tahun'=>$ajaran, 'sis_siswa.dm_jenjang_id'=>$jenjang));
 		} 
 		
 		$data['page']='index';
@@ -409,34 +409,34 @@ class Tsetor extends Alazka_Controller {
 		$data ['nm_jenjang']=$jenjang;
 
 		if ($jenjang==0 && empty($tanggal_akhir)){
-		$data['data_dfulang']=$this->Sdftulang_model->get_all(array('due_date >='=>$tanggal_mulai));		
-		$data['data_total']=$this->Sdftulang_model->get_total(array('due_date >='=>$tanggal_mulai));
-		$data['data_um']=$this->Sdftulang_model->get_total_um(array('due_date >='=>$tanggal_mulai));
-		$data['data_du']=$this->Sdftulang_model->get_total_du(array('due_date >='=>$tanggal_mulai));
+		$data['data_dfulang']=$this->Sdftulang_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai));		
+		$data['data_total']=$this->Sdftulang_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai));
+		$data['data_um']=$this->Sdftulang_model->get_total_um(array('ar_payment_details.created >='=>$tanggal_mulai));
+		$data['data_du']=$this->Sdftulang_model->get_total_du(array('ar_payment_details.created >='=>$tanggal_mulai));
 		//echo "1";
 		}
 		
 		else if ($jenjang==0 && !empty($tanggal_akhir)){
-		$data['data_dfulang']=$this->Sdftulang_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir));	
-		$data['data_total']=$this->Sdftulang_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir));	
-		$data['data_um']=$this->Sdftulang_model->get_total_um(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir));	
-		$data['data_du']=$this->Sdftulang_model->get_total_du(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir));	
+		$data['data_dfulang']=$this->Sdftulang_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir));	
+		$data['data_total']=$this->Sdftulang_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir));	
+		$data['data_um']=$this->Sdftulang_model->get_total_um(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir));	
+		$data['data_du']=$this->Sdftulang_model->get_total_du(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir));	
 	//	echo "2";
 		}
 		
 		else if ($jenjang!=0 && empty($tanggal_akhir)){
-		$data['data_dfulang']=$this->Sdftulang_model->get_all(array('due_date >='=>$tanggal_mulai, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_total']=$this->Sdftulang_model->get_total(array('due_date >='=>$tanggal_mulai,'sis_siswa.dm_jenjang_id'=>$jenjang));
-		$data['data_um']=$this->Sdftulang_model->get_total_um(array('due_date >='=>$tanggal_mulai, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_du']=$this->Sdftulang_model->get_total_du(array('due_date >='=>$tanggal_mulai,'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_dfulang']=$this->Sdftulang_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Sdftulang_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_um']=$this->Sdftulang_model->get_total_um(array('ar_payment_details.created >='=>$tanggal_mulai, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_du']=$this->Sdftulang_model->get_total_du(array('ar_payment_details.created >='=>$tanggal_mulai,'sis_siswa.dm_jenjang_id'=>$jenjang));
 		//echo "3";
 		}
 		
 		else if ($jenjang!=0 && !empty($tanggal_akhir)){
-		$data['data_dfulang']=$this->Sdftulang_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_total']=$this->Sdftulang_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));
-		$data['data_um']=$this->Sdftulang_model->get_total_um(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_du']=$this->Sdftulang_model->get_total_du(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_dfulang']=$this->Sdftulang_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Sdftulang_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_um']=$this->Sdftulang_model->get_total_um(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_du']=$this->Sdftulang_model->get_total_du(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));
 		//echo "4";
 		} 
 		
@@ -474,34 +474,34 @@ class Tsetor extends Alazka_Controller {
 		$data ['nm_jenjang']=$jenjang;
 
 		if ($jenjang==0 && empty($tanggal_akhir)){
-		$data['data_sppbpps']=$this->Sspp_model->get_all(array('due_date >='=>$tanggal_mulai));		
-		$data['data_total']=$this->Sspp_model->get_total(array('due_date >='=>$tanggal_mulai));
-		$data['data_spp']=$this->Sspp_model->get_total_spp(array('due_date >='=>$tanggal_mulai));
-		$data['data_bpps']=$this->Sspp_model->get_total_bpps(array('due_date >='=>$tanggal_mulai));
+		$data['data_sppbpps']=$this->Sspp_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai));		
+		$data['data_total']=$this->Sspp_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai));
+		$data['data_spp']=$this->Sspp_model->get_total_spp(array('ar_payment_details.created >='=>$tanggal_mulai));
+		$data['data_bpps']=$this->Sspp_model->get_total_bpps(array('ar_payment_details.created >='=>$tanggal_mulai));
 		//echo "1";
 		}
 		
 		else if ($jenjang==0 && !empty($tanggal_akhir)){
-		$data['data_sppbpps']=$this->Sspp_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir));	
-		$data['data_total']=$this->Sspp_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir));	
-		$data['data_spp']=$this->Sspp_model->get_total_spp(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir));	
-		$data['data_bpps']=$this->Sspp_model->get_total_bpps(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir));	
+		$data['data_sppbpps']=$this->Sspp_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir));	
+		$data['data_total']=$this->Sspp_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir));	
+		$data['data_spp']=$this->Sspp_model->get_total_spp(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir));	
+		$data['data_bpps']=$this->Sspp_model->get_total_bpps(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir));	
 	//	echo "2";
 		}
 		
 		else if ($jenjang!=0 && empty($tanggal_akhir)){
-		$data['data_sppbpps']=$this->Sspp_model->get_all(array('due_date >='=>$tanggal_mulai, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_total']=$this->Sspp_model->get_total(array('due_date >='=>$tanggal_mulai,'sis_siswa.dm_jenjang_id'=>$jenjang));
-		$data['data_spp']=$this->Sspp_model->get_total_spp(array('due_date >='=>$tanggal_mulai, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_bpps']=$this->Sspp_model->get_total_bpps(array('due_date >='=>$tanggal_mulai,'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_sppbpps']=$this->Sspp_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Sspp_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_spp']=$this->Sspp_model->get_total_spp(array('ar_payment_details.created >='=>$tanggal_mulai, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_bpps']=$this->Sspp_model->get_total_bpps(array('ar_payment_details.created >='=>$tanggal_mulai,'sis_siswa.dm_jenjang_id'=>$jenjang));
 		//echo "3";
 		}
 		
 		else if ($jenjang!=0 && !empty($tanggal_akhir)){
-		$data['data_sppbpps']=$this->Sspp_model->get_all(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_total']=$this->Sspp_model->get_total(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));
-		$data['data_spp']=$this->Sspp_model->get_total_spp(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
-		$data['data_bpps']=$this->Sspp_model->get_total_bpps(array('due_date >='=>$tanggal_mulai,'due_date <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_sppbpps']=$this->Sspp_model->get_all(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_total']=$this->Sspp_model->get_total(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));
+		$data['data_spp']=$this->Sspp_model->get_total_spp(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));	
+		$data['data_bpps']=$this->Sspp_model->get_total_bpps(array('ar_payment_details.created >='=>$tanggal_mulai,'ar_payment_details.created <='=>$tanggal_akhir, 'sis_siswa.dm_jenjang_id'=>$jenjang));
 		//echo "4";
 		} 
 		
