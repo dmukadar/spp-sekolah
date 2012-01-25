@@ -156,10 +156,10 @@ class ClassGroup_model extends CI_Model {
 		parent::__construct();
 	}
 	
-	public function get_both_group($where='', $limit=null, $offset=5) {
-		if (empty($where)) $condition = '';
+	public function get_both_group($where='', $limit=0, $offset=5) {
+		if (empty($where)) $condition1 = $condition2 = '';
 		else {
-			$condition =<<<EOL
+			$condition1 =<<<EOL
 and (
 	lower(rate.name) like lower('%$where%') 
 	OR lower(sis.namalengkap) like lower('%$where%')
@@ -167,29 +167,51 @@ and (
 	OR lower(kelas.jenjang) like lower('%$where%')
 	)
 EOL;
+			$condition2 =<<<EOL
+and (
+	lower(rate.name) like lower('%$where%') 
+	OR lower(kelas.kelas) like lower('%$where%')
+	OR lower(kelas.jenjang) like lower('%$where%')
+	)
+EOL;
 		}
-
-		if ($limit == null) $limit = " limit $offset";
-		else $limit = " limit $limit, $offset";
 
 		$query = "
 		select 'siswa' kelompok, arg.id, rate.name tagihan, CONCAT(sis.namalengkap, ' - ', kelas.kelas, ' ( ', kelas.jenjang, ' )') peserta
 		  from   ar_group_student arg, ar_rate rate, sis_siswa sis, dm_kelas kelas 
-			  where arg.id_rate = rate.id and sis.id = arg.id_student and sis.dm_kelas_id = kelas.id $condition $limit
+			  where arg.id_rate = rate.id and sis.id = arg.id_student and sis.dm_kelas_id = kelas.id $condition1
 		";
 		$query = $this->db->query($query);
-		$result = $query->result();
+		$r1 = $query->result();
 
+		$query =<<<EOL
+select 'kelas' kelompok, arg.id, rate.name tagihan, CONCAT('Kelas ', kelas.kelas, ' ( ', kelas.jenjang, ' )') peserta
+	from   ar_group_class arg, ar_rate rate, dm_kelas kelas 
+	where arg.id_rate = rate.id and arg.id_class = kelas.id $condition2
+
+EOL;
+		$query = $this->db->query($query);
+		$r2 = $query->result();
+
+		$result = array_merge($r2, $r1);
+		$result = array_slice($result, $limit, $offset);
 		return $result;
 	}
 
 	public function get_both_group_count($where='', $limit=-1, $offset=0) {
-		if (empty($where)) $condition = '';
+		if (empty($where)) $condition1 = $condition2 = '';
 		else {
-			$condition =<<<EOL
+			$condition1 =<<<EOL
 and (
 	lower(rate.name) like lower('%$where%') 
 	OR lower(sis.namalengkap) like lower('%$where%')
+	OR lower(kelas.kelas) like lower('%$where%')
+	OR lower(kelas.jenjang) like lower('%$where%')
+	)
+EOL;
+			$condition2 =<<<EOL
+and (
+	lower(rate.name) like lower('%$where%') 
 	OR lower(kelas.kelas) like lower('%$where%')
 	OR lower(kelas.jenjang) like lower('%$where%')
 	)
@@ -199,12 +221,21 @@ EOL;
 		$query = "
 		select COUNT(-1) as total 
 		  from   ar_group_student arg, ar_rate rate, sis_siswa sis, dm_kelas kelas 
-			  where arg.id_rate = rate.id and sis.id = arg.id_student and sis.dm_kelas_id = kelas.id $condition
+			  where arg.id_rate = rate.id and sis.id = arg.id_student and sis.dm_kelas_id = kelas.id $condition1
 		";
 		$query = $this->db->query($query);
-		$result = $query->result();
+		$r1 = $query->result();
 
-		return $result[0]->total;
+		$query =<<<EOL
+select count(-1) total
+	from   ar_group_class arg, ar_rate rate, dm_kelas kelas 
+	where arg.id_rate = rate.id and arg.id_class = kelas.id $condition2
+
+EOL;
+		$query = $this->db->query($query);
+		$r2 = $query->result();
+
+		return $r1[0]->total + $r2[0]->total;
 	}
 
 	public function get_all_classgroup($where=array(), $limit=-1, $offset=0) {
