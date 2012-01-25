@@ -8,18 +8,21 @@ function __construct()
 
 	function check_siswa($id_siswa){
 	$this->load->model("Keltagih_model");	
+		$this->db->select("kelas, sis_siswa.noinduk, jenjang");	
+		$this->db->from('sis_siswa');
+		$this->db->join('dm_kelas', 'sis_siswa.dm_kelas_id = dm_kelas.id');		
+		$this->db->where("sis_siswa.noinduk", $id_siswa);
+		$query = $this->db->get();
+		return $query;
+	}
+		
+	/*function check_siswa($id_siswa){
+	$this->load->model("Keltagih_model");	
 		$this->db->select("noinduk");	
 		$this->db->where("noinduk", $id_siswa);
 		$query = $this->db->get("sis_siswa");
 		return $query->num_rows();
-	}
-	/*function check_siswa($id_siswa){
-	$this->load->model("Keltagih_model");	
-		$this->db->select("dm_kelas.kelas, sis_siswa.noinduk");	
-		$this->db->where("sis_siswa.dm_kelas_id = dm_kelas.id and sis_siswa.noinduk", $id_siswa);
-		$query = $this->db->get("sis_siswa,dm_kelas");
-		return $query->num_rows();*/
-	
+	}*/
 	function check_group($id_siswa){
 	$this->load->model("Keltagih_model");	
 		$this->db->select("id_student");	
