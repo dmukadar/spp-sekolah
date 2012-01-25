@@ -370,7 +370,7 @@ class Invoice_model extends CI_Model {
 		$this->db->join('ar_invoice_outbox', 'ar_invoice_outbox.invoice_id=ar_invoice.id', 'left');
 		
 		$this->db->where(array('ar_rate.notification' => 1));
-		// $this->db->where('ar_invoice.due_date < CURRENT_DATE()', NULL, FALSE);
+		$this->db->where('ar_invoice.due_date < CURRENT_DATE()', NULL, FALSE);
 		$this->db->where('sis_orangtua.nosms IS NOT NULL', NULL, FALSE);
 		$this->db->where('ar_invoice.due_date IS NOT NULL', NULL, FALSE);
 		$this->db->where('ar_invoice_outbox.invoice_id IS NULL', NULL, FALSE);
