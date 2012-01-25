@@ -29,6 +29,10 @@ class Otogroup extends Alazka_Controller {
 			$this->data['list_tarif'] = array();
 		}
 
+		$this->data['list_kelas'] = array();
+		try {
+			$this->data['list_kelas'] = $this->Kelas_model->get_all_kelas();
+		} catch (Exception $e) { } 
 		$offset = 20;
 		$page = $this->input->post('page');
 		$keyword = $this->input->post('keyword');
@@ -143,8 +147,8 @@ class Otogroup extends Alazka_Controller {
 		$this->load->model('ClassGroup_model');
 		$this->load->model('StudentGroup_model');
 
-		$fields = array('grouping', 'id_rate', 'kelas');
-
+		$fields = array('grouping', 'id_rate');
+		$kelas = $this->input->post('kelas');
 		$peserta = $this->input->post('peserta');
 		foreach ($fields as $f) $$f = trim($this->input->post($f));
 
@@ -153,17 +157,17 @@ class Otogroup extends Alazka_Controller {
 		if (empty($id_rate)) array_push($errors, 'Tarif harap diisi');
 
 		if (($grouping == 'siswa') && (empty($peserta))) array_push($errors, 'Peserta belum ada');
+		if (($grouping == 'kelas') && (empty($kelas))) array_push($errors, 'Belum memilih kelas');
 
-		$grades = array();
+		$classInGroup = array();
 		if ($grouping == 'kelas') {
-			$kelas = (int) $kelas;
-
 			try {
 				$rows = $this->ClassGroup_model->get_all_classgroup(array('id_rate'=>$id_rate));
 
-				foreach ($rows as $r) array_push($grades, $r->get_grade());
+				foreach ($rows as $r) {
+					array_push($classInGroup, $r->get_id_class());
+				}
 
-				if (in_array($kelas, $grades)) array_push($errors, 'Kelompok tagihan sudah ada');
 			} catch (ClassGroupNotFoundException $e) {
 				//it's okay
 			}
@@ -176,30 +180,31 @@ class Otogroup extends Alazka_Controller {
 			$response['success'] = 0;
 			$response['message'] = sprintf('<span>%s</span>', implode('<span><br/></span>', $errors));
 		} else {
+			$ok = array();
+			$ok['fail'] = array(); $ok['success'] = array();
+
 			if ($grouping == 'kelas') {
-				$kelompok = new ClassGroup;
 
-				$kelompok->set_id_rate($id_rate);
-				if (in_array($kelas, range(0,9))) {
-					$kelompok->set_grade($kelas);
+				foreach ($kelas as $r) {
+					if (in_array($r, $classInGroup)) array_push($ok['fail'], $r);
+					else {
+						$kelompok = new ClassGroup;
+						$kelompok->set_id_rate($id_rate);
 
-					$ok = $this->ClassGroup_model->insert($kelompok);
-				} else if ($kelas == 99) {
-					foreach (range(0,9) as $i) {
-						if (in_array($i, $grades)) continue;
+						$kelompok->set_id_class($r);
 
-						$kelompok->set_grade($i);
-
-						if ($this->ClassGroup_model->insert($kelompok)) $ok++;
+						if ($this->ClassGroup_model->insert($kelompok)) array_push($ok['success'], $r);
+						else array_push($ok['fail'], $r);
 					}
 				}
+
 			} else {
 				//i know, query in a loop, double query
-				$ok = array();
 				foreach ($peserta as $r) {
 
 					try {
 						$this->StudentGroup_model->get_single_studentgroup(array('id_rate'=>$id_rate, 'id_student'=>$r));
+						array_push($ok['fail'], $r);
 
 					} catch (StudentGroupNotFoundException $e) {
 						$student = new StudentGroup();
@@ -207,13 +212,14 @@ class Otogroup extends Alazka_Controller {
 						$student->set_id_rate($id_rate);
 						$student->set_id_student($r);
 
-						if ($this->StudentGroup_model->insert($student)) array_push($ok, $r);
+						if ($this->StudentGroup_model->insert($student)) array_push($ok['success'], $r);
+						else array_push($ok['fail'], $r);
 					}
 				}
 
 			}
-			$response['success'] = (! empty($ok));
-			$response['message'] = empty($ok) ? 'gagal menyimpan kelompok tagihan' : 'Kelompok tagih berhasil disimpan';
+			$response['success'] = (! empty($ok['success']));
+			$response['message'] = empty($ok['success']) ? 'gagal menyimpan kelompok tagihan' : 'Kelompok tagih berhasil disimpan';
 			$response['extended'] = $ok;
 
 		}

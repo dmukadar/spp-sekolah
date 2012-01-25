@@ -5,7 +5,7 @@ define('CLASSGROUP_TABLE', 'ar_group_class');
 class ClassGroup {
 	private $id = NULL;
 	private $id_rate = NULL;
-	private $grade = NULL;
+	private $id_class = NULL;
 	private $status = NULL;
 	private $created = NULL;
 	private $modified = NULL;
@@ -30,12 +30,12 @@ class ClassGroup {
 		return $this->id_rate;
 	}
 
-	public function set_grade($grade) {
-		$this->grade = $grade;
+	public function set_id_class($id_class) {
+		$this->id_class = $id_class;
 	}
 
-	public function get_grade() {
-		return $this->grade;
+	public function get_id_class() {
+		return $this->id_class;
 	}
 
 	public function set_status($status) {
@@ -86,7 +86,7 @@ class ClassGroup {
 			$tmp = new ClassGroup();
 			$tmp->set_id($result->id);
 			$tmp->set_id_rate($result->id_rate);
-			$tmp->set_grade($result->grade);
+			$tmp->set_id_class($result->id_class);
 			$tmp->set_status($result->status);
 			$tmp->set_created($result->created);
 			$tmp->set_modified($result->modified);
@@ -173,7 +173,7 @@ EOL;
 		else $limit = " limit $limit, $offset";
 
 		$query = "
-		select 'siswa', arg.id, rate.name tagihan, CONCAT(sis.namalengkap, ' - ', kelas.kelas, ' ( ', kelas.jenjang, ' )') peserta
+		select 'siswa' kelompok, arg.id, rate.name tagihan, CONCAT(sis.namalengkap, ' - ', kelas.kelas, ' ( ', kelas.jenjang, ' )') peserta
 		  from   ar_group_student arg, ar_rate rate, sis_siswa sis, dm_kelas kelas 
 			  where arg.id_rate = rate.id and sis.id = arg.id_student and sis.dm_kelas_id = kelas.id $condition $limit
 		";
