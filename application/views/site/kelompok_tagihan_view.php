@@ -17,11 +17,11 @@
 							</select>
 						</dd>
 
-						<dt><label for="nama">Peserta</label></dt>
+						<dt><label for="nama">Kelompok ditagih</label></dt>
 						<dd>
-								<p>
-								<input id="group_kelas" name="grouping" value="kelas" type="radio"> Kelas <br/>
-								<select id="kelas" name="kelas" class="small">
+								<strong> Kelas </strong><br/>
+								<input id="grouping" name="grouping" value="kelas" type="hidden" />
+								<select id="kelas" name="kelas" class="small select_grouping">
 									<option value="99">Semua</option>
 									<option value="0">TK</option>
 									<option value="1">1 (SD)</option>
@@ -29,21 +29,19 @@
 									<option value="3">3 (SD)</option>
 									<option value="4">4 (SD)</option>
 									<option value="5">5 (SD)</option>
-									<option value="6">5 (SD)</option>
+									<option value="6">6 (SD)</option>
 									<option value="7">7 (SMP)</option>
 									<option value="8">8 (SMP)</option>
 									<option value="9">9 (SMP)</option>
 								</select>
-								</p>
-								<p>
-								<input id="group_siswa" name="grouping" value="siswa" type="radio" checked="checked"> Siswa <br/>
-								<input id="siswa" type="text" name="siswa" class="medium" value="<?php echo (@$sess->nama);?>" />
-								<div id="peserta-container" style="display: none; -moz-border-radius: 5px 5px 5px 5px; background: no-repeat scroll 10px 13px #E3FFDE; border: 1px solid #6CD858; margin-bottom: 10px; padding: 10px 10px 10px 37px; ">
+								<hr />
+								<strong> Siswa </strong><br/>
+								<input id="siswa" type="text" name="siswa" class="medium select_grouping" value="<?php echo (@$sess->nama);?>" />
+								<div id="peserta-container" style="margin-top: 10px; display: none; -moz-border-radius: 5px 5px 5px 5px; background: no-repeat scroll 10px 13px #E3FFDE; border: 1px solid #6CD858; margin-bottom: 10px; padding: 10px 10px 10px 37px; ">
 									Daftar sementara:
 									<ol id="tmp_siswa">
 									</ol>
 								</div>
-								</p>
 						</dd>
 					</dl>
 					
@@ -187,5 +185,9 @@
 				var li = jQuery(item).parent();
 				li.fadeOut();
 				li.remove();
-			}
+			};
+
+			jQuery('.select_grouping').focus(function() {
+				jQuery('#grouping').val(this.id);
+			});
 			</script>
