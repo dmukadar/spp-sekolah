@@ -221,9 +221,14 @@ class Otogroup extends Alazka_Controller {
 			}
 		}
 		
-		
+			try {
+			$this->data['list_tarif'] = $this->Rate_model->get_all_rate();
+			
+		} catch (Exception $e) {
+			$this->data['list_tarif'] = array();
+		}
 		$this->load->view('site/header_view');
-		$this->load->view('site/form_kelompok_tagihan', $this->data);
+		$this->load->view('site/impor_kelompok_tagihan_view', $this->data);
 		$this->load->view('site/footer_view');
 	}
 
