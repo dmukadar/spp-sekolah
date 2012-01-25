@@ -442,6 +442,10 @@ class Siswa_model extends CI_Model {
 			
 		return $record[0];
 	}
+
+	public function find_by_pk($id) {
+		return $this->get_single_siswa(array('sis_siswa.id'=>$id));
+	}
 	
 	public function get_all_siswa_ajax($nama_siswa, $limit=-1, $offset=0) {
 		$this->db->like('sis_siswa.namalengkap', $nama_siswa, 'after');

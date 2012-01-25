@@ -21,7 +21,7 @@ class Tarif_khusus extends Alazka_Controller {
 		$this->load->helper('mr_form');
 		
 		// Page title untuk HTML
-		$this->data['page_title'] = 'Data Tarif Khusus';
+		$this->data['page_title'] = 'Data Dispensasi';
 		
 		// URL untuk Ajax
 		$this->data['ajax_siswa_url'] = site_url('tarif_khusus/get_ajax_siswa/10/');
@@ -137,7 +137,7 @@ class Tarif_khusus extends Alazka_Controller {
 		$this->load->helper('mr_form');
 		
 		// Page title untuk HTML
-		$this->data['page_title'] = 'Edit Tarif Khusus';
+		$this->data['page_title'] = 'Edit Data Dispensasi';
 		
 		// URL untuk Ajax
 		$this->data['ajax_siswa_url'] = site_url('tarif_khusus/get_ajax_siswa/10/');
@@ -164,14 +164,14 @@ class Tarif_khusus extends Alazka_Controller {
 			$siswa = $this->Siswa_model->get_single_siswa($where);
 		} catch (Custom_RateNotFoundException $e) {
 			// data tarif tidak ditemukan, tampilkan form insert
-			$this->set_flash_message('FATAL ERROR: Tarif khusus yang akan diedit tidak ditemukan.', 'error msg');
+			$this->set_flash_message('FATAL ERROR: Data dispensasi yang akan diedit tidak ditemukan.', 'error msg');
 			
 			$this->index();
 			
 			return FALSE;
 		} catch (SiswaNotFoundException $e) {
 			// data tarif tidak ditemukan, tampilkan form insert
-			$this->set_flash_message('FATAL ERROR: Siswa yang memiliki data tarif khusus ini tidak ditemukan.', 'error msg');
+			$this->set_flash_message('FATAL ERROR: Data siswa tidak ditemukan.', 'error msg');
 			
 			$this->index();
 			
@@ -258,10 +258,10 @@ class Tarif_khusus extends Alazka_Controller {
 			// update custom_rate
 			$this->Custom_Rate_model->update($custrate, $exclude);
 			
-			$mesg = sprintf('Data tarif khusus untuk siswa %s berhasil diupdate.', $sess->nama_siswa);
+			$mesg = sprintf('Data dispensasi untuk siswa %s berhasil disimpan.', $sess->nama_siswa);
 			$this->set_flash_message($mesg, 'information msg');
 		} catch (Custom_RateNotFoundException $e) {
-			$this->set_flash_message('FATAL ERROR: Tarif khusus yang akan diupdate tidak ditemukan.', 'error msg');
+			$this->set_flash_message('FATAL ERROR: Data dispensasi yang akan disimpan tidak ditemukan.', 'error msg');
 		} catch (Exception $e) {
 			$this->set_flash_message('Mohon maaf, terjadi error saat penyimpan, coba lagi.', 'error msg');
 		}
