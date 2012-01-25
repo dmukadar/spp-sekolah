@@ -117,8 +117,9 @@ class Otogroup extends Alazka_Controller {
 		$this->load->model('ClassGroup_model');
 		$this->load->model('StudentGroup_model');
 
-		$fields = array('grouping', 'id_rate', 'kelas', 'peserta');
+		$fields = array('grouping', 'id_rate', 'kelas');
 
+		$peserta = $this->input->post('peserta');
 		foreach ($fields as $f) $$f = trim($this->input->post($f));
 
 		$errors = array();
@@ -143,8 +144,12 @@ class Otogroup extends Alazka_Controller {
 		}
 
 
-		if (! empty($errors)) echo sprintf('<span>%s</span>', implode('<span><br/></span>', $errors));
-		else {
+		header('Content-type: application/json');
+		$response = array();
+		if (! empty($errors)) {
+			$response['success'] = 0;
+			$response['message'] = sprintf('<span>%s</span>', implode('<span><br/></span>', $errors));
+		} else {
 			if ($grouping == 'kelas') {
 				$kelompok = new ClassGroup;
 
@@ -162,8 +167,31 @@ class Otogroup extends Alazka_Controller {
 						if ($this->ClassGroup_model->insert($kelompok)) $ok++;
 					}
 				}
+			} else {
+				//i know, query in a loop, double query
+				$ok = array();
+				foreach ($peserta as $r) {
+
+					try {
+						$this->StudentGroup_model->get_single_studentgroup(array('id_rate'=>$id_rate, 'id_student'=>$r));
+
+					} catch (StudentGroupNotFoundException $e) {
+						$student = new StudentGroup();
+
+						$student->set_id_rate($id_rate);
+						$student->set_id_student($r);
+
+						if ($this->StudentGroup_model->insert($student)) array_push($ok, $r);
+					}
+				}
+
 			}
-			echo empty($ok) ? 'gagal menyimpan kelompok tagihan' : 'Kelompok tagih berhasil disimpan';
+			$response['success'] = (! empty($ok));
+			$response['message'] = empty($ok) ? 'gagal menyimpan kelompok tagihan' : 'Kelompok tagih berhasil disimpan';
+			$response['extended'] = $ok;
+
 		}
+
+		echo json_encode($response);
 	}
 }

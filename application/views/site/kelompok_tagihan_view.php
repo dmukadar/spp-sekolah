@@ -37,14 +37,10 @@
 								</p>
 								<p>
 								<input id="group_siswa" name="grouping" value="siswa" type="radio" checked="checked"> Siswa <br/>
-								<input id="nama" type="text" name="nama" class="medium" value="<?php echo (@$sess->nama);?>" />
-								<div class="success msg">
-									Daftar sementara (klik tombol Simpan untuk menyimpan permanen):
+								<input id="siswa" type="text" name="siswa" class="medium" value="<?php echo (@$sess->nama);?>" />
+								<div id="peserta-container" style="display: none; -moz-border-radius: 5px 5px 5px 5px; background: no-repeat scroll 10px 13px #E3FFDE; border: 1px solid #6CD858; margin-bottom: 10px; padding: 10px 10px 10px 37px; ">
+									Daftar sementara:
 									<ol id="tmp_siswa">
-										<li><a title="Delete" href="1" class="delete-row"><img alt="Delete" src="images/icons/cross.png"></a> Budiwijaya - SD kelas IV</li>
-										<li><a title="Delete" href="2" class="delete-row"><img alt="Delete" src="images/icons/cross.png"></a> Ali Mukadar - SD kelas IV</li>
-										<li><a title="Delete" href="3" class="delete-row"><img alt="Delete" src="images/icons/cross.png"></a> Teguh Wijaya - SMP kelas II</li>
-										<li><a title="Delete" href="4" class="delete-row"><img alt="Delete" src="images/icons/cross.png"></a> Santi susisan - SD kelas IV</li>
 									</ol>
 								</div>
 								</p>
@@ -161,13 +157,35 @@
 					var data = jQuery('#myform').serialize();
 
 					jQuery.post(url, data, function(response) {
-						if (response.search('berhasil') == -1) {
-							flashDialog('err-msg', response, 5);
+						if (! response.success) {
+							flashDialog('err-msg', response.message, 5);
 						} else {
-							flashDialog('info-msg', response, 2);
+							flashDialog('info-msg', response.message, 2);
 							setTimeout(function() { document.location.href=document.location.href; }, 3000);
 						}
 					});
 				});
 
+			// ---- Auto complete
+			jQuery('#siswa').jsonSuggest({
+				minCharacters: 3,
+				url: '<?php echo ($ajax_siswa_url);?>',
+				onSelect: function(item) {
+					if (! jQuery('#peserta-container').is(':visible')) jQuery('#peserta-container').toggle();
+
+					peserta = '<li><input type="hidden" name="peserta[]" value="' + item.id + '" /><a title="Delete" href="javascript:void(0);" class="rm-siswa" onclick="remove_siswa(this);"><img alt="Delete" src="images/icons/cross.png"></a> ' + item.nama + ' - ' + item.kelas + ' ( ' + item.jenjang + ' )</li>';
+					jQuery('#tmp_siswa').append(peserta);
+					jQuery('#siswa').val('');
+				},
+				onEnter: function() {
+					// cegah form submit
+					return false;
+				}
+			});
+
+			function remove_siswa(item) {
+				var li = jQuery(item).parent();
+				li.fadeOut();
+				li.remove();
+			}
 			</script>
