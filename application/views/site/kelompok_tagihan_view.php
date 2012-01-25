@@ -201,4 +201,17 @@
 					}
 				});
 			});
+
+			jQuery('.delete-row').click(function(e) {
+				if (confirm('Anda yakin akan menghapus data kelompok tagihan ?')) {
+					jQuery.post(jQuery(this).attr('href'), function(response) {
+						if (response.search('berhasil') == -1) flashDialog('err-msg', response, 10);
+						else {
+							flashDialog('info-msg', response, 2);
+							setTimeout(function() { document.location.href=document.location.href; }, 3000);
+						}
+					});
+				}
+				e.preventDefault();
+			});
 			</script>

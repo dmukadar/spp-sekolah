@@ -307,6 +307,8 @@ EOL;
 		if ($this->db->affected_rows() == 0) {
 			// do nothing
 		}
+
+		return $this->db->affected_rows();
 	}
 	
 	public function custom_delete($where) {

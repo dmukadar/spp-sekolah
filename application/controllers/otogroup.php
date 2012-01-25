@@ -227,4 +227,29 @@ class Otogroup extends Alazka_Controller {
 
 		echo json_encode($response);
 	}
+	function delete($grouping, $id, $hash) {
+		if ($hash != md5($id)) echo 'salah link';
+		else {
+			if (($grouping != 'siswa') && ($grouping != 'kelas')) echo 'invalid grouping';
+			else {
+				$this->load->model('ClassGroup_model');
+				$this->load->model('StudentGroup_model');
+
+				$ok = false;
+				if ($grouping == 'siswa') {
+					$kelompok = new StudentGroup;
+					$kelompok->set_id($id);
+
+					$ok = $this->StudentGroup_model->delete($kelompok);
+				} else {
+					$kelompok = new ClassGroup;
+					$kelompok->set_id($id);
+
+					$ok = $this->ClassGroup_model->delete($kelompok);
+				}
+
+				echo $ok ? 'data berhasil dihapus' : 'data gagal dihapus';
+			}
+		}
+	}
 }
