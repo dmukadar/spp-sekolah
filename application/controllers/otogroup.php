@@ -14,6 +14,7 @@ class Otogroup extends Alazka_Controller {
 		$this->load->model('Kelas_model');
 		$this->load->model('Siswa_model');
 		$this->load->model('Rate_model');
+		$this->load->model('ClassGroup_model');
 
 		$this->data['sess'] = null;
 		$this->data['action_url'] = site_url('otogroup/simpan');
@@ -27,6 +28,31 @@ class Otogroup extends Alazka_Controller {
 		} catch (Exception $e) {
 			$this->data['list_tarif'] = array();
 		}
+
+		$offset = 20;
+		$page = $this->input->post('page');
+		$keyword = $this->input->post('keyword');
+
+		$total_page = ceil($this->ClassGroup_model->get_both_group_count($keyword) / $offset);
+		if (empty($page)) $page = 1;
+		else if (($page > $total_page) && ($total_page > 0)) $page = $total_page;
+
+		$this->data['list_data'] = $this->ClassGroup_model->get_both_group($keyword, ($page-1) * $offset, $offset);
+
+		$firstRange = floor($page / 5) * 5;
+		if (empty($firstRange)) $firstRange = 1;
+
+		if (($firstRange + 4) < $total_page)  $lastRange = $firstRange + 4;
+		else $lastRange = $total_page - 1;
+
+		$this->data['total_page'] = $total_page;
+		$this->data['offset'] = $offset;
+		$this->data['page'] = $page;
+		$this->data['next_page'] = ($page >= $total_page) ? $total_page : ($page + 1);
+		$this->data['prev_page'] = ($page == 1) ? 1 : ($page - 1);
+		$this->data['first_range'] = $firstRange;
+		$this->data['last_range'] = $lastRange;
+		$this->data['keyword'] = $keyword;
 
 		$this->load->view('site/header_view');
 		$this->load->view('site/kelompok_tagihan_view', $this->data);

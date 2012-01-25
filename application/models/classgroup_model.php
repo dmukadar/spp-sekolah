@@ -156,6 +156,57 @@ class ClassGroup_model extends CI_Model {
 		parent::__construct();
 	}
 	
+	public function get_both_group($where='', $limit=null, $offset=5) {
+		if (empty($where)) $condition = '';
+		else {
+			$condition =<<<EOL
+and (
+	lower(rate.name) like lower('%$where%') 
+	OR lower(sis.namalengkap) like lower('%$where%')
+	OR lower(kelas.kelas) like lower('%$where%')
+	OR lower(kelas.jenjang) like lower('%$where%')
+	)
+EOL;
+		}
+
+		if ($limit == null) $limit = " limit $offset";
+		else $limit = " limit $limit, $offset";
+
+		$query = "
+		select 'siswa', arg.id, rate.name tagihan, CONCAT(sis.namalengkap, ' - ', kelas.kelas, ' ( ', kelas.jenjang, ' )') peserta
+		  from   ar_group_student arg, ar_rate rate, sis_siswa sis, dm_kelas kelas 
+			  where arg.id_rate = rate.id and sis.id = arg.id_student and sis.dm_kelas_id = kelas.id $condition $limit
+		";
+		$query = $this->db->query($query);
+		$result = $query->result();
+
+		return $result;
+	}
+
+	public function get_both_group_count($where='', $limit=-1, $offset=0) {
+		if (empty($where)) $condition = '';
+		else {
+			$condition =<<<EOL
+and (
+	lower(rate.name) like lower('%$where%') 
+	OR lower(sis.namalengkap) like lower('%$where%')
+	OR lower(kelas.kelas) like lower('%$where%')
+	OR lower(kelas.jenjang) like lower('%$where%')
+	)
+EOL;
+		}
+
+		$query = "
+		select COUNT(-1) as total 
+		  from   ar_group_student arg, ar_rate rate, sis_siswa sis, dm_kelas kelas 
+			  where arg.id_rate = rate.id and sis.id = arg.id_student and sis.dm_kelas_id = kelas.id $condition
+		";
+		$query = $this->db->query($query);
+		$result = $query->result();
+
+		return $result[0]->total;
+	}
+
 	public function get_all_classgroup($where=array(), $limit=-1, $offset=0) {
 		if ($limit > 0) {
 			$this->db->limit($limit, $offset);

@@ -54,15 +54,15 @@
 			</div>
 
 			<div id="list-layer">
+			<form name="frm-filter-cat" id="frm-filter-cat" method="post" action="<?php echo (@$filter_url);?>">
+
 			<div class="buttons" style="text-align:right;">
 				<button type="button" class="button green" id="new-button">Tambah</button>
 			</div>
-			<form name="frm-filter-cat" id="frm-filter-cat" method="post" action="<?php echo (@$action_url);?>">
 					<div>
 						<label for"keyword"><strong>Filter: </strong></label>
-						<input type="text" class="medium" name="keyword" id="keyword" value="cari ..." onfocus="if (this.value=='cari ...') this.value='';" />
+						<input type="text" class="medium submit-filter" name="keyword" id="keyword" value="<?php echo empty($keyword) ? 'cari ...' : $keyword; ?>" onfocus="if (this.value=='cari ...') this.value='';" />
 					</div>
-		  </form>
 				
 			
 			<br/>
@@ -75,46 +75,21 @@
 				</tr>
 				</thead>
 				<tbody>
+				<?php if (empty($list_data)) : ?>
 				<tr>
-					<td>Uang Seragam SMP</td>
-					<td>Kelas 7 SMP</td>
+					<td colspan="3">Data tidak ditemukan</td>
+				</tr>
+				<?php else : ?>
+				<?php foreach ($list_data as $row) : ?>
+				<tr>
+					<td><?php echo $row->tagihan; ?></td>
+					<td><?php echo $row->peserta; ?></td>
 					<td style="text-align:center;">
-						<a title="Edit" href="edit/999"><img alt="Edit" src="images/icons/edit.png"></a>
-						<a title="Delete" href="delete/999" class="delete-row"><img alt="Delete" src="images/icons/cross.png"></a>
+						<a title="Delete" href="<?php echo sprintf('%s/%d/%s', site_url('otogroup/delete/'), $row->id, md5($row->id) ); ?>" class="delete-row"><img alt="Delete" src="images/icons/cross.png"></a>
 					</td>
 				</tr>
-				<tr>
-					<td>Uang Seragam SMP</td>
-					<td>Kelas 8 SMP</td>
-					<td style="text-align:center;">
-						<a title="Edit" href="edit/999"><img alt="Edit" src="images/icons/edit.png"></a>
-						<a title="Delete" href="delete/999" class="delete-row"><img alt="Delete" src="images/icons/cross.png"></a>
-					</td>
-				</tr>
-				<tr>
-					<td>Uang Seragam SMP</td>
-					<td>Kelas 9 SMP</td>
-					<td style="text-align:center;">
-						<a title="Edit" href="edit/999"><img alt="Edit" src="images/icons/edit.png"></a>
-						<a title="Delete" href="delete/999" class="delete-row"><img alt="Delete" src="images/icons/cross.png"></a>
-					</td>
-				</tr>
-				<tr>
-					<td>Uang Sanggar Pendaftaran Komputer Kids</td>
-					<td>Budiwijaya - IV B SD</td>
-					<td style="text-align:center;">
-						<a title="Edit" href="edit/999"><img alt="Edit" src="images/icons/edit.png"></a>
-						<a title="Delete" href="delete/999" class="delete-row"><img alt="Delete" src="images/icons/cross.png"></a>
-					</td>
-				</tr>
-				<tr>
-					<td>Uang Sanggar Komputer Kids</td>
-					<td>Budiwijaya - IV B SD</td>
-					<td style="text-align:center;">
-						<a title="Edit" href="edit/999"><img alt="Edit" src="images/icons/edit.png"></a>
-						<a title="Delete" href="delete/999" class="delete-row"><img alt="Delete" src="images/icons/cross.png"></a>
-					</td>
-				</tr>
+				<?php endforeach; ?>
+				<?php endif; ?>
 				</tbody>
 			</table>
 		<div class="tablefooter clearfix">
@@ -122,18 +97,20 @@
 							Keterangan: <img alt="Edit" src="images/icons/edit.png"> Ubah data  <img alt="Delete" src="images/icons/cross.png"> Hapus data
 						</div>
 						<div class="pagination">
-							<a href="#">Prev</a>
-							<a class="current" href="#">1</a>
-							<a href="#">2</a>
-							<a href="#">3</a>
-							<a href="#">4</a>
-							<a href="#">5</a>
+							<a href="<?php echo $prev_page; ?>" class="paging-leaf">Prev</a>
+							<?php if ($total_page > 1) : ?>
+							<?php foreach (range($first_range, $last_range) as $p) : ?>
+							<a <?php echo ($p==$page ? 'class="current"' : ''); ?> href="<?php echo $p; ?>" class="paging-leaf"><?php echo $p; ?></a>
+							<?php endforeach; ?>
 							...
-							<a href="#">78</a>
-							<a href="#">Next</a>
+							<?php endif; ?>
+							<input type="text" title="loncat ke halaman ..." name="page" value="<?php echo $total_page; ?>" id="page" style="width: 25px; text-align: right;" class="submit-filter" />
+							<a href="<?php echo $next_page; ?>" class="paging-leaf">Next</a>
 						</div>
 					</div>
 		</div>
+
+		</form>
 		</div><!--list-layer-->
 
 
@@ -190,4 +167,19 @@
 			jQuery('.select_grouping').focus(function() {
 				jQuery('#grouping').val(this.id);
 			});
+
+			jQuery('a.paging-leaf').click(function(e) {
+				jQuery('#page').val(jQuery(this).attr('href'));
+				jQuery('#frm-filter-cat').submit();
+				e.preventDefault();
+			});
+
+			jQuery('.submit-filter').keypress(function(e){
+				if (e.keyCode == 13) jQuery('#frm-filter-cat').submit();
+			});
+
+			jQuery('#keyword').keypress(function(e){
+				jQuery('#page').val(1);
+			});
+
 			</script>
