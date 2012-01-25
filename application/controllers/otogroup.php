@@ -36,6 +36,7 @@ class Otogroup extends Alazka_Controller {
 		$offset = 20;
 		$page = $this->input->post('page');
 		$keyword = $this->input->post('keyword');
+		if ($keyword == 'cari ...') $keyword = '';
 
 		$total_page = ceil($this->ClassGroup_model->get_both_group_count($keyword) / $offset);
 		if (empty($page)) $page = 1;
