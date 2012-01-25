@@ -157,7 +157,17 @@
 					jQuery('#list-layer').show();
 				});
 				jQuery('#save-button').click(function() {
-					flashDialog('err-msg', 'Fitur ini masih dalam pengembangan', 5);
+					var url = jQuery('#myform').attr('action');
+					var data = jQuery('#myform').serialize();
+
+					jQuery.post(url, data, function(response) {
+						if (response.search('berhasil') == -1) {
+							flashDialog('err-msg', response, 5);
+						} else {
+							flashDialog('info-msg', response, 2);
+							setTimeout(function() { document.location.href=document.location.href; }, 3000);
+						}
+					});
 				});
 
 			</script>

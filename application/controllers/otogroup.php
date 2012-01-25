@@ -16,8 +16,9 @@ class Otogroup extends Alazka_Controller {
 		$this->load->model('Rate_model');
 
 		$this->data['sess'] = null;
-		$this->data['action_url'] = site_url('tagihan/simpan');
-		$this->data['info_url'] = site_url('tagihan/info');
+		$this->data['action_url'] = site_url('otogroup/simpan');
+		$this->data['info_url'] = site_url('otogroup/info');
+		$this->data['filter_url'] = site_url('otogroup/index');
 
 		$this->data['ajax_siswa_url'] = site_url('tarif_khusus/get_ajax_siswa/10/');
 
@@ -112,4 +113,57 @@ class Otogroup extends Alazka_Controller {
 		$this->load->view('site/footer_view');
 	}
 
+	public function simpan() {
+		$this->load->model('ClassGroup_model');
+		$this->load->model('StudentGroup_model');
+
+		$fields = array('grouping', 'id_rate', 'kelas', 'peserta');
+
+		foreach ($fields as $f) $$f = trim($this->input->post($f));
+
+		$errors = array();
+		if (! in_array($grouping, array('siswa', 'kelas'))) array_push($errors, 'Jenis peserta harus kelas atau siswa');
+		if (empty($id_rate)) array_push($errors, 'Tarif harap diisi');
+
+		if (($grouping == 'siswa') && (empty($peserta))) array_push($errors, 'Peserta belum ada');
+
+		$grades = array();
+		if ($grouping == 'kelas') {
+			$kelas = (int) $kelas;
+
+			try {
+				$rows = $this->ClassGroup_model->get_all_classgroup(array('id_rate'=>$id_rate));
+
+				foreach ($rows as $r) array_push($grades, $r->get_grade());
+
+				if (in_array($kelas, $grades)) array_push($errors, 'Kelompok tagihan sudah ada');
+			} catch (ClassGroupNotFoundException $e) {
+				//it's okay
+			}
+		}
+
+
+		if (! empty($errors)) echo sprintf('<span>%s</span>', implode('<span><br/></span>', $errors));
+		else {
+			if ($grouping == 'kelas') {
+				$kelompok = new ClassGroup;
+
+				$kelompok->set_id_rate($id_rate);
+				if (in_array($kelas, range(0,9))) {
+					$kelompok->set_grade($kelas);
+
+					$ok = $this->ClassGroup_model->insert($kelompok);
+				} else if ($kelas == 99) {
+					foreach (range(0,9) as $i) {
+						if (in_array($i, $grades)) continue;
+
+						$kelompok->set_grade($i);
+
+						if ($this->ClassGroup_model->insert($kelompok)) $ok++;
+					}
+				}
+			}
+			echo empty($ok) ? 'gagal menyimpan kelompok tagihan' : 'Kelompok tagih berhasil disimpan';
+		}
+	}
 }
