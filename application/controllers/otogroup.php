@@ -164,11 +164,14 @@ class Otogroup extends Alazka_Controller {
 				$id_siswa=$import->val($i, 'A');
 				$nama=$import->val($i, 'B');
 				$this->load->model('Keltagih_model');		
-				$check_siswa=$this->Keltagih_model->check_siswa($id_siswa);		
+				//$check_siswa=$this->Keltagih_model->check_siswa($id_siswa);		
+				$query=$this->Keltagih_model->check_siswa($id_siswa); 
+				$check_siswa=$query->num_rows();
 				$check_group=$this->Keltagih_model->check_group($id_siswa);	
 				
 			if ($check_siswa > 0&& $check_group > 0)
 			{
+			  $siswa_data=$query->row();
 			  $data['status']="SUDAH";
 			  $data['induk']=$id_siswa;
 			  $data['nama']=$nama;
@@ -176,26 +179,30 @@ class Otogroup extends Alazka_Controller {
 			  $data_siswa[$counter]['induk']=$id_siswa;
 			  $data_siswa[$counter]['nama']=$nama;
 			  
-			   $data['kelas']="";		
-			  $data_siswa[$counter]['kelas']=" ";
+			  $data['kelas']=$siswa_data->kelas;		
+			  $data_siswa[$counter]['kelas']=$siswa_data->kelas;
 			  
-			  $data['jenjang']="";		
-			  $data_siswa[$counter]['jenjang']=" ";	
+			  $data['jenjang']=$siswa_data->jenjang;		
+			  $data_siswa[$counter]['jenjang']=$siswa_data->jenjang;	
 			  
 			}
 			else if($check_siswa > 0&& $check_group==0)
 			{
+			  $siswa_data=$query->row();
 			  $data['status']="OK";
 			  $data['induk']=$id_siswa;
 			  $data['nama']=$nama;
 			  $data_siswa[$counter]['status']="OK";
 			  $data_siswa[$counter]['induk']=$id_siswa;
 			  $data_siswa[$counter]['nama']=$nama;	  	
-			  $data['kelas']=" ";	
-			  $data_siswa[$counter]['kelas']=" ";	
+			 /* $data['kelas']= $this->Keltagih_model->kelas(array(),$id_siswa);		
+			   $data_siswa[$counter]['kelas']= $data['kelas'];*/
+			 
+			  $data['kelas']=$siswa_data->kelas;	
+			  $data_siswa[$counter]['kelas']=$siswa_data->kelas;	
 			  
-			  $data['jenjang']="";		
-			  $data_siswa[$counter]['jenjang']=" "; 
+			  $data['jenjang']=$siswa_data->jenjang;		
+			  $data_siswa[$counter]['jenjang']=$siswa_data->jenjang; 
 			}
 			
 			else if ($check_siswa==0 && $check_group==0)		
@@ -233,13 +240,14 @@ class Otogroup extends Alazka_Controller {
 
 		
 	}
-
+//---
 	public function insert_data_from_excel(){
 		
 		$counter=$this->input->post('tx_counter');
 		$this->load->model("Keltagih_model");
 		for($i=1;$i<=$counter;$i++){
 			$status=$this->input->post('tx_status_'.$i);
+			//echo $status;
 			if($status=="OK"){
 				$data=array(
 				'id_rate' =>$this->input->post('tx_rate'), 
