@@ -144,6 +144,134 @@ class Otogroup extends Alazka_Controller {
 		$this->load->view('site/footer_view');
 	}
 
+//---by puz	-----------------------------------------------
+    function loadExcel()
+	{	
+		
+			 $rate=$this->input->post('id_rate');	
+			 $data['rate']=$rate;
+		     $this->load->helper('excel_reader2');
+		
+			 $import = new Spreadsheet_Excel_Reader($_FILES['file_import']['tmp_name']);
+             $baris = $import->rowcount($sheet_index=0);
+             $counter=0;
+             $error_msg="";
+             $counter_index=0;
+             $status=true;
+			 
+			for ($i=1; $i<=$baris; $i++)
+		    {
+				$id_siswa=$import->val($i, 'A');
+				$nama=$import->val($i, 'B');
+				$this->load->model('Keltagih_model');		
+				$check_siswa=$this->Keltagih_model->check_siswa($id_siswa);		
+				$check_group=$this->Keltagih_model->check_group($id_siswa);	
+				
+			if ($check_siswa > 0&& $check_group > 0)
+			{
+			  $data['status']="SUDAH";
+			  $data['induk']=$id_siswa;
+			  $data['nama']=$nama;
+			  $data_siswa[$counter]['status']="SUDAH";
+			  $data_siswa[$counter]['induk']=$id_siswa;
+			  $data_siswa[$counter]['nama']=$nama;
+			  
+			   $data['kelas']="";		
+			  $data_siswa[$counter]['kelas']=" ";
+			  
+			  $data['jenjang']="";		
+			  $data_siswa[$counter]['jenjang']=" ";	
+			  
+			}
+			else if($check_siswa > 0&& $check_group==0)
+			{
+			  $data['status']="OK";
+			  $data['induk']=$id_siswa;
+			  $data['nama']=$nama;
+			  $data_siswa[$counter]['status']="OK";
+			  $data_siswa[$counter]['induk']=$id_siswa;
+			  $data_siswa[$counter]['nama']=$nama;	  	
+			  $data['kelas']=" ";	
+			  $data_siswa[$counter]['kelas']=" ";	
+			  
+			  $data['jenjang']="";		
+			  $data_siswa[$counter]['jenjang']=" "; 
+			}
+			
+			else if ($check_siswa==0 && $check_group==0)		
+			{
+			  $data['status']="GAGAL";
+			  $data['induk']="  ";
+			  $data['nama']=$nama;
+			  $data_siswa[$counter]['status']="GAGAL";
+			  $data_siswa[$counter]['induk']="  ";
+			  $data_siswa[$counter]['nama']=$nama;
+			  
+			  $data['kelas']="";		
+			  $data_siswa[$counter]['kelas']=" ";
+			  
+			  $data['jenjang']="";		
+			  $data_siswa[$counter]['jenjang']=" ";	
+			}
+		$counter++;
+
+		}
+		
+		$data['data_siswa']=$data_siswa;
+		
+		$this->load->view('site/header_view');		
+		$this->load->view('site/tampil_tagihan_view',$data);
+		$this->load->view('site/footer_view');
+		try 
+			{
+			$this->data['list_tarif'] = $this->Rate_model->get_all_rate();		
+     		} 
+		
+		catch (Exception $e) {
+			$this->data['list_tarif'] = array();
+		}
+
+		
+	}
+
+	public function insert_data_from_excel(){
+		
+		$counter=$this->input->post('tx_counter');
+		$this->load->model("Keltagih_model");
+		for($i=1;$i<=$counter;$i++){
+			$status=$this->input->post('tx_status_'.$i);
+			if($status=="OK"){
+				$data=array(
+				'id_rate' =>$this->input->post('tx_rate'), 
+				'id_student'=>$this->input->post('tx_induk_'.$i)
+				);
+				$status=$this->Keltagih_model->insert($data);
+			}
+		}
+		
+			try {
+			$this->data['list_tarif'] = $this->Rate_model->get_all_rate();
+			
+		} catch (Exception $e) {
+			$this->data['list_tarif'] = array();
+		}
+		$this->load->view('site/header_view');
+		$this->load->view('site/impor_kelompok_tagihan_view', $this->data);
+		$this->load->view('site/footer_view');
+	}
+
+public function insert_data(){
+		
+		$data=array(
+			'id_rate' =>$this->input->post('rate'), 
+			'id_student'=>$this->input->post('tx_induk')
+		);
+		$status=$this->Keltagih_model->insert($data);
+		$this->load->view('site/header_view');
+		$this->load->view('site/form_kelompok_tagihan', $this->data);
+		$this->load->view('site/footer_view');
+	}
+//--------------------------------------------------------------------------
 	public function simpan() {
 		$this->load->model('ClassGroup_model');
 		$this->load->model('StudentGroup_model');
