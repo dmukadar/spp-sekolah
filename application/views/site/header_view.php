@@ -79,6 +79,11 @@
 						<li><a href="<?php echo (site_url('setoran/index'));?>">Data Setoran</a></li>
 					</ul>
 				</li>
+				<li><a href="#" onClick="return false;">Settings</a>
+					<ul>
+						<li><a href="<?php echo (site_url('userctl/index'));?>">Ubah Data Profil</a></li>
+					</ul>
+				</li>
 			</ul>
 			<ul id="usermenu">
 				<li><a href="<?php echo (site_url('site/logout'));?>">Logout</a></li>

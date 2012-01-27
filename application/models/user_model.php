@@ -278,6 +278,37 @@ class User_model extends CI_Model {
 	}
 	
 	/**
+	 * Method untuk menggenerate password dari user menggunakan kombinasi
+	 * salt + keyword yang dihash dengan MD5.
+	 * 
+	 * @author Rio Astamal <me@rioastamal.net>
+	 * 
+	 * @param string $salt - Random string untuk memperaman hasil hash
+	 * @param string $password - Password dari user
+	 * @return string - Hash 32 chars
+	 */ 
+	public function generate_password($salt, $password) {
+		$pass = md5($salt . $password);
+		
+		return $pass;
+	}
+	
+	public function update_password($user, $newpassword) {
+		if (FALSE === ($user instanceof User)) {
+			throw new Exception('Argumen pertama yang diberikan untuk method User_model::update_password harus berupa instance dari object User.');
+		}
+		
+		// lakukan update password
+		$salt = $user->get_user_salt();	// tidak perlug generate salt, ambil dari yang lama
+		$password = self::generate_password($salt, $newpassword);
+		
+		$where = array('ar_user.user_id' => $user->get_user_id());
+		$data = array('ar_user.user_pass' => $password);
+		
+		$this->custom_update($where, $data);
+	}
+	
+	/**
 	 * Method untuk mencocokkan username dan password dari user/pengguna.
 	 *
 	 * @author Rio Astamal <me@rioastamal.net>
