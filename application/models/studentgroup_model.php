@@ -230,6 +230,29 @@ class StudentGroup_model extends CI_Model {
 	public function custom_delete($where) {
 		$this->db->delete(STUDENGROUP_TABLE, $where);
 	}
+//------import excel	
+	public function check_siswa($id_siswa){
+		$this->db->select("kelas, sis_siswa.noinduk, jenjang,sis_siswa.id");	
+		$this->db->from('sis_siswa');
+		$this->db->join('dm_kelas', 'sis_siswa.dm_kelas_id = dm_kelas.id');		
+		$this->db->where("sis_siswa.noinduk", $id_siswa);
+		$query = $this->db->get();
+		return $query;
+	}
+		
+	public function check_group($id_siswa){
+		$this->db->select("ar_group_student.id_student");	
+		$this->db->from('ar_group_student');
+		$this->db->join('sis_siswa', 'ar_group_student.id_student = sis_siswa.id');		
+		$this->db->where("sis_siswa.noinduk", $id_siswa);
+		$query = $this->db->get();
+		return $query->num_rows();
+	}
+	
+	 function insert_exc($data=array()){
+		return $this->db->insert('ar_group_student',$data);		
+	}
+	//-------end import excel
 }
 
 

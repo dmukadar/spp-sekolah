@@ -133,6 +133,16 @@ class Otogroup extends Alazka_Controller {
 	}
 
 	public function import() {
+		$this->load->model('Kelas_model');
+		$this->load->model('Siswa_model');
+		$this->load->model('Rate_model');
+		$this->load->model('ClassGroup_model');
+
+		$this->data['sess'] = null;
+		$this->data['action_url'] = site_url('otogroup/simpan');
+		$this->data['info_url'] = site_url('otogroup/info');
+		$this->data['filter_url'] = site_url('otogroup/index');
+
 		try {
 			$this->data['list_tarif'] = $this->Rate_model->get_all_rate();
 		} catch (Exception $e) {
@@ -147,6 +157,15 @@ class Otogroup extends Alazka_Controller {
 //---by puz	-----------------------------------------------
     function loadExcel()
 	{	
+		$this->load->model('Kelas_model');
+		$this->load->model('Siswa_model');
+		$this->load->model('Rate_model');
+		$this->load->model('ClassGroup_model');
+
+		$this->data['sess'] = null;
+		$this->data['action_url'] = site_url('otogroup/simpan');
+		$this->data['info_url'] = site_url('otogroup/info');
+		$this->data['filter_url'] = site_url('otogroup/index');
 		
 			 $rate=$this->input->post('id_rate');	
 			 $data['rate']=$rate;
@@ -163,11 +182,10 @@ class Otogroup extends Alazka_Controller {
 		    {
 				$id_siswa=$import->val($i, 'A');
 				$nama=$import->val($i, 'B');
-				$this->load->model('Keltagih_model');		
-				//$check_siswa=$this->Keltagih_model->check_siswa($id_siswa);		
-				$query=$this->Keltagih_model->check_siswa($id_siswa); 
-				$check_siswa=$query->num_rows();
-				$check_group=$this->Keltagih_model->check_group($id_siswa);	
+				$this->load->model('StudentGroup_model');		
+				$query=$this->StudentGroup_model->check_siswa($id_siswa); 				
+				$check_siswa=$query->num_rows();				
+				$check_group=$this->StudentGroup_model->check_group($id_siswa);	
 				
 			if ($check_siswa > 0&& $check_group > 0)
 			{
@@ -185,6 +203,9 @@ class Otogroup extends Alazka_Controller {
 			  $data['jenjang']=$siswa_data->jenjang;		
 			  $data_siswa[$counter]['jenjang']=$siswa_data->jenjang;	
 			  
+			  $data['id']=$siswa_data->id;		
+			  $data_siswa[$counter]['id']=$siswa_data->id;
+			  
 			}
 			else if($check_siswa > 0&& $check_group==0)
 			{
@@ -195,14 +216,15 @@ class Otogroup extends Alazka_Controller {
 			  $data_siswa[$counter]['status']="OK";
 			  $data_siswa[$counter]['induk']=$id_siswa;
 			  $data_siswa[$counter]['nama']=$nama;	  	
-			 /* $data['kelas']= $this->Keltagih_model->kelas(array(),$id_siswa);		
-			   $data_siswa[$counter]['kelas']= $data['kelas'];*/
 			 
 			  $data['kelas']=$siswa_data->kelas;	
 			  $data_siswa[$counter]['kelas']=$siswa_data->kelas;	
 			  
 			  $data['jenjang']=$siswa_data->jenjang;		
 			  $data_siswa[$counter]['jenjang']=$siswa_data->jenjang; 
+			  
+			  $data['id']=$siswa_data->id;		
+			  $data_siswa[$counter]['id']=$siswa_data->id;
 			}
 			
 			else if ($check_siswa==0 && $check_group==0)		
@@ -219,6 +241,9 @@ class Otogroup extends Alazka_Controller {
 			  
 			  $data['jenjang']="";		
 			  $data_siswa[$counter]['jenjang']=" ";	
+			  
+			   $data['id']="";		
+			  $data_siswa[$counter]['id']=" ";
 			}
 		$counter++;
 
@@ -240,11 +265,11 @@ class Otogroup extends Alazka_Controller {
 
 		
 	}
-//---
+
 	public function insert_data_from_excel(){
 		
 		$counter=$this->input->post('tx_counter');
-		$this->load->model("Keltagih_model");
+		$this->load->model("StudentGroup_model");
 		for($i=1;$i<=$counter;$i++){
 			$status=$this->input->post('tx_status_'.$i);
 			//echo $status;
@@ -253,7 +278,7 @@ class Otogroup extends Alazka_Controller {
 				'id_rate' =>$this->input->post('tx_rate'), 
 				'id_student'=>$this->input->post('tx_induk_'.$i)
 				);
-				$status=$this->Keltagih_model->insert($data);
+				$status=$this->StudentGroup_model->insert_exc($data);
 			}
 		}
 		
@@ -267,7 +292,7 @@ class Otogroup extends Alazka_Controller {
 		$this->load->view('site/impor_kelompok_tagihan_view', $this->data);
 		$this->load->view('site/footer_view');
 	}
-
+//--------------------------------------------------------------------------
 public function insert_data(){
 		
 		$data=array(
@@ -279,7 +304,7 @@ public function insert_data(){
 		$this->load->view('site/form_kelompok_tagihan', $this->data);
 		$this->load->view('site/footer_view');
 	}
-//--------------------------------------------------------------------------
+
 	public function simpan() {
 		$this->load->model('ClassGroup_model');
 		$this->load->model('StudentGroup_model');
