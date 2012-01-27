@@ -1,7 +1,10 @@
 <div id="list-layer">
-			<h2>Data Siap Impor Kelompok Tagihan "Uang Sanggar Komputer Kids"</h2>
+			<h2>Data Siap Impor Kelompok Tagihan </h2>
 			
-<form id="form1" name="form1" method="post" action="<?php echo site_url('otogroup/insert_data_from_excel'); ?>">		
+<form id="form1" name="form1" method="post" action="<?php 
+echo site_url('otogroup/insert_data_from_excel'); 
+//echo site_url('otogroup/simpan'); 
+?>">		
 <table id="tabel" class="gtable">
 				<thead>
 				<tr>
@@ -24,7 +27,7 @@
 					<td><?php echo $siswa['status']; ?>
 				    <input name="tx_status_<?php echo $counter_hidden;?>" type="hidden" id="tx_status_<?php echo $counter_hidden;?>" value="<?php echo $siswa['status']; ?>" /></td>
 					<td><?php echo $siswa['induk']; ?>
-				    <input name="tx_induk_<?php echo $counter_hidden;?>" type="hidden" id="tx_induk_<?php echo $counter_hidden;?>" value="<?php echo $siswa['induk']; ?>" /></td>
+				    <input name="tx_induk_<?php echo $counter_hidden;?>" type="hidden" id="tx_induk_<?php echo $counter_hidden;?>" value="<?php echo $siswa['id']; ?>" /></td>
 					<td><?php echo $siswa['nama']; ?></td>
 					<td><?php echo $siswa['kelas']; ?></td>
 					<td><?php echo $siswa['jenjang']; ?></td>
@@ -41,7 +44,7 @@
 							Keterangan: OK = data bisa diimpor, Sudah = data sudah ada, Gagal = data siswa tidak ditemukan
 						</div>
 						<div class="pagination">&nbsp;</div>
-			</div>
+  </div>
 					<div class="buttons" style="text-align:right; margin-top: 10px;">
 					  
 						<label>

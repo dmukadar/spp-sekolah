@@ -4,7 +4,10 @@
 			<div id="info-msg" class="information msg">Data yang diupload bisa berupa xls atau csv yang terdiri dari 2 kolom: nomor induk dan nama siswa</div>
 
 			<div id="form-layer">
-			<form id="myform" class="uniform" action="<?php echo (@$action_url);?>">
+			<form id="myform" enctype="multipart/form-data" class="uniform" method="post" action="
+			<?php 
+			echo site_url("otogroup/loadExcel/");
+			?>">
 				<fieldset>
 					<legend>Form Impor Kelompok Tagih</legend>
 					<dl class="inline">
@@ -25,8 +28,7 @@
 					
 				</fieldset>
 				<div class="buttons" style="text-align:right;">
-					<button type="button" class="button grey" id="upload-button">Upload</button>
-				</div>
+					<input type="submit" value="Upload"/>
 			</form>
 			</div>
 

@@ -170,6 +170,8 @@ class Kelas_model extends CI_Model {
 		if ($this->db->affected_rows() == 0) {
 			throw new Exception(sprintf('Gagal memasukkan data kelas.'));
 		}
+
+		return $this->db->insert_id();
 	}
 	
 	public function update($kelas, $exclude=array()) {

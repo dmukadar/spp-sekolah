@@ -17,37 +17,29 @@
 							</select>
 						</dd>
 
-						<dt><label for="nama">Peserta</label></dt>
+						<dt><label for="nama">Kelompok ditagih</label></dt>
 						<dd>
-								<p>
-								<input id="group_kelas" name="grouping" value="kelas" type="radio"> Kelas <br/>
-								<select id="kelas" name="kelas" class="small">
-									<option value="99">Semua</option>
-									<option value="0">TK</option>
-									<option value="1">1 (SD)</option>
-									<option value="2">2 (SD)</option>
-									<option value="3">3 (SD)</option>
-									<option value="4">4 (SD)</option>
-									<option value="5">5 (SD)</option>
-									<option value="6">5 (SD)</option>
-									<option value="7">7 (SMP)</option>
-									<option value="8">8 (SMP)</option>
-									<option value="9">9 (SMP)</option>
-								</select>
-								</p>
-								<p>
-								<input id="group_siswa" name="grouping" value="siswa" type="radio" checked="checked"> Siswa <br/>
-								<input id="nama" type="text" name="nama" class="medium" value="<?php echo (@$sess->nama);?>" />
-								<div class="success msg">
-									Daftar sementara (klik tombol Simpan untuk menyimpan permanen):
+								<strong> Kelas </strong><br/>
+								<input id="grouping" name="grouping" value="kelas" type="hidden" />
+								<input type="checkbox" name="checker" id="checker" class="select_grouping" /><label for="checker">Semua kelas</label><br/><br/>
+								<?php $lastGrade = 0; ?>
+								<?php foreach ($list_kelas as $ndx=>$r) : ?>
+								<?php if ($ndx % 2) : ?>
+								<div>
+								<?php else : ?>
+								<div style="float: left; width: 250px;">
+								<?php endif; ?>
+									<input type="checkbox" name="kelas[]" value="<?php echo $r->get_id(); ?>" id="kelas-<?php echo $r->get_id(); ?>" class="select_grouping" /><?php echo sprintf('<label for="kelas-%d">%s ( %s )</label>', $r->get_id(), $r->get_kelas(), $r->get_jenjang()); ?>
+								</div>
+								<?php endforeach; ?>
+								<hr style="clear: both; margin-top: 40px;" />
+								<strong> Siswa </strong><br/>
+								<input id="siswa" type="text" name="siswa" class="medium select_grouping" value="<?php echo (@$sess->nama);?>" />
+								<div id="peserta-container" style="margin-top: 10px; display: none; -moz-border-radius: 5px 5px 5px 5px; background: no-repeat scroll 10px 13px #E3FFDE; border: 1px solid #6CD858; margin-bottom: 10px; padding: 10px 10px 10px 37px; ">
+									Daftar sementara:
 									<ol id="tmp_siswa">
-										<li><a title="Delete" href="1" class="delete-row"><img alt="Delete" src="images/icons/cross.png"></a> Budiwijaya - SD kelas IV</li>
-										<li><a title="Delete" href="2" class="delete-row"><img alt="Delete" src="images/icons/cross.png"></a> Ali Mukadar - SD kelas IV</li>
-										<li><a title="Delete" href="3" class="delete-row"><img alt="Delete" src="images/icons/cross.png"></a> Teguh Wijaya - SMP kelas II</li>
-										<li><a title="Delete" href="4" class="delete-row"><img alt="Delete" src="images/icons/cross.png"></a> Santi susisan - SD kelas IV</li>
 									</ol>
 								</div>
-								</p>
 						</dd>
 					</dl>
 					
@@ -60,15 +52,15 @@
 			</div>
 
 			<div id="list-layer">
+			<form name="frm-filter-cat" id="frm-filter-cat" method="post" action="<?php echo (@$filter_url);?>">
+
 			<div class="buttons" style="text-align:right;">
 				<button type="button" class="button green" id="new-button">Tambah</button>
 			</div>
-			<form name="frm-filter-cat" id="frm-filter-cat" method="post" action="<?php echo (@$action_url);?>">
 					<div>
 						<label for"keyword"><strong>Filter: </strong></label>
-						<input type="text" class="medium" name="keyword" id="keyword" value="cari ..." onfocus="if (this.value=='cari ...') this.value='';" />
+						<input type="text" class="medium submit-filter" name="keyword" id="keyword" value="<?php echo empty($keyword) ? 'cari ...' : $keyword; ?>" onfocus="if (this.value=='cari ...') this.value='';" />
 					</div>
-		  </form>
 				
 			
 			<br/>
@@ -81,46 +73,21 @@
 				</tr>
 				</thead>
 				<tbody>
+				<?php if (empty($list_data)) : ?>
 				<tr>
-					<td>Uang Seragam SMP</td>
-					<td>Kelas 7 SMP</td>
+					<td colspan="3">Data tidak ditemukan</td>
+				</tr>
+				<?php else : ?>
+				<?php foreach ($list_data as $row) : ?>
+				<tr>
+					<td><?php echo $row->tagihan; ?></td>
+					<td><?php echo $row->peserta; ?></td>
 					<td style="text-align:center;">
-						<a title="Edit" href="edit/999"><img alt="Edit" src="images/icons/edit.png"></a>
-						<a title="Delete" href="delete/999" class="delete-row"><img alt="Delete" src="images/icons/cross.png"></a>
+						<a title="Delete" href="<?php echo sprintf('%s/%d/%s', site_url('otogroup/delete/' . $row->kelompok . '/'), $row->id, md5($row->id) ); ?>" class="delete-row"><img alt="Delete" src="images/icons/cross.png"></a>
 					</td>
 				</tr>
-				<tr>
-					<td>Uang Seragam SMP</td>
-					<td>Kelas 8 SMP</td>
-					<td style="text-align:center;">
-						<a title="Edit" href="edit/999"><img alt="Edit" src="images/icons/edit.png"></a>
-						<a title="Delete" href="delete/999" class="delete-row"><img alt="Delete" src="images/icons/cross.png"></a>
-					</td>
-				</tr>
-				<tr>
-					<td>Uang Seragam SMP</td>
-					<td>Kelas 9 SMP</td>
-					<td style="text-align:center;">
-						<a title="Edit" href="edit/999"><img alt="Edit" src="images/icons/edit.png"></a>
-						<a title="Delete" href="delete/999" class="delete-row"><img alt="Delete" src="images/icons/cross.png"></a>
-					</td>
-				</tr>
-				<tr>
-					<td>Uang Sanggar Pendaftaran Komputer Kids</td>
-					<td>Budiwijaya - IV B SD</td>
-					<td style="text-align:center;">
-						<a title="Edit" href="edit/999"><img alt="Edit" src="images/icons/edit.png"></a>
-						<a title="Delete" href="delete/999" class="delete-row"><img alt="Delete" src="images/icons/cross.png"></a>
-					</td>
-				</tr>
-				<tr>
-					<td>Uang Sanggar Komputer Kids</td>
-					<td>Budiwijaya - IV B SD</td>
-					<td style="text-align:center;">
-						<a title="Edit" href="edit/999"><img alt="Edit" src="images/icons/edit.png"></a>
-						<a title="Delete" href="delete/999" class="delete-row"><img alt="Delete" src="images/icons/cross.png"></a>
-					</td>
-				</tr>
+				<?php endforeach; ?>
+				<?php endif; ?>
 				</tbody>
 			</table>
 		<div class="tablefooter clearfix">
@@ -128,18 +95,20 @@
 							Keterangan: <img alt="Edit" src="images/icons/edit.png"> Ubah data  <img alt="Delete" src="images/icons/cross.png"> Hapus data
 						</div>
 						<div class="pagination">
-							<a href="#">Prev</a>
-							<a class="current" href="#">1</a>
-							<a href="#">2</a>
-							<a href="#">3</a>
-							<a href="#">4</a>
-							<a href="#">5</a>
+							<a href="<?php echo $prev_page; ?>" class="paging-leaf">Prev</a>
+							<?php if ($total_page > 1) : ?>
+							<?php foreach (range($first_range, $last_range) as $p) : ?>
+							<a <?php echo ($p==$page ? 'class="current"' : ''); ?> href="<?php echo $p; ?>" class="paging-leaf"><?php echo $p; ?></a>
+							<?php endforeach; ?>
 							...
-							<a href="#">78</a>
-							<a href="#">Next</a>
+							<?php endif; ?>
+							<input type="text" title="loncat ke halaman ..." name="page" value="<?php echo $total_page; ?>" id="page" style="width: 25px; text-align: right;" class="submit-filter" />
+							<a href="<?php echo $next_page; ?>" class="paging-leaf">Next</a>
 						</div>
 					</div>
 		</div>
+
+		</form>
 		</div><!--list-layer-->
 
 
@@ -157,7 +126,92 @@
 					jQuery('#list-layer').show();
 				});
 				jQuery('#save-button').click(function() {
-					flashDialog('err-msg', 'Fitur ini masih dalam pengembangan', 5);
+					var url = jQuery('#myform').attr('action');
+					var data = jQuery('#myform').serialize();
+
+					jQuery.post(url, data, function(response) {
+						if (! response.success) {
+							flashDialog('err-msg', response.message, 5);
+						} else {
+							flashDialog('info-msg', response.message, 2);
+							setTimeout(function() { document.location.href=document.location.href; }, 3000);
+						}
+					});
 				});
 
+			// ---- Auto complete
+			jQuery('#siswa').jsonSuggest({
+				minCharacters: 3,
+				url: '<?php echo ($ajax_siswa_url);?>',
+				onSelect: function(item) {
+					if (! jQuery('#peserta-container').is(':visible')) jQuery('#peserta-container').toggle();
+
+					peserta = '<li><input type="hidden" name="peserta[]" value="' + item.id + '" /><a title="Delete" href="javascript:void(0);" class="rm-siswa" onclick="remove_siswa(this);"><img alt="Delete" src="images/icons/cross.png"></a> ' + item.nama + ' - ' + item.kelas + ' ( ' + item.jenjang + ' )</li>';
+					jQuery('#tmp_siswa').append(peserta);
+					jQuery('#siswa').val('');
+				},
+				onEnter: function() {
+					// cegah form submit
+					return false;
+				}
+			});
+
+			function remove_siswa(item) {
+				var li = jQuery(item).parent();
+				li.fadeOut();
+				li.remove();
+			};
+
+			jQuery('.select_grouping').focus(function() {
+				if (this.id != 'siswa') {
+					grouping = 'kelas';
+					jQuery('#peserta-container').fadeOut();
+				} else {
+					grouping = 'siswa';
+					jQuery(':checkbox').each(function() {
+						this.checked = false;
+						jQuery(this).parent().removeClass("checked");
+					});
+				};
+				jQuery('#grouping').val(grouping);
+			});
+
+			jQuery('a.paging-leaf').click(function(e) {
+				jQuery('#page').val(jQuery(this).attr('href'));
+				jQuery('#frm-filter-cat').submit();
+				e.preventDefault();
+			});
+
+			jQuery('.submit-filter').keypress(function(e){
+				if (e.keyCode == 13) jQuery('#frm-filter-cat').submit();
+			});
+
+			jQuery('#keyword').keypress(function(e){
+				jQuery('#page').val(1);
+			});
+
+			jQuery('#checker').click(function() {
+				var on = this.checked;
+				jQuery(':checkbox').each(function() {
+					this.checked = on;
+					if (on) {
+						jQuery(this).parent().addClass("checked");
+					} else {
+						jQuery(this).parent().removeClass("checked");
+					}
+				});
+			});
+
+			jQuery('.delete-row').click(function(e) {
+				if (confirm('Anda yakin akan menghapus data kelompok tagihan ?')) {
+					jQuery.post(jQuery(this).attr('href'), function(response) {
+						if (response.search('berhasil') == -1) flashDialog('err-msg', response, 10);
+						else {
+							flashDialog('info-msg', response, 2);
+							setTimeout(function() { document.location.href=document.location.href; }, 3000);
+						}
+					});
+				}
+				e.preventDefault();
+			});
 			</script>
