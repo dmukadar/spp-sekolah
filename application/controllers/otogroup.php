@@ -155,35 +155,57 @@ class Otogroup extends Alazka_Controller {
 	}
 
 //---by puz	-----------------------------------------------
+function do_upload()
+	{  
+		$this->load->helper(array('form', 'url'));
+	    $config['upload_path'] = './uploads/';
+		$config['allowed_types'] = 'csv|xls';
+		$this->load->library('upload', $config);		
+		if ( $this->upload->do_upload('file_import'))
+		{	
+			$upload=$this->upload->data();
+			$ext= $upload["file_ext"];	
+			if($ext==".csv"){
+				$this->loadCSV();
+			}
+			else if ($ext==".xls"){
+				$this->loadExcel();
+			}
+		}
+		else
+		{		
+			echo $this->upload->display_errors();
+		}
+	}
+	
+	
     function loadExcel()
 	{	
 		$this->load->model('Kelas_model');
-		$this->load->model('Siswa_model');
+		$this->load->model('StudentGroup_model');		
 		$this->load->model('Rate_model');
 		$this->load->model('ClassGroup_model');
-
-		$this->data['sess'] = null;
-		$this->data['action_url'] = site_url('otogroup/simpan');
-		$this->data['info_url'] = site_url('otogroup/info');
-		$this->data['filter_url'] = site_url('otogroup/index');
+        $this->load->model('Siswa_model');
 		
+		$this->data['sess'] = null;	   
 			 $rate=$this->input->post('id_rate');	
-			 $data['rate']=$rate;
-		     $this->load->helper('excel_reader2');
-		
+			 $data['rate']=$rate;		 
+		     $this->load->helper('excel_reader2');		
 			 $import = new Spreadsheet_Excel_Reader($_FILES['file_import']['tmp_name']);
+              
              $baris = $import->rowcount($sheet_index=0);
              $counter=0;
              $error_msg="";
              $counter_index=0;
              $status=true;
-			 
+			  
+			 $data['ratename']=$this->StudentGroup_model->check_rate(array(),$rate);	
+			
 			for ($i=1; $i<=$baris; $i++)
 		    {
 				$id_siswa=$import->val($i, 'A');
-				$nama=$import->val($i, 'B');
-				$this->load->model('StudentGroup_model');		
-				$query=$this->StudentGroup_model->check_siswa($id_siswa); 				
+				$nama=$import->val($i, 'B');				
+	            $query=$this->StudentGroup_model->check_siswa($id_siswa); 						
 				$check_siswa=$query->num_rows();				
 				$check_group=$this->StudentGroup_model->check_group($id_siswa);	
 				
@@ -204,8 +226,7 @@ class Otogroup extends Alazka_Controller {
 			  $data_siswa[$counter]['jenjang']=$siswa_data->jenjang;	
 			  
 			  $data['id']=$siswa_data->id;		
-			  $data_siswa[$counter]['id']=$siswa_data->id;
-			  
+			  $data_siswa[$counter]['id']=$siswa_data->id;			  
 			}
 			else if($check_siswa > 0&& $check_group==0)
 			{
@@ -246,11 +267,8 @@ class Otogroup extends Alazka_Controller {
 			  $data_siswa[$counter]['id']=" ";
 			}
 		$counter++;
-
-		}
-		
-		$data['data_siswa']=$data_siswa;
-		
+		}		
+		$data['data_siswa']=$data_siswa;	
 		$this->load->view('site/header_view');		
 		$this->load->view('site/tampil_tagihan_view',$data);
 		$this->load->view('site/footer_view');
@@ -260,19 +278,42 @@ class Otogroup extends Alazka_Controller {
      		} 
 		
 		catch (Exception $e) {
-			$this->data['list_tarif'] = array();
-		}
-
-		
+			$this->data['list_tarif'] = array();	
+		}		
 	}
 
-	public function insert_data_from_excel(){
+
+function loadCSV()
+	{	
+	echo "in progress";
+		/*$this->load->model('Kelas_model');
+		$this->load->model('StudentGroup_model');		
+		$this->load->model('Rate_model');
+		$this->load->model('ClassGroup_model');
+        $this->load->model('Siswa_model');		
+		$this->data['sess'] = null;	   
+		
+			 $rate=$this->input->post('id_rate');	
+			 $data['rate']=$rate;		 
+             $this->load->library('csvreader');
+			 $csv = new CSVReader();
+             $csvData = $this->csvreader->parse_file($_FILES['file_import']['tmp_name']);
+             //$this->db->truncate('ar_group_student'); 
+			/* foreach($csvData as $id=>$fields)
+			{ 
+			$this->db->insert('ar_group_student', array('id_rate' => $rate, 'id_student' => str_replace(".", "-", trim(substr($fields[0], 0, 10)))
+			)); 
+            } */
+	
+}
+
+
+	public function simpan_exc(){
 		
 		$counter=$this->input->post('tx_counter');
 		$this->load->model("StudentGroup_model");
 		for($i=1;$i<=$counter;$i++){
 			$status=$this->input->post('tx_status_'.$i);
-			//echo $status;
 			if($status=="OK"){
 				$data=array(
 				'id_rate' =>$this->input->post('tx_rate'), 
@@ -281,34 +322,13 @@ class Otogroup extends Alazka_Controller {
 				$status=$this->StudentGroup_model->insert_exc($data);
 			}
 		}
-		
-			try {
-			$this->data['list_tarif'] = $this->Rate_model->get_all_rate();
-			
-		} catch (Exception $e) {
-			$this->data['list_tarif'] = array();
-		}
-		$this->load->view('site/header_view');
-		$this->load->view('site/impor_kelompok_tagihan_view', $this->data);
-		$this->load->view('site/footer_view');
+		$this->index();
 	}
 //--------------------------------------------------------------------------
-public function insert_data(){
-		
-		$data=array(
-			'id_rate' =>$this->input->post('rate'), 
-			'id_student'=>$this->input->post('tx_induk')
-		);
-		$status=$this->Keltagih_model->insert($data);
-		$this->load->view('site/header_view');
-		$this->load->view('site/form_kelompok_tagihan', $this->data);
-		$this->load->view('site/footer_view');
-	}
 
 	public function simpan() {
 		$this->load->model('ClassGroup_model');
 		$this->load->model('StudentGroup_model');
-
 		$fields = array('grouping', 'id_rate');
 		$kelas = $this->input->post('kelas');
 		$peserta = $this->input->post('peserta');

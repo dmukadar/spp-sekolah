@@ -239,6 +239,15 @@ class StudentGroup_model extends CI_Model {
 		$query = $this->db->get();
 		return $query;
 	}
+	
+	public function check_rate($filter=array(),$rate){
+	    $this->load->model("StudentGroup_model");
+		$this->db->select("name");	
+	    $this->db->where ("id = '".$rate."'");
+		$this->db->where($filter);
+		$query = $this->db->get("ar_rate");
+		return $query;
+	}
 		
 	public function check_group($id_siswa){
 		$this->db->select("ar_group_student.id_student");	

@@ -1,8 +1,12 @@
 <div id="list-layer">
-			<h2>Data Siap Impor Kelompok Tagihan </h2>
+			<h2>Data Siap Impor Kelompok Tagihan<strong> 
+	        <?php 
+		foreach($ratename->result() as $row){echo $row->name;} 
+			//echo $jenis?>
+			</strong></h2>
 			
 <form id="form1" name="form1" method="post" action="<?php 
-echo site_url('otogroup/insert_data_from_excel'); 
+echo site_url('otogroup/simpan_exc'); 
 //echo site_url('otogroup/simpan'); 
 ?>">		
 <table id="tabel" class="gtable">
@@ -39,6 +43,7 @@ echo site_url('otogroup/insert_data_from_excel');
 		
 		<input name="tx_rate" type="hidden" id="tx_rate" value="<?php echo $rate; ?>" />
 		<input name="tx_counter" type="hidden" id="tx_counter" value="<?php echo $counter_hidden; ?>" />
+		
 		<div class="tablefooter clearfix">
 						<div class="actions">
 							Keterangan: OK = data bisa diimpor, Sudah = data sudah ada, Gagal = data siswa tidak ditemukan
@@ -48,7 +53,7 @@ echo site_url('otogroup/insert_data_from_excel');
 					<div class="buttons" style="text-align:right; margin-top: 10px;">
 					  
 						<label>
-						  <input type="submit" name="Submit" value="Impor data diatas"  />
+						  <input type="submit" name="Submit" value="Impor data diatas" class="button gray" />
 						</label>
 					  
 					</div>
