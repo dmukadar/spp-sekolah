@@ -174,6 +174,7 @@ function do_upload()
 		else
 		{		
 			echo $this->upload->display_errors();
+			  redirect('/otogroup/import/', 'refresh');
 		}
 	}
 	
@@ -204,10 +205,10 @@ function do_upload()
 				$id_siswa=$import->val($i, 'A');
 				$nama=$import->val($i, 'B');				
 	            $query=$this->StudentGroup_model->check_siswa($id_siswa); 						
-				$check_siswa=$query->num_rows();				
-				$check_group=$this->StudentGroup_model->check_group($id_siswa);	
-				
-			if ($check_siswa > 0&& $check_group > 0)
+				$check_siswa=$query->num_rows();							
+				$check_group=$this->StudentGroup_model->check_group($id_siswa,$rate);					
+		
+			if ($check_siswa > 0 && $check_group > 0)
 			{
 			  $siswa_data=$query->row();
 			  $data['status']="SUDAH";
@@ -226,7 +227,7 @@ function do_upload()
 			  $data['id']=$siswa_data->id;		
 			  $data_siswa[$counter]['id']=$siswa_data->id;			  
 			}
-			else if($check_siswa > 0&& $check_group==0)
+			else if($check_siswa > 0&& $check_group==0 )
 			{
 			  $siswa_data=$query->row();
 			  $data['status']="OK";
@@ -293,7 +294,6 @@ function loadCSV()
 	$row = 1;
 	$counter=0;
      if (($handle = fopen($_FILES['file_import']['tmp_name'], "r")) !== FALSE) {	     
-    //  while (($data2 = fgetcsv($handle, 1000, ",")) !== FALSE) 
 	    while (($data2 = fgetcsv($handle, 1000, ",")) !== FALSE ) 
 	  {
              $num = count($data2)/2;
@@ -311,7 +311,7 @@ function loadCSV()
 			$nama=$data2[1];				
 	            $query=$this->StudentGroup_model->check_siswa($id_siswa); 						
 				$check_siswa=$query->num_rows();				
-				$check_group=$this->StudentGroup_model->check_group($id_siswa);	
+				$check_group=$this->StudentGroup_model->check_group($id_siswa,$rate);		
 		
 			if ($check_siswa > 0&& $check_group > 0)
 			{
