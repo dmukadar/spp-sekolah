@@ -47,10 +47,10 @@
 					</dd>
 
 					<dt><label for="keterangan">Keterangan</label></dt>
-					<dd><input id="keterangan" type="text" class="medium" name="keterangan" value="<?php echo (empty($model) ? '' : $model->get_description());?>" /></dd>
+					<dd><input id="keterangan" type="text" class="medium" name="keterangan" value="<?php echo (empty($model) ? '' : $model->get_description());?>" readonly="readonly" /></dd>
 
 					<dt><label for="jumlah">Jumlah</label></dt>
-					<dd><input style="text-align:right;" id="jumlah" type="text" name="jumlah" value="<?php echo (empty($model) ? '' : $model->get_amount());?>" /></dd>
+					<dd><input style="text-align:right;" id="jumlah" type="text" name="jumlah" value="<?php echo (empty($model) ? '' : $model->get_amount());?>" readonly="readonly" /></dd>
 
 					<dt><label for="catatan">Catatan</label></dt>
 					<dd><textarea id="catatan" class="medium" name="catatan"><?php echo (empty($model) ? '' : $model->get_notes());?> </textarea></dd>
@@ -118,7 +118,7 @@
 					console.log(data);
 					jQuery('#keterangan').val(data.tagihan + ' ' +  data.waktu);
 					jQuery('#jumlah').val(data.jumlah);
-					jQuery('#jumlah').focus();
+					jQuery('#catatan').focus();
 			});
 			modified++;
 		});
