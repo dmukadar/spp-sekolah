@@ -4,7 +4,7 @@
 		<?php ME()->print_flash_message(); ?>	
 		<div id="info-msg" class="information msg" style="display:none">tes</div>
 		<div id="success-msg" class="success msg" style="display:none">tes</div>
-		<div id="error-msg" class="error msg" style="display:none">tes</div>
+		<div id="err-msg" class="error msg" style="display:none">tes</div>
 		
 		<div class="clear"></div>
 		<form action="<?php echo (@$action_url);?>" method="post" class="uniform" id="myform">
@@ -44,7 +44,7 @@
 							<option value=''>-- Pilih --</option>
 							<?php $id_rate = empty($model) ? 0 : $model->get_id_rate(); ?>
 							<?php foreach ($list_tarif as $tarif) : ?>
-								<option <?php echo (mr_selected_if($id_rate, $tarif->get_id()));?> value="<?php echo ($tarif->get_id());?>"><?php echo ($tarif->get_name());?></option>
+								<option <?php echo ($id_rate == $tarif->get_id() ? 'selected="selected"' : '');?> value="<?php echo ($tarif->get_id());?>"><?php echo ($tarif->get_name());?></option>
 							<?php endforeach; ?>
 						</select>
 					</dd>
@@ -134,6 +134,10 @@
 			modified++;
 		});
 
+		jQuery('#catatan').change(function() {
+			modified++;
+		});
+
 		jQuery('#myform').submit(function() {
 			var stat = '<?php echo empty($model) ? 0 : $model->get_status(); ?>';
 			var go = (modified > 0);
@@ -156,12 +160,7 @@
 					if (response.search('SUCCESS') > -1) {
 						jQuery('#myform').submit();
 					} else {
-						jQuery('h1').after('<div class="error msg" id="msg-box">' + response + '</div>');
-						setTimeout(function() { 
-							jQuery('#msg-box').fadeOut(); 
-							jQuery('#msg-box').remove(); 
-						}
-						, 10000);
+						flashDialog('err-msg', response, 5);
 					}
 				}
 			);
