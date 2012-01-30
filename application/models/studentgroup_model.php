@@ -239,12 +239,22 @@ class StudentGroup_model extends CI_Model {
 		$query = $this->db->get();
 		return $query;
 	}
+	
+	public function check_rate($filter=array(),$rate){
+	    $this->load->model("StudentGroup_model");
+		$this->db->select("name");	
+	    $this->db->where ("id = '".$rate."'");
+		$this->db->where($filter);
+		$query = $this->db->get("ar_rate");
+		return $query;
+	}
 		
-	public function check_group($id_siswa){
+	public function check_group($id_siswa,$rate){
 		$this->db->select("ar_group_student.id_student");	
 		$this->db->from('ar_group_student');
 		$this->db->join('sis_siswa', 'ar_group_student.id_student = sis_siswa.id');		
 		$this->db->where("sis_siswa.noinduk", $id_siswa);
+		$this->db->where("ar_group_student.id_rate", $rate);
 		$query = $this->db->get();
 		return $query->num_rows();
 	}

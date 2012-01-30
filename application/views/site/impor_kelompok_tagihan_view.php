@@ -6,7 +6,8 @@
 			<div id="form-layer">
 			<form id="myform" enctype="multipart/form-data" class="uniform" method="post" action="
 			<?php 
-			echo site_url("otogroup/loadExcel/");
+			//echo site_url("otogroup/loadExcel/");
+			echo site_url("otogroup/do_upload/");
 			?>">
 				<fieldset>
 					<legend>Form Impor Kelompok Tagih</legend>
@@ -19,7 +20,7 @@
 								<?php endforeach; ?>
 							</select>
 						</dd>
-
+                       
 						<dt><label for="nama">Daftar Siswa</label></dt>
 						<dd>
 							<input type="file" name="file_import" />
@@ -28,7 +29,7 @@
 					
 				</fieldset>
 				<div class="buttons" style="text-align:right;">
-					<input type="submit" value="Upload"/>
+					<input type="submit" value="Upload" class="button gray"/>
 			</form>
 			</div>
 
