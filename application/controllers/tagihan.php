@@ -242,6 +242,21 @@ class Tagihan extends Alazka_Controller {
 					break;
 				default: $data['waktu']  =  $this->TahunAkademik_model->berjalan->get_tahun();
 			}
+
+			$lastInvoice = null;
+			try {
+				//$invoice = $this->Invoice_model->get_single_invoice(array('ar_invoice.id_rate'=>$id_rate, 'ar_invoice.id_student'=>$id_student), 'id desc');
+				$invoice = $this->Invoice_model->get_single_invoice(array('ar_invoice.id_student'=>$id_student), 'id desc');
+
+				$lastInvoice = new StdClass;
+				$lastInvoice->number = $invoice->get_code();
+				$lastInvoice->date   = $invoice->get_created_date();
+				$lastInvoice->description  = $invoice->get_description();
+				$lastInvoice->amount  = $invoice->get_amount(TRUE);
+			} catch (InvoiceNotFoundException $e) {}
+
+			$data['tagihan_terakhir'] = $lastInvoice;
+
 		}
 
 		header('Content-type: application/json');

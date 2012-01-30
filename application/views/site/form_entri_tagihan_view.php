@@ -2,6 +2,9 @@
 		<h1 align="center">Form <?php echo $page_title; ?></h1>
 
 		<?php ME()->print_flash_message(); ?>	
+		<div id="info-msg" class="information msg" style="display:none">tes</div>
+		<div id="success-msg" class="success msg" style="display:none">tes</div>
+		<div id="error-msg" class="error msg" style="display:none">tes</div>
 		
 		<div class="clear"></div>
 		<form action="<?php echo (@$action_url);?>" method="post" class="uniform" id="myform">
@@ -115,7 +118,12 @@
 					rate: jQuery('#tagihan').val()
 				},
 				function(data) {
-					console.log(data);
+					//console.log(data);
+					if (data.tagihan_terakhir != null) {
+						var tgl = new Date(data.tagihan_terakhir.date);
+						var lastInvoice = 'Tagihan terakhir "' + data.tagihan_terakhir.description + '"<br />tanggal, ' + tgl.getDate() + '/' + tgl.getMonth() + '/' + tgl.getFullYear() + ' <br/> nomor ' + data.tagihan_terakhir.number.toString() + ' <br/> senilai Rp ' + data.tagihan_terakhir.amount;
+						flashDialog('info-msg', lastInvoice, 60);
+					}
 					jQuery('#keterangan').val(data.tagihan + ' ' +  data.waktu);
 					jQuery('#jumlah').val(data.jumlah);
 					jQuery('#catatan').focus();
