@@ -197,13 +197,22 @@ catch (StudentGroupNotFoundException $e)
        }
  $this->load->helper('excel_reader2');
  $import = new Spreadsheet_Excel_Reader($_FILES['file_import']['tmp_name']);
- $baris = $import->rowcount($sheet_index=0);
+ $baris = $import->rowcount($sheet_index=0);           
+ $kolom = $import->colcount($sheet_index=0);
+if ($kolom > 2){
+    $eror= "data yang dimasukkan tidak valid";
+    $this->import();
+    echo $eror;
+}
+else if ($kolom==2){
              $counter=0;
              $error_msg="";
              $counter_index=0;
              $status=true;
-for ($i=1; $i<=$baris; $i++)
+try {
+ for ($i=1; $i<=$baris; $i++)
 {
+
     $id_siswa=$import->val($i, 'A');
     $nama=$import->val($i, 'B');
     try {
@@ -255,6 +264,11 @@ for ($i=1; $i<=$baris; $i++)
     }
     	$counter++;
  }
+}
+catch (Exception $e)
+  {
+   
+  }
  $data['data_siswa']=$data_siswa;	
  $this->load->view('site/header_view');
  $this->load->view('site/tampil_tagihan_view',$data);
@@ -268,6 +282,7 @@ for ($i=1; $i<=$baris; $i++)
   {
    $this->data['list_tarif'] = array();
   }
+ }
 }
 
  
@@ -302,6 +317,7 @@ if (($handle = fopen($_FILES['file_import']['tmp_name'], "r")) !== FALSE) {
        }
 
  for ($c=0; $c < $num; $c++) {
+ 
 	$id_siswa=$data2[0];
 	$nama=$data2[1];
 	try {
