@@ -1,13 +1,10 @@
-<div id="list-layer">
+<div id="list-layer"><?php ME()->print_flash_message(); ?>	
 			<h2>Data Siap Impor Kelompok Tagihan<strong> 
-	        <?php 
-		foreach($ratename->result() as $row){echo $row->name;} 
-			//echo $jenis?>
+	        <?php  echo $ratename;?>
 			</strong></h2>
 			
 <form id="form1" name="form1" method="post" action="<?php 
 echo site_url('otogroup/simpan_exc'); 
-//echo site_url('otogroup/simpan'); 
 ?>">		
 <table id="tabel" class="gtable">
 				<thead>
@@ -30,9 +27,9 @@ echo site_url('otogroup/simpan_exc');
 				<tr>
 					<td><?php echo $siswa['status']; ?>
 				    <input name="tx_status_<?php echo $counter_hidden;?>" type="hidden" id="tx_status_<?php echo $counter_hidden;?>" value="<?php echo $siswa['status']; ?>" /></td>
-					<td><?php echo $siswa['induk']; ?>
+					<td><?php echo $siswa['noinduk']; ?>
 				    <input name="tx_induk_<?php echo $counter_hidden;?>" type="hidden" id="tx_induk_<?php echo $counter_hidden;?>" value="<?php echo $siswa['id']; ?>" /></td>
-					<td><?php echo $siswa['nama']; ?></td>
+					<td><?php echo $siswa['namalengkap']; ?></td>
 					<td><?php echo $siswa['kelas']; ?></td>
 					<td><?php echo $siswa['jenjang']; ?></td>
 				</tr>
@@ -53,7 +50,7 @@ echo site_url('otogroup/simpan_exc');
 					<div class="buttons" style="text-align:right; margin-top: 10px;">
 					  
 						<label>
-						  <input type="submit" name="Submit" value="Impor data diatas" class="button gray" />
+						  <input type="submit" name="savebtn" id="savebtn" value="Impor data diatas" class="button gray" />
 						</label>
 					  
 					</div>
@@ -65,8 +62,25 @@ echo site_url('otogroup/simpan_exc');
 				jQuery('#upload-button').click(function() {
 					jQuery('#list-layer').slideDown();
 				});
-				jQuery('#save-button').click(function() {
-					flashDialog('err-msg', 'Fitur ini masih dalam pengembangan', 5);
-				});
+				
+				
+				jQuery('#savebtn').click(function() {
+			jQuery.post(
+				'<?php echo site_url("otogroup/simpan_exc"); ?>',
+				jQuery('#myform').serialize(),
+				function (response) {
+					if (response.search('SUCCESS') > -1) {
+						jQuery('#myform').submit();
+					} else {
+						jQuery('h1').after('<div class="error msg" id="msg-box">' + response + '</div>');
+						setTimeout(function() { 
+							jQuery('#msg-box').fadeOut(); 
+							jQuery('#msg-box').remove(); 
+						}
+						, 10000);
+					}
+				}
+			);
+		});
 
 			</script>
