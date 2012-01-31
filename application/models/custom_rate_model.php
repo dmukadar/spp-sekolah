@@ -101,12 +101,27 @@ class Custom_Rate {
 			$rate->set_category($result->rate_category);
 			$rate->set_name($result->rate_name);
 			$tmp->rate = clone $rate;
+			$rate = NULL;
+			
+			// inject object siswa
+			$siswa = new Siswa();
+			$siswa->set_id($result->id_student);
+			$siswa->set_noinduk($result->siswa_noinduk);
+			$siswa->set_namalengkap($result->siswa_namalengkap);
+			$tmp->siswa = clone $siswa;
+			$siswa = NULL;
+			
+			// inject object kelas
+			$kelas = new Kelas();
+			$kelas->set_id($result->kelas_id);
+			$kelas->set_kelas($result->kelas_nama);
+			$kelas->set_jenjang($result->kelas_jenjang);
+			$tmp->kelas = clone $kelas;
 			
 			$objects[$i] = clone $tmp;
 		}
 		
 		$tmp = NULL;
-		$rate = NULL;
 		
 		return $objects;
 	}
@@ -127,6 +142,9 @@ class Custom_Rate {
 		// properti yang akan diexclude dalam hasil
 		// sehingga tidak digunakan pada saat akan insert atau update
 		$def_exclude = array(
+			'rate',
+			'siswa',
+			'kelas'
 		);
 		$exclude = $def_exclude + $param_exclude;
 		
@@ -169,8 +187,10 @@ class Custom_Rate_model extends CI_Model {
 	}
 	
 	public function get_all_custom_rate($where=array(), $limit=-1, $offset=0) {
-		$this->db->select('ar_custom_rate.*, ar_rate.category rate_category, ar_rate.name rate_name');
+		$this->db->select('ar_custom_rate.*, ar_rate.category rate_category, ar_rate.name rate_name, sis_siswa.noinduk siswa_noinduk, sis_siswa.namalengkap siswa_namalengkap, dm_kelas.kelas kelas_id, dm_kelas.kelas kelas_nama, dm_kelas.jenjang kelas_jenjang');
 		$this->db->join('ar_rate', 'ar_rate.id=ar_custom_rate.id_rate', 'left');
+		$this->db->join('sis_siswa', 'sis_siswa.id=ar_custom_rate.id_student', 'left');
+		$this->db->join('dm_kelas', 'sis_siswa.dm_kelas_id=dm_kelas.id', 'left');
 		if ($limit > 0) {
 			$this->db->limit($limit, $offset);
 		}

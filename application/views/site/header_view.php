@@ -60,8 +60,7 @@
 					<ul>
 						<li><a href="<?php echo (site_url('data_tarif/index'));?>">Data Tarif</a></li>
 						<li><a href="<?php echo (site_url('otogroup/import'));?>">Impor Kelompok Tagih</a></li>
-						<li><a href="<?php echo (site_url('tarif_khusus/index'));?>">Input Dispensasi</a></li>
-						<li><a href="<?php echo (site_url('data_tarif_khusus/index'));?>">Data Dispensasi</a></li>
+						<li><a href="<?php echo (site_url('tarif_khusus/index'));?>">Data Dispensasi</a></li>
 					</ul>
 				</li>
 				<li><a href="#" onClick="return false;">Tagihan</a>
