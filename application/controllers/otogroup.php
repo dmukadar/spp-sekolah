@@ -165,7 +165,7 @@ function do_upload()
 			$upload=$this->upload->data();
 			$ext= $upload["file_ext"];
 			if($ext==".csv"){
-				$this->loadCSV();
+                                $this->loadCSV();
 			}
 			else if ($ext==".xls"){
 				$this->loadExcel();
@@ -288,6 +288,15 @@ catch (Exception $e)
  }
 }
 
+function olahData(){
+$file=fopen($_FILES['file_import']['tmp_name'], "w");
+$fileData = file_get_contents($_FILES['file_import']['tmp_name']);
+$fileData = str_replace(";", ",", $fileData);
+fwrite($file, $fileData);
+flush();
+fclose($file);
+$this -> loadCSV();
+}
 
 function loadCSV()
 {
@@ -295,17 +304,19 @@ function loadCSV()
   $this->load->model('Rate_model');
   $this->load->model('StudentGroup_model');
 
-$file=fopen($_FILES['file_import']['tmp_name'], "rw");
-$fileData = file_get_contents($_FILES['file_import']['tmp_name']);
-$fileData = str_replace(";", ",", $fileData);
-fwrite($file, $fileData);
-flush();
-fclose($file);
-
 $row = 1;
 $counter=0;
-$file2=fopen($_FILES['file_import']['tmp_name'], "r");
-if (($handle =$file2 ) !== FALSE) {
+$file=fopen($_FILES['file_import']['tmp_name'], "rw");
+//$file=fopen("./uploads/data.csv", "rw");
+$fileData = file_get_contents($_FILES['file_import']['tmp_name']);
+
+if(stristr($fileData, ';') === TRUE) {
+    $delimiter= ";";
+  }
+else if (stristr($fileData, ',') === TRUE) {
+    $delimiter= ",";
+  }
+if (($handle =$file) !== FALSE) {
 $delimiter= ",";
 	    while (($data2 = fgetcsv($handle, 1000, $delimiter)) !== FALSE )
 	  {
@@ -329,7 +340,7 @@ $delimiter= ",";
        }
 
  for ($c=0; $c < $num; $c++) {
- 
+
 	$id_siswa=$data2[0];
 	$nama=$data2[1];
 	try {
@@ -399,23 +410,10 @@ $counter++;
    }
 }
 
-
-	public function simpan_exc(){
-
-		$counter=$this->input->post('tx_counter');
-		$this->load->model("StudentGroup_model");
-		for($i=1;$i<=$counter;$i++){
-			$status=$this->input->post('tx_status_'.$i);
-			if($status=="OK"){
-				$data=array(
-				'id_rate' =>$this->input->post('tx_rate'),
-				'id_student'=>$this->input->post('tx_induk_'.$i)
-				);
-				$status=$this->StudentGroup_model->insert_exc($data);
-			}
-		}
-		$this->index();
-	}
+function simpan_exc(){
+ $this->simpan();
+ redirect('/otogroup/index/', 'refresh');
+}
 //--------------------------------------------------------------------------
 
 	public function simpan() {

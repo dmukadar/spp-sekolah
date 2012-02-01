@@ -230,13 +230,7 @@ class StudentGroup_model extends CI_Model {
 	public function custom_delete($where) {
 		$this->db->delete(STUDENGROUP_TABLE, $where);
 	}
-//------import excel	
-	
-	
-	 function insert_exc($data=array()){
-		return $this->db->insert('ar_group_student',$data);		
-	}
-	//-------end import excel
+
 }
 
 

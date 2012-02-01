@@ -4,7 +4,7 @@
 			</strong></h2>
 			
 <form id="form1" name="form1" method="post" action="<?php 
-echo site_url('otogroup/simpan_exc'); 
+echo site_url('otogroup/simpan_exc');
 ?>">		
 <table id="tabel" class="gtable">
 				<thead>
@@ -27,8 +27,9 @@ echo site_url('otogroup/simpan_exc');
 				<tr>
 					<td><?php echo $siswa['status']; ?>
 				    <input name="tx_status_<?php echo $counter_hidden;?>" type="hidden" id="tx_status_<?php echo $counter_hidden;?>" value="<?php echo $siswa['status']; ?>" /></td>
-					<td><?php echo $siswa['noinduk']; ?>
-				    <input name="tx_induk_<?php echo $counter_hidden;?>" type="hidden" id="tx_induk_<?php echo $counter_hidden;?>" value="<?php echo $siswa['id']; ?>" /></td>
+				  <td><?php echo $siswa['noinduk']; ?>
+				    <input name="peserta[]" type="hidden" id="peserta[]_<?php echo $counter_hidden;?>" value="<?php echo $siswa['id']; ?>" />
+				 <!-- <input name="tx_induk_<?php echo $counter_hidden;?>" type="hidden" id="tx_induk_<?php echo $counter_hidden;?>" value="<?php echo $siswa['id']; ?>" />-->
 					<td><?php echo $siswa['namalengkap']; ?></td>
 					<td><?php echo $siswa['kelas']; ?></td>
 					<td><?php echo $siswa['jenjang']; ?></td>
@@ -40,7 +41,9 @@ echo site_url('otogroup/simpan_exc');
 		
 		<input name="tx_rate" type="hidden" id="tx_rate" value="<?php echo $rate; ?>" />
 		<input name="tx_counter" type="hidden" id="tx_counter" value="<?php echo $counter_hidden; ?>" />
-		
+		<input id="grouping" name="grouping" value="siswa" type="hidden" />
+		<input id="id_rate" name="id_rate" value="<?php echo $rate; ?>" type="hidden" />
+		<!--<input type="hidden" name="peserta[]" value="' + item.id + '" />-->
 		<div class="tablefooter clearfix">
 						<div class="actions">
 							Keterangan: OK = data bisa diimpor, Sudah = data sudah ada, Gagal = data siswa tidak ditemukan
