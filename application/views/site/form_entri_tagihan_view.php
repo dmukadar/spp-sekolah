@@ -2,6 +2,9 @@
 		<h1 align="center">Form <?php echo $page_title; ?></h1>
 
 		<?php ME()->print_flash_message(); ?>	
+		<div id="info-msg" class="information msg" style="display:none">tes</div>
+		<div id="success-msg" class="success msg" style="display:none">tes</div>
+		<div id="err-msg" class="error msg" style="display:none">tes</div>
 		
 		<div class="clear"></div>
 		<form action="<?php echo (@$action_url);?>" method="post" class="uniform" id="myform">
@@ -41,16 +44,16 @@
 							<option value=''>-- Pilih --</option>
 							<?php $id_rate = empty($model) ? 0 : $model->get_id_rate(); ?>
 							<?php foreach ($list_tarif as $tarif) : ?>
-								<option <?php echo (mr_selected_if($id_rate, $tarif->get_id()));?> value="<?php echo ($tarif->get_id());?>"><?php echo ($tarif->get_name());?></option>
+								<option <?php echo ($id_rate == $tarif->get_id() ? 'selected="selected"' : '');?> value="<?php echo ($tarif->get_id());?>"><?php echo ($tarif->get_name());?></option>
 							<?php endforeach; ?>
 						</select>
 					</dd>
 
 					<dt><label for="keterangan">Keterangan</label></dt>
-					<dd><input id="keterangan" type="text" class="medium" name="keterangan" value="<?php echo (empty($model) ? '' : $model->get_description());?>" /></dd>
+					<dd><input id="keterangan" type="text" class="medium" name="keterangan" value="<?php echo (empty($model) ? '' : $model->get_description());?>" readonly="readonly" /></dd>
 
 					<dt><label for="jumlah">Jumlah</label></dt>
-					<dd><input style="text-align:right;" id="jumlah" type="text" name="jumlah" value="<?php echo (empty($model) ? '' : $model->get_amount());?>" /></dd>
+					<dd><input style="text-align:right;" id="jumlah" type="text" name="jumlah" value="<?php echo (empty($model) ? '' : $model->get_amount());?>" readonly="readonly" /></dd>
 
 					<dt><label for="catatan">Catatan</label></dt>
 					<dd><textarea id="catatan" class="medium" name="catatan"><?php echo (empty($model) ? '' : $model->get_notes());?> </textarea></dd>
@@ -115,14 +118,23 @@
 					rate: jQuery('#tagihan').val()
 				},
 				function(data) {
-					console.log(data);
+					//console.log(data);
+					if (data.tagihan_terakhir != null) {
+						var tgl = new Date(data.tagihan_terakhir.date);
+						var lastInvoice = 'Tagihan terakhir "' + data.tagihan_terakhir.description + '"<br />tanggal, ' + tgl.getDate() + '/' + tgl.getMonth() + '/' + tgl.getFullYear() + ' <br/> nomor ' + data.tagihan_terakhir.number.toString() + ' <br/> senilai Rp ' + data.tagihan_terakhir.amount;
+						flashDialog('info-msg', lastInvoice, 60);
+					}
 					jQuery('#keterangan').val(data.tagihan + ' ' +  data.waktu);
 					jQuery('#jumlah').val(data.jumlah);
-					jQuery('#jumlah').focus();
+					jQuery('#catatan').focus();
 			});
 			modified++;
 		});
 		jQuery('#jumlah').change(function() {
+			modified++;
+		});
+
+		jQuery('#catatan').change(function() {
 			modified++;
 		});
 
@@ -148,12 +160,7 @@
 					if (response.search('SUCCESS') > -1) {
 						jQuery('#myform').submit();
 					} else {
-						jQuery('h1').after('<div class="error msg" id="msg-box">' + response + '</div>');
-						setTimeout(function() { 
-							jQuery('#msg-box').fadeOut(); 
-							jQuery('#msg-box').remove(); 
-						}
-						, 10000);
+						flashDialog('err-msg', response, 5);
 					}
 				}
 			);

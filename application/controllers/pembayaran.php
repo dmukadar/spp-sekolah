@@ -460,11 +460,12 @@ class Pembayaran extends Alazka_Controller {
 	
 	private function print_pdf($content, $filename) {
 		$this->load->library('pdf');
+		$this->pdf->setPageFormat('A5', 'L');
 		$this->pdf->SetSubject('Laporan Tunggakan Lain-lain');
 		$this->pdf->SetKeywords('TCPDF, PDF');      
-		$this->pdf->SetFont('times', '', 12);   
 		$this->pdf->setHeaderFont(Array('times', '', '14'));
 		$this->pdf->setFooterFont(Array('times', '', '12'));
+		$this->pdf->SetFont('times', '', 10);   
 		$this->pdf->SetAutoPageBreak(FALSE, PDF_MARGIN_BOTTOM);    
 		$this->pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
 		$this->pdf->AddPage(); 

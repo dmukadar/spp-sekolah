@@ -523,4 +523,45 @@ function simpan_exc(){
 			}
 		}
 	}
+	function suggest($key = 1) {
+		$this->load->model('Rate_model');
+		$this->load->model('Kelas_model');
+		$this->load->model('Siswa_model');
+
+		$limit = 5;
+		$response = array();
+		$keyword = $this->input->get("search");
+
+		try {
+			$list = $this->Kelas_model->get_all_kelas(array('kelas like'=>"%$keyword%"), 3);
+			foreach ($list as $l) {
+				$line = new StdClass;
+				$line->text = sprintf('kelas %s (tingkat %s %s)', $l->get_kelas(), $l->get_angka(), $l->get_jenjang());
+				$line->value = $l->get_kelas();
+				array_push($response, $line);
+			}
+		} catch (KelasNotFoundException $e) {}
+		try {
+			$list = $this->Rate_model->get_all_rate(array('name like'=>strtolower("%$keyword%")), 3);
+			foreach ($list as $l) {
+				$line = new StdClass;
+				$line->text = sprintf('%s - Rp %s', $l->get_name(), $l->get_fare());
+				$line->value = $l->get_name();
+				array_push($response, $line);
+			}
+		} catch (RateNotFoundException $e) {}
+
+		try {
+			$list = $this->Siswa_model->get_all_siswa_ajax($keyword, $limit);
+			foreach ($list as $l) {
+				$line = new StdClass;
+				$line->text = sprintf('%s - %s (%s)', $l->get_namalengkap(), $l->kelas->get_kelas(), $l->kelas->get_jenjang());
+				$line->value = $l->get_namalengkap();
+				array_push($response, $line);
+			}
+		} catch (SiswaNotFoundException $e) {}
+
+		header('Content-type: application/json');
+		echo json_encode($response);
+	}
 }

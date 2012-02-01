@@ -58,7 +58,7 @@
 				<button type="button" class="button green" id="new-button">Tambah</button>
 			</div>
 					<div>
-						<label for"keyword"><strong>Filter: </strong></label>
+						<label for"keyword"><strong>Cari data </strong></label>
 						<input type="text" class="medium submit-filter" name="keyword" id="keyword" value="<?php echo empty($keyword) ? 'cari ...' : $keyword; ?>" onfocus="if (this.value=='cari ...') this.value='';" />
 					</div>
 				
@@ -149,6 +149,21 @@
 					peserta = '<li><input type="hidden" name="peserta[]" value="' + item.id + '" /><a title="Delete" href="javascript:void(0);" class="rm-siswa" onclick="remove_siswa(this);"><img alt="Delete" src="images/icons/cross.png"></a> ' + item.nama + ' - ' + item.kelas + ' ( ' + item.jenjang + ' )</li>';
 					jQuery('#tmp_siswa').append(peserta);
 					jQuery('#siswa').val('');
+				},
+				onEnter: function() {
+					// cegah form submit
+					return false;
+				}
+			});
+
+			jQuery('#keyword').jsonSuggest({
+				minCharacters: 2,
+				url: '<?php echo site_url("otogroup/suggest/keyword") ;?>',
+				onSelect: function(item) {
+
+					jQuery('#keyword').val(item.value);
+					jQuery('#keyword').focus();
+					//do nothing
 				},
 				onEnter: function() {
 					// cegah form submit

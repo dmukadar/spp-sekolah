@@ -126,6 +126,23 @@ class pdf extends TCPDF {
 		
 	}
 	
+	/**
+	 * Method untuk mengubah page format
+	 *
+	 * WTH!! kenapa TCPDF tidak menyediakan public method untuk mengubah page
+	 * format. aneh!
+	 *
+	 * @author Rio Astamal <me@rioastamal.net>
+	 *
+	 * @param string $format - Format halaman contoh: A4, A5, dsb
+	 * @param string $orientation - Portrait(P) atau Landscape(L)
+	 *
+	 * @return void
+	 */
+	public function setPageFormat($format, $orientation='P') {
+		parent::setPageFormat($format, $orientation);
+	}
+	
 /*	function Header()
 {
     //Logo  
