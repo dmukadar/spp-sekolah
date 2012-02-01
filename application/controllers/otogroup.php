@@ -158,7 +158,7 @@ function do_upload()
 	{
 		$this->load->helper(array('form', 'url'));
 	    $config['upload_path'] = './uploads/';
-		$config['allowed_types'] = 'csv|xls';
+		$config['allowed_types'] = 'csv|xls|txt';
 		$this->load->library('upload', $config);
 		if ( $this->upload->do_upload('file_import'))
 		{
@@ -169,6 +169,9 @@ function do_upload()
 			}
 			else if ($ext==".xls"){
 				$this->loadExcel();
+			}
+                        else if ($ext==".txt"){
+				$this->loadCSV();
 			}
 		}
 		else
@@ -285,17 +288,26 @@ catch (Exception $e)
  }
 }
 
- 
+
 function loadCSV()
 {
   $this->load->model('Siswa_model');
   $this->load->model('Rate_model');
   $this->load->model('StudentGroup_model');
 
-	$row = 1;
-	$counter=0;
-if (($handle = fopen($_FILES['file_import']['tmp_name'], "r")) !== FALSE) {
-	    while (($data2 = fgetcsv($handle, 1000, ",")) !== FALSE )
+$file=fopen($_FILES['file_import']['tmp_name'], "rw");
+$fileData = file_get_contents($_FILES['file_import']['tmp_name']);
+$fileData = str_replace(";", ",", $fileData);
+fwrite($file, $fileData);
+flush();
+fclose($file);
+
+$row = 1;
+$counter=0;
+$file2=fopen($_FILES['file_import']['tmp_name'], "r");
+if (($handle =$file2 ) !== FALSE) {
+$delimiter= ",";
+	    while (($data2 = fgetcsv($handle, 1000, $delimiter)) !== FALSE )
 	  {
              $num = count($data2)/2;
              $row++;
