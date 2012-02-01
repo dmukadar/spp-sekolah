@@ -148,6 +148,7 @@
 		jQuery('.duit').autoNumeric();
 
 		jQuery('#new-button').click(function() {
+			clear_form();
 			jQuery('#form-layer').slideDown();
 			jQuery('#list-layer').hide();
 		});
@@ -189,7 +190,8 @@
 					} else {
 						// alert(response.item);
 						repop_form(response);
-						jQuery('#new-button').click();
+						jQuery('#form-layer').slideDown();
+						jQuery('#list-layer').hide();
 					}
 				}
 			);
@@ -247,5 +249,14 @@
 		if (document.getElementById('rep-siswa-induk').value.length > 0) {
 			document.getElementById('siswa-kelas').style.display = '';
 			document.getElementById('siswa-induk').style.display = '';
+		}
+		
+		function clear_form() {
+			jQuery('#tagihan').val('');jQuery
+			jQuery('#siswa').val('');jQuery
+			jQuery('#siswa_id').val('');jQuery
+			jQuery('#custom-rate-id').val('');jQuery
+			jQuery('#jumlah').val('');
+			jQuery('#siswa-kelas, #siswa-induk').css('display', 'none');
 		}
 		</script>
