@@ -317,7 +317,7 @@ class Invoice_model extends CI_Model {
 		parent::__construct();
 	}
 	
-	public function get_all_invoice($where=array(), $limit=-1, $offset=0) {
+	public function get_all_invoice($where=array(), $limit=-1, $offset=0, $order='') {
 		// join dengan rate untuk mendapatkan jumlah installment atau recurrence
 		$this->db->select('ar_invoice.*, (ar_invoice.amount - ar_invoice.received_amount) sisa_bayar');
 		$this->db->select('ar_rate.id rate_id, ar_rate.name rate_name, ar_rate.recurrence rate_recurrence, ar_rate.installment rate_installment');
@@ -327,6 +327,9 @@ class Invoice_model extends CI_Model {
 		}
 		if ($where) {
 			$this->db->where($where);
+		}
+		if (!empty($order)) {
+			$this->db->order_by($order);
 		}
 		$query = $this->db->get(INVOICE_TABLE);
 		if ($query->num_rows == 0) {
@@ -378,8 +381,8 @@ class Invoice_model extends CI_Model {
 		return $this->get_all_invoice($where, $limit, $offset);
 	}
 	
-	public function get_single_invoice($where=array()) {
-		$record = $this->get_all_invoice($where, 1, 0);
+	public function get_single_invoice($where=array(), $order='') {
+		$record = $this->get_all_invoice($where, 1, 0, $order);
 			
 		return $record[0];
 	}

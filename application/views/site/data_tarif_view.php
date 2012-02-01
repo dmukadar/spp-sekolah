@@ -19,10 +19,14 @@
 
 					//jQuery('#notify').val(rate.notification);
 					/*
-					jQuery(':checkbox').each(function() {
-						this.checked = (rate.notification == "1");
-					});
 					*/
+					if (rate.notification == "1") {
+						jQuery('#notify').checked = true;
+						jQuery('#notify').parent().addClass("checked");
+					} else {
+						jQuery('#notify').checked = false;
+						jQuery('#notify').parent().removeClass("checked");
+					}
 				}
 			</script>
 			<form id="myform" class="uniform" action="<?php echo (@$action_url);?>">
@@ -60,7 +64,7 @@
 
 						<dt><label for="due_date">Jatuh Tempo</label></dt>
 						<dd>
-							<input class="angka" id="due_date" type="text" name="due_after" value="1" class="small" /> hari<br/>
+							<input class="angka" id="due_date" type="text" name="due_after" value="1" class="small" /> hari (Notes: tgl aktif tagihan yaitu tgl 1 setiap awal bulannya.) <br/>
 							<input type="checkbox" name="notification" value="1" id="notify" checked="checked" /> <label for="notify">kirim SMS jika terjadi tunggakan</label>
 						</dd>
 
