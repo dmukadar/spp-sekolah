@@ -8,7 +8,7 @@ class Otogroup extends Alazka_Controller {
 		$this->load->model('Siswa_model');
 		$this->load->model('Rate_model');
 	}
-	
+
 	public function index() {
 		$this->load->model('Kelas_model');
 		$this->load->model('Siswa_model');
@@ -31,7 +31,7 @@ class Otogroup extends Alazka_Controller {
 		$this->data['list_kelas'] = array();
 		try {
 			$this->data['list_kelas'] = $this->Kelas_model->get_all_kelas();
-		} catch (Exception $e) { } 
+		} catch (Exception $e) { }
 		$offset = 20;
 		$page = $this->input->post('page');
 		$keyword = $this->input->post('keyword');
@@ -62,7 +62,7 @@ class Otogroup extends Alazka_Controller {
 		$this->load->view('site/kelompok_tagihan_view', $this->data);
 		$this->load->view('site/footer_view');
 	}
-	
+
 	/**
 	 * Method untuk menampilkan link edit sesuai dengan ID dari tagihan. Method
 	 * biasanya digunakan pada view.
@@ -75,7 +75,7 @@ class Otogroup extends Alazka_Controller {
 	public function get_edit_link($model) {
 		return site_url('tagihan/edit/' . $model->get_id());
 	}
-	
+
 	/**
 	 * Method untuk menampilkan link edit sesuai dengan ID dari tagihan. Method
 	 * biasanya digunakan pada view.
@@ -89,8 +89,8 @@ class Otogroup extends Alazka_Controller {
 		$token = md5($model->get_id());
 		return site_url('tagihan/delete/' . $model->get_id() . '/' . $token);
 	}
-	
-	
+
+
 	/**
 	 * Method untuk menambahkan javascript baru pada HEAD
 	 *
@@ -155,261 +155,265 @@ class Otogroup extends Alazka_Controller {
 
 //---by puz	-----------------------------------------------
 function do_upload()
-	{  
+	{
 		$this->load->helper(array('form', 'url'));
 	    $config['upload_path'] = './uploads/';
-		$config['allowed_types'] = 'csv|xls';
-		$this->load->library('upload', $config);		
+		$config['allowed_types'] = 'csv|xls|txt';
+		$this->load->library('upload', $config);
 		if ( $this->upload->do_upload('file_import'))
-		{	
+		{
 			$upload=$this->upload->data();
-			$ext= $upload["file_ext"];	
+			$ext= $upload["file_ext"];
 			if($ext==".csv"){
-				$this->loadCSV();
+                                $this->loadCSV();
 			}
 			else if ($ext==".xls"){
 				$this->loadExcel();
 			}
+                        else if ($ext==".txt"){
+				$this->loadCSV();
+			}
 		}
 		else
-		{		
+		{
 			echo $this->upload->display_errors();
 			  redirect('/otogroup/import/', 'refresh');
 		}
 	}
-	
-	
-    function loadExcel()
-	{	
-		$this->load->model('Kelas_model');
-		$this->load->model('StudentGroup_model');		
-		$this->load->model('Rate_model');
-		$this->load->model('ClassGroup_model');
-        $this->load->model('Siswa_model');		
-		$this->data['sess'] = null;	   
-			 $rate=$this->input->post('id_rate');	
-			 $data['rate']=$rate;		 
-		     $this->load->helper('excel_reader2');		
-			 $import = new Spreadsheet_Excel_Reader($_FILES['file_import']['tmp_name']);
-              
-             $baris = $import->rowcount($sheet_index=0);
+
+function loadExcel(){
+  $this->load->model('Siswa_model');
+  $this->load->model('Rate_model');
+  $this->load->model('StudentGroup_model');
+  $rate=$this->input->post('id_rate');
+   try {
+              $data_rate=$this->Rate_model->get_single_rate(array('id'=>$rate));
+              $sess = new stdClass();
+              $sess->name = $data_rate->get_name();
+              $this->data['sess'] = $sess;
+              $data['ratename']= $data_rate->get_name();
+              $data['rate']= $rate;
+       }
+catch (StudentGroupNotFoundException $e)
+       {
+
+       }
+ $this->load->helper('excel_reader2');
+ $import = new Spreadsheet_Excel_Reader($_FILES['file_import']['tmp_name']);
+ $baris = $import->rowcount($sheet_index=0);           
+ $kolom = $import->colcount($sheet_index=0);
+if ($kolom > 2){
+    $eror= "data yang dimasukkan tidak valid";
+    $this->import();
+    echo $eror;
+}
+else if ($kolom==2){
              $counter=0;
              $error_msg="";
              $counter_index=0;
              $status=true;
-			  
-			 $data['ratename']=$this->StudentGroup_model->check_rate(array(),$rate);	
-			
-			for ($i=1; $i<=$baris; $i++)
-		    {
-				$id_siswa=$import->val($i, 'A');
-				$nama=$import->val($i, 'B');				
-	            $query=$this->StudentGroup_model->check_siswa($id_siswa); 						
-				$check_siswa=$query->num_rows();							
-				$check_group=$this->StudentGroup_model->check_group($id_siswa,$rate);					
-		
-			if ($check_siswa > 0 && $check_group > 0)
-			{
-			  $siswa_data=$query->row();
-			  $data['status']="SUDAH";
-			  $data['induk']=$id_siswa;
-			  $data['nama']=$nama;
-			  $data_siswa[$counter]['status']="SUDAH";
-			  $data_siswa[$counter]['induk']=$id_siswa;
-			  $data_siswa[$counter]['nama']=$nama;
-			  
-			  $data['kelas']=$siswa_data->kelas;		
-			  $data_siswa[$counter]['kelas']=$siswa_data->kelas;
-			  
-			  $data['jenjang']=$siswa_data->jenjang;		
-			  $data_siswa[$counter]['jenjang']=$siswa_data->jenjang;	
-			  
-			  $data['id']=$siswa_data->id;		
-			  $data_siswa[$counter]['id']=$siswa_data->id;			  
-			}
-			else if($check_siswa > 0&& $check_group==0 )
-			{
-			  $siswa_data=$query->row();
-			  $data['status']="OK";
-			  $data['induk']=$id_siswa;
-			  $data['nama']=$nama;
-			  $data_siswa[$counter]['status']="OK";
-			  $data_siswa[$counter]['induk']=$id_siswa;
-			  $data_siswa[$counter]['nama']=$nama;	  	
-			 
-			  $data['kelas']=$siswa_data->kelas;	
-			  $data_siswa[$counter]['kelas']=$siswa_data->kelas;	
-			  
-			  $data['jenjang']=$siswa_data->jenjang;		
-			  $data_siswa[$counter]['jenjang']=$siswa_data->jenjang; 
-			  
-			  $data['id']=$siswa_data->id;		
-			  $data_siswa[$counter]['id']=$siswa_data->id;
-			}
-			
-			else if ($check_siswa==0 && $check_group==0)		
-			{
-			  $data['status']="GAGAL";
-			  $data['induk']="  ";
-			  $data['nama']=$nama;
-			  $data_siswa[$counter]['status']="GAGAL";
-			  $data_siswa[$counter]['induk']="  ";
-			  $data_siswa[$counter]['nama']=$nama;
-			  
-			  $data['kelas']="";		
-			  $data_siswa[$counter]['kelas']=" ";
-			  
-			  $data['jenjang']="";		
-			  $data_siswa[$counter]['jenjang']=" ";	
-			  
-			   $data['id']="";		
-			  $data_siswa[$counter]['id']=" ";
-			}
-		$counter++;
-		}		
-		$data['data_siswa']=$data_siswa;	
-		$this->load->view('site/header_view');		
-		$this->load->view('site/tampil_tagihan_view',$data);
-		$this->load->view('site/footer_view');
-		try 
-			{
-			$this->data['list_tarif'] = $this->Rate_model->get_all_rate();		
-     		} 
-		
-		catch (Exception $e) {
-			$this->data['list_tarif'] = array();	
-		}		
-	}
+try {
+ for ($i=1; $i<=$baris; $i++)
+{
 
+    $id_siswa=$import->val($i, 'A');
+    $nama=$import->val($i, 'B');
+    try {
+         $where = array('sis_siswa.noinduk' => $id_siswa);
+         $query = $this->Siswa_model->get_single_siswa($where);
+         $sess = new stdClass();
+         $sess->id = $query->get_id();
+         $sess->nama_siswa = $query->get_namalengkap();
+         $sess->no_induk = $id_siswa;
+         $sess->kelas_jenjang = sprintf('%s (%s)', $query->kelas->get_kelas(), $query->kelas->get_jenjang());
+         $this->data['sess'] = $sess;
+         $data['siswa_id']= $query->get_id();
+         $array = array($data['siswa_id']);
 
-function loadCSV()
-	{	
-	    $this->load->model('Kelas_model');
-		$this->load->model('StudentGroup_model');		
-		$this->load->model('Rate_model');
-		$this->load->model('ClassGroup_model');
-        $this->load->model('Siswa_model');	
-		$this->data['sess'] = null;	   
-    
-	$row = 1;
-	$counter=0;
-     if (($handle = fopen($_FILES['file_import']['tmp_name'], "r")) !== FALSE) {	     
-	    while (($data2 = fgetcsv($handle, 1000, ",")) !== FALSE ) 
-	  {
-             $num = count($data2)/2;
-             $row++;			 
-		    
-             $error_msg="";
-             $counter_index=0;
-             $status=true;		
-			 $rate=$this->input->post('id_rate');	
-			 $data['rate']=$rate;			  
-			 $data['ratename']=$this->StudentGroup_model->check_rate(array(),$rate);	
- 
- for ($c=0; $c < $num; $c++) {
-			$id_siswa=$data2[0];
-			$nama=$data2[1];				
-	            $query=$this->StudentGroup_model->check_siswa($id_siswa); 						
-				$check_siswa=$query->num_rows();				
-				$check_group=$this->StudentGroup_model->check_group($id_siswa,$rate);		
-		
-			if ($check_siswa > 0&& $check_group > 0)
-			{
-			  $siswa_data=$query->row();
-			  $data['status']="SUDAH";
-			  $data['induk']=$id_siswa;
-			  $data['nama']=$nama;
-			  $data_siswa[$counter]['status']="SUDAH";
-			  $data_siswa[$counter]['induk']=$id_siswa;
-			  $data_siswa[$counter]['nama']=$nama;
-			  
-			  $data['kelas']=$siswa_data->kelas;		
-			  $data_siswa[$counter]['kelas']=$siswa_data->kelas;
-			  
-			  $data['jenjang']=$siswa_data->jenjang;		
-			  $data_siswa[$counter]['jenjang']=$siswa_data->jenjang;	
-			  
-			  $data['id']=$siswa_data->id;		
-			  $data_siswa[$counter]['id']=$siswa_data->id;			  
-			}
-			else if($check_siswa > 0&& $check_group==0)
-			{
-			  $siswa_data=$query->row();
-			  $data['status']="OK";
-			  $data['induk']=$id_siswa;
-			  $data['nama']=$nama;
-			  $data_siswa[$counter]['status']="OK";
-			  $data_siswa[$counter]['induk']=$id_siswa;
-			  $data_siswa[$counter]['nama']=$nama;	  	
-			 
-			  $data['kelas']=$siswa_data->kelas;	
-			  $data_siswa[$counter]['kelas']=$siswa_data->kelas;	
-			  
-			  $data['jenjang']=$siswa_data->jenjang;		
-			  $data_siswa[$counter]['jenjang']=$siswa_data->jenjang; 
-			  
-			  $data['id']=$siswa_data->id;		
-			  $data_siswa[$counter]['id']=$siswa_data->id;
-			}
-			
-			else if ($check_siswa==0 && $check_group==0)		
-			{
-			  $data['status']="GAGAL";
-			  $data['induk']="  ";
-			  $data['nama']=$nama;
-			  $data_siswa[$counter]['status']="GAGAL";
-			  $data_siswa[$counter]['induk']="  ";
-			  $data_siswa[$counter]['nama']=$nama;
-			  
-			  $data['kelas']="";		
-			  $data_siswa[$counter]['kelas']=" ";
-			  
-			  $data['jenjang']="";		
-			  $data_siswa[$counter]['jenjang']=" ";	
-			  
-			   $data['id']="";		
-			  $data_siswa[$counter]['id']=" ";
-			}
-		
-        }//for	
-$counter++;	
- 
-    }//while
-	   $data['data_siswa']=$data_siswa;	
-		$this->load->view('site/header_view');		
-		$this->load->view('site/tampil_tagihan_view',$data);
-		$this->load->view('site/footer_view');
-		try 
-			{
-			$this->data['list_tarif'] = $this->Rate_model->get_all_rate();		
-     		} 
-		
-		catch (Exception $e) 
-		   {
-			$this->data['list_tarif'] = array();	
-		   }	
-	 fclose($handle);
-   }
+         $data['id']= $query->get_id();
+         $data_siswa[$counter]['id']=$query->get_id();
 
+         $data['noinduk']= $id_siswa;
+         //print_r ($data['noinduk']);
+         $data_siswa[$counter]['noinduk']=$id_siswa;
+
+         $data['namalengkap']= $query->get_namalengkap();
+         $data_siswa[$counter]['namalengkap']=$query->get_namalengkap();
+
+         $data['kelas']= $query->kelas->get_kelas();
+         $data_siswa[$counter]['kelas']= $query->kelas->get_kelas();
+
+         $data['jenjang']= $query->kelas->get_jenjang();
+         $data_siswa[$counter]['jenjang']=$query->kelas->get_jenjang();
+         
+         try {
+	 $query2 = $this->StudentGroup_model->get_single_studentgroup(array('id_rate'=>$rate, 'id_student'=>$query->get_id()));
+         $data['status']="SUDAH" ;
+         $data_siswa[$counter]['status']="SUDAH";
+	     }
+         catch (StudentGroupNotFoundException $e)
+           {	 $data['status']="OK" ;
+                 $data_siswa[$counter]['status']="OK";
+           }
+        }
+    catch (SiswaNotFoundException $e){
+          $data['status']="GAGAL" ;
+          $data_siswa[$counter]['status']="GAGAL";
+          $data_siswa[$counter]['noinduk']=$id_siswa;
+          $data_siswa[$counter]['id']=" ";
+          $data_siswa[$counter]['namalengkap']=$nama;
+          $data_siswa[$counter]['kelas']= "-";
+          $data_siswa[$counter]['jenjang']="-";
+    }
+    	$counter++;
+ }
+}
+catch (Exception $e)
+  {
+   
+  }
+ $data['data_siswa']=$data_siswa;	
+ $this->load->view('site/header_view');
+ $this->load->view('site/tampil_tagihan_view',$data);
+ $this->load->view('site/footer_view');
+  try
+  {
+   $this->data['list_tarif'] = $this->Rate_model->get_all_rate();
+  }
+
+  catch (Exception $e)
+  {
+   $this->data['list_tarif'] = array();
+  }
+ }
 }
 
+function olahData(){
+$file=fopen($_FILES['file_import']['tmp_name'], "w");
+$fileData = file_get_contents($_FILES['file_import']['tmp_name']);
+$fileData = str_replace(";", ",", $fileData);
+fwrite($file, $fileData);
+flush();
+fclose($file);
+$this -> loadCSV();
+}
 
-	public function simpan_exc(){
-		
-		$counter=$this->input->post('tx_counter');
-		$this->load->model("StudentGroup_model");
-		for($i=1;$i<=$counter;$i++){
-			$status=$this->input->post('tx_status_'.$i);
-			if($status=="OK"){
-				$data=array(
-				'id_rate' =>$this->input->post('tx_rate'), 
-				'id_student'=>$this->input->post('tx_induk_'.$i)
-				);
-				$status=$this->StudentGroup_model->insert_exc($data);
-			}
-		}
-		$this->index();
-	}
+function loadCSV()
+{
+  $this->load->model('Siswa_model');
+  $this->load->model('Rate_model');
+  $this->load->model('StudentGroup_model');
+
+$row = 1;
+$counter=0;
+$file=fopen($_FILES['file_import']['tmp_name'], "rw");
+//$file=fopen("./uploads/data.csv", "rw");
+$fileData = file_get_contents($_FILES['file_import']['tmp_name']);
+
+if(stristr($fileData, ';') === TRUE) {
+    $delimiter= ";";
+  }
+else if (stristr($fileData, ',') === TRUE) {
+    $delimiter= ",";
+  }
+if (($handle =$file) !== FALSE) {
+$delimiter= ",";
+	    while (($data2 = fgetcsv($handle, 1000, $delimiter)) !== FALSE )
+	  {
+             $num = count($data2)/2;
+             $row++;
+
+             $error_msg="";
+             $counter_index=0;
+             $status=true;
+    $rate=$this->input->post('id_rate');
+    try {
+              $data_rate=$this->Rate_model->get_single_rate(array('id'=>$rate));
+              $sess = new stdClass();
+              $sess->name = $data_rate->get_name();
+              $this->data['sess'] = $sess;
+              $data['ratename']= $data_rate->get_name();
+              $data['rate']= $rate;
+       }
+   catch (StudentGroupNotFoundException $e)
+       {
+       }
+
+ for ($c=0; $c < $num; $c++) {
+
+	$id_siswa=$data2[0];
+	$nama=$data2[1];
+	try {
+         $where = array('sis_siswa.noinduk' => $id_siswa);
+         $query = $this->Siswa_model->get_single_siswa($where);
+         $sess = new stdClass();
+         $sess->id = $query->get_id();
+         $sess->nama_siswa = $query->get_namalengkap();
+         $sess->no_induk = $id_siswa;
+         $sess->kelas_jenjang = sprintf('%s (%s)', $query->kelas->get_kelas(), $query->kelas->get_jenjang());
+         $this->data['sess'] = $sess;
+         $data['siswa_id']= $query->get_id();
+         $array = array($data['siswa_id']);
+
+         $data['id']= $query->get_id();
+         $data_siswa[$counter]['id']=$query->get_id();
+
+         $data['noinduk']= $id_siswa;
+         //print_r ($data['noinduk']);
+         $data_siswa[$counter]['noinduk']=$id_siswa;
+
+         $data['namalengkap']= $query->get_namalengkap();
+         $data_siswa[$counter]['namalengkap']=$query->get_namalengkap();
+
+         $data['kelas']= $query->kelas->get_kelas();
+         $data_siswa[$counter]['kelas']= $query->kelas->get_kelas();
+
+         $data['jenjang']= $query->kelas->get_jenjang();
+         $data_siswa[$counter]['jenjang']=$query->kelas->get_jenjang();
+
+         try {
+	 $query2 = $this->StudentGroup_model->get_single_studentgroup(array('id_rate'=>$rate, 'id_student'=>$query->get_id()));
+         $data['status']="SUDAH" ;
+         $data_siswa[$counter]['status']="SUDAH";
+	     }
+         catch (StudentGroupNotFoundException $e)
+           {	 $data['status']="OK" ;
+                 $data_siswa[$counter]['status']="OK";
+           }
+        }
+    catch (SiswaNotFoundException $e){
+          $data['status']="GAGAL" ;
+          $data_siswa[$counter]['status']="GAGAL";
+          $data_siswa[$counter]['noinduk']=$id_siswa;
+          $data_siswa[$counter]['id']=" ";
+          $data_siswa[$counter]['namalengkap']=$nama;
+          $data_siswa[$counter]['kelas']= "-";
+          $data_siswa[$counter]['jenjang']="-";
+    }
+   }//for
+$counter++;
+}//while
+	   $data['data_siswa']=$data_siswa;
+		$this->load->view('site/header_view');
+		$this->load->view('site/tampil_tagihan_view',$data);
+		$this->load->view('site/footer_view');
+		try
+			{
+			$this->data['list_tarif'] = $this->Rate_model->get_all_rate();
+     		}
+
+		catch (Exception $e)
+		   {
+			$this->data['list_tarif'] = array();
+		   }
+	 fclose($handle);
+   }
+}
+
+function simpan_exc(){
+ $this->simpan();
+ redirect('/otogroup/index/', 'refresh');
+}
 //--------------------------------------------------------------------------
 
 	public function simpan() {
