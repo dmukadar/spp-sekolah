@@ -46,7 +46,8 @@
 			<a id="view-site" href="#">View Site</a>
 		</div>
 		<div id="userinfo" class="grid_6">
-			Welcome, <a href="#" onClick="return false;"><?php echo (ME()->get_current_user()->get_user_full_name());?></a>
+			<a href="<?php echo (site_url('userctl/index'));?>"><?php echo (ME()->get_current_user()->get_user_full_name());?></a>
+			(<?php echo (ME()->get_current_user()->get_user_privilege(TRUE));?>)
 		</div>
 	</div>
 </header>
@@ -84,6 +85,7 @@
 				<li><a href="#" onClick="return false;">Settings</a>
 					<ul>
 						<li><a href="<?php echo (site_url('userctl/index'));?>">Ubah Data Profil</a></li>
+						<li><a href="<?php echo (site_url('userctl/pengguna'));?>">Pengguna</a></li>
 						<li><a href="<?php echo (site_url('otogroup/import'));?>">Impor Kelompok Tagih</a></li>
 					</ul>
 				</li>

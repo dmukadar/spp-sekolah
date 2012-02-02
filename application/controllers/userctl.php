@@ -13,6 +13,7 @@ class Userctl extends Alazka_Controller {
 			// karena bukan POST jadi tampilkan data dari user yang saat ini
 			$this->data['sess']->namadepan = $this->current_user->get_user_first_name();
 			$this->data['sess']->namabelakang = $this->current_user->get_user_last_name();
+			$this->data['sess']->privilege = $this->current_user->get_user_privilege(TRUE);
 		}
 		
 		$this->load->view('site/header_view');
@@ -27,6 +28,7 @@ class Userctl extends Alazka_Controller {
 		
 		$this->data['sess']->namadepan = trim($this->input->post('namadepan'));
 		$this->data['sess']->namabelakang = trim($this->input->post('namabelakang'));
+		$this->data['sess']->privilege = $this->current_user->get_user_privilege(TRUE);
 			
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('namadepan', 'Nama Depan', 'required');

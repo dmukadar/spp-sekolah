@@ -14,6 +14,7 @@ class User {
 	private $user_join_date = NULL;
 	private $user_last_login = NULL;
 	private $pegawai_id = NULL;
+	private $user_privilege = NULL;
 
 	public function __construct() {
 	}
@@ -109,6 +110,18 @@ class User {
 	public function get_pegawai_id() {
 		return $this->pegawai_id;
 	}
+	
+	public function set_user_privilege($user_privilege) {
+		$this->user_privilege = $user_privilege;
+	}
+	
+	public function get_user_privilege($format=FALSE) {
+		if ($format === TRUE) {
+			return User_model::get_user_privilege_by_code($this->user_privilege);
+		}
+		
+		return $this->user_privilege;
+	}
 
 	/**
 	 * Method untuk melakukan mapping dari standard object ke user.
@@ -135,6 +148,7 @@ class User {
 			$tmp->set_user_join_date($result->user_join_date);
 			$tmp->set_user_last_login($result->user_last_login);
 			$tmp->set_pegawai_id($result->pegawai_id);
+			$tmp->set_user_privilege($result->user_privilege);
 			$objects[$i] = clone $tmp;
 		}
 		
@@ -430,5 +444,60 @@ class User_model extends CI_Model {
 				throw new Exception (sprintf('ID status "%d" yang anda cari tidak ada, baca dokumentasi!.', $status_id));
 			break;
 		}
+	}
+	
+	/**
+	 * Method untuk mendapatkan daftar user privilege berupa associative array
+	 * dimana index-nya adalah kode privilege dan value-nya adalah label dari 
+	 * privilege tersebut.
+	 *
+	 * @author Rio Astamal <me@rioastamal.net>
+	 *
+	 * @return array
+	 */
+	public static function get_user_privilege_list() {
+		return array(
+			'adm' => 'Administrator',
+			'ksr' => 'Kasir'
+		);
+	}
+	
+	/**
+	 * Method untuk mendapatkan kode user privilege berdasarkan label-nya.
+	 *
+	 * @author Rio Astamal <me@rioastamal.net>
+	 *
+	 * @param string $label - Nama label yang dicari
+	 * @return string
+	 */
+	public static function get_user_privilege_by_label($label) {
+		$label = strtolower($label);
+		$list = array_map('strtolower', self::get_user_privilege_list());
+		
+		$key = array_search($label, $list);
+		if ($key === FALSE) {
+			// label tidak ada
+			throw new Exception(sprintf('Label "%s" yang anda masukkan pada method User_model::get_user_privilege_by_label salah!', $label));
+		}
+		
+		return $key;
+	}
+	
+	/**
+	 * Method untuk mendapatkan label user privilege berdasarkan code.
+	 *
+	 * @author Rio Astamal <me@rioastamal.net>
+	 *
+	 * @param string $label - Nama label yang dicari
+	 * @return string
+	 */
+	public static function get_user_privilege_by_code($code) {
+		$list = self::get_user_privilege_list();
+		
+		if (array_key_exists($code, $list) === FALSE) {
+			throw new Exception(sprintf('Tidak terdapat kode user "%s" pada daftar privilege User_model.', $code));
+		}
+		
+		return $list[$code];
 	}
 }

@@ -20,6 +20,14 @@
 					</td>
 				</tr>
 				<tr>
+					<td style="font-weight:bold;"><dt><label for="namabelakang">Privilege</label></dt></td>
+					<td style="font-weight:bold;">
+						<dl>
+							<dd style="font-weight:bold;"><?php echo (@$sess->privilege);?></dd>
+						<dl>
+					</td>
+				</tr>
+				<tr>
 					<td style="font-weight:bold;"><dt><label for="passwordbaru2">Password Baru</label></dt></td>
 					<td style="font-weight:bold;">
 						<dl>
