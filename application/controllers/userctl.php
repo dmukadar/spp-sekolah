@@ -241,4 +241,31 @@ class Userctl extends Alazka_Controller {
 		header('Content-type: application/json');
 		echo json_encode($json);
 	}
+	
+	public function delete() {
+		if ($this->input->post('user-id') === FALSE) {
+			return '<strong>ERROR</strong>';
+		}
+		
+		$id = $this->input->post('user-id');
+		$json = array();
+		try {
+			if ($id == $this->current_user->get_user_id()) {
+				throw new Exception ('Anda tidak dapat menghapus user account milik sendiri.');
+			}
+			
+			$where = array(
+					'ar_user.user_id' => $id
+			);
+			$user = $this->User_model->get_single_user($where);
+			
+			$this->User_model->delete($user);
+			
+			$this->set_flash_message(sprintf('User %s berhasil dihapus', $user->get_username()), 'information msg');
+		} catch (Exception $e) {
+			$this->set_flash_message($e->getMessage(), 'error msg');
+		}
+		
+		$this->print_flash_message();
+	}
 }

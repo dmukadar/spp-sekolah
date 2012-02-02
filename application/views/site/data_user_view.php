@@ -234,13 +234,13 @@
 
 			if (confirm('Anda yakin akan menghapus user ini?')) {
 				jQuery.post(
-					"<?php echo site_url('tarif_khusus/delete'); ?>",
-					{"id": id},
+					"<?php echo site_url('userctl/delete'); ?>",
+					{"user-id": id},
 					function (response) {
-						if (! response.search('berhasil') == -1) {
+						if (response.search('berhasil') == -1) {
 							flashDialog('flash-msg', response, 10);
 						} else {
-							flashDialog('flash-msg', response, 2);
+							flashDialog('flash-msg', response, 3);
 							jQuery('#tbl-' + id).hide();
 							// setTimeout(function() { document.location.href = document.location.href; }, 3000);
 						}

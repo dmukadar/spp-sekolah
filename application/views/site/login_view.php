@@ -12,10 +12,8 @@
 				<dt><label for="adminpassword">Password</label></dt>
 				<dd><input id="adminpassword" type="password" name="adminpassword" /></dd>
 			</dl>
-			<label><input type="checkbox" />Remember Me</label>
 			<p>
 				<button type="submit" class="button gray" name="loginbtn" id="loginbtn">LOGIN</button>
-				<a id="forgot" href="#">Forgot Password?</a>
 			</p>
 		</form>
 	</section>
