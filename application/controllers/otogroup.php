@@ -156,6 +156,10 @@ class Otogroup extends Alazka_Controller {
 //---by puz	-----------------------------------------------
 function do_upload()
 	{
+                $this->data['sess'] = null;
+		$this->data['action_url'] = site_url('otogroup/simpan');
+		$this->data['info_url'] = site_url('otogroup/info');
+		$this->data['filter_url'] = site_url('otogroup/index');
 		$this->load->helper(array('form', 'url'));
 	    $config['upload_path'] = './uploads/';
 		$config['allowed_types'] = 'csv|xls|txt';
@@ -182,6 +186,10 @@ function do_upload()
 	}
 
 function loadExcel(){
+  $this->data['sess'] = null;
+  $this->data['action_url'] = site_url('otogroup/simpan');
+  $this->data['info_url'] = site_url('otogroup/info');
+  $this->data['filter_url'] = site_url('otogroup/index');
   $this->load->model('Siswa_model');
   $this->load->model('Rate_model');
   $this->load->model('StudentGroup_model');
@@ -272,7 +280,8 @@ catch (Exception $e)
   {
    
   }
- $data['data_siswa']=$data_siswa;	
+ $data['data_siswa']=$data_siswa;
+ $data['action_url'] = site_url('otogroup/simpan_exc');
  $this->load->view('site/header_view');
  $this->load->view('site/tampil_tagihan_view',$data);
  $this->load->view('site/footer_view');
@@ -300,6 +309,10 @@ $this -> loadCSV();
 
 function loadCSV()
 {
+  $this->data['sess'] = null;
+  $this->data['action_url'] = site_url('otogroup/simpan');
+  $this->data['info_url'] = site_url('otogroup/info');
+  $this->data['filter_url'] = site_url('otogroup/index');
   $this->load->model('Siswa_model');
   $this->load->model('Rate_model');
   $this->load->model('StudentGroup_model');
@@ -394,6 +407,7 @@ $delimiter= ",";
 $counter++;
 }//while
 	   $data['data_siswa']=$data_siswa;
+           $data['action_url'] = site_url('otogroup/simpan_exc');
 		$this->load->view('site/header_view');
 		$this->load->view('site/tampil_tagihan_view',$data);
 		$this->load->view('site/footer_view');

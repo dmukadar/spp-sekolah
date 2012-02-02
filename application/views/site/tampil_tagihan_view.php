@@ -3,8 +3,9 @@
 	        <?php  echo $ratename;?>
 			</strong></h2>
 			
-<form id="form1" name="form1" method="post" action="<?php 
-echo site_url('otogroup/simpan_exc');
+<form id="myform" name="myform" method="post" action="<?php 
+//echo site_url('otogroup/simpan_exc');
+echo (@$action_url);
 ?>">		
 <table id="tabel" class="gtable">
 				<thead>
@@ -53,37 +54,133 @@ echo site_url('otogroup/simpan_exc');
 					<div class="buttons" style="text-align:right; margin-top: 10px;">
 					  
 						<label>
-						  <input type="submit" name="savebtn" id="savebtn" value="Impor data diatas" class="button gray" />
+						  <script>
+							function test(){
+									var url = jQuery('#myform').attr('action');
+									var data = jQuery('#myform').serialize();
+									
+					
+									jQuery.post(url, data, function(response) {
+										if (! response.success) {
+											flashDialog('err-msg', response.message, 5);
+										} else {
+											flashDialog('info-msg', response.message, 2);
+											setTimeout(function() { document.location.href=document.location.href; }, 3000);
+										}
+									});
+							}
+						  </script>
+						  <button type="button" class="button green" name="save-button2" id="save-button2" onclick="test();">Impor Data Diatas</button>
 						</label>
 					  
 					</div>
 			</div>
+			</form>
 		</div><!--list-layer-->
-</form>
 
-			<script>
-				jQuery('#upload-button').click(function() {
-					jQuery('#list-layer').slideDown();
+
+		<script>
+				jQuery('keyword').change(function() {
+					//document.getElementById('frm-filter-cat').submit();
+					flashDialog('err-msg', 'Fitur ini masih dalam pengembangan', 5);
 				});
-				
-				
-				jQuery('#savebtn').click(function() {
-			jQuery.post(
-				'<?php echo site_url("otogroup/simpan_exc"); ?>',
-				jQuery('#myform').serialize(),
-				function (response) {
-					if (response.search('SUCCESS') > -1) {
-						jQuery('#myform').submit();
-					} else {
-						jQuery('h1').after('<div class="error msg" id="msg-box">' + response + '</div>');
-						setTimeout(function() { 
-							jQuery('#msg-box').fadeOut(); 
-							jQuery('#msg-box').remove(); 
-						}
-						, 10000);
-					}
-				}
-			);
-		});
+				jQuery('#new-button').click(function() {
+					jQuery('#form-layer').slideDown();
+					jQuery('#list-layer').hide();
+				});
+				jQuery('#cancel-button').click(function() {
+					jQuery('#form-layer').slideUp();
+					jQuery('#list-layer').show();
+				});
+				jQuery('#save-button').click(function() {
+					alert("oke");
+					var url = jQuery('#myform').attr('action');
+					var data = jQuery('#myform').serialize();
 
+					jQuery.post(url, data, function(response) {
+						if (! response.success) {
+							flashDialog('err-msg', response.message, 5);
+						} else {
+							flashDialog('info-msg', response.message, 2);
+							setTimeout(function() { document.location.href=document.location.href; }, 3000);
+						}
+					});
+					alert("oke 2");
+				});
+
+			// ---- Auto complete
+			jQuery('#siswa').jsonSuggest({
+				minCharacters: 3,
+				url: '<?php echo ($ajax_siswa_url);?>',
+				onSelect: function(item) {
+					if (! jQuery('#peserta-container').is(':visible')) jQuery('#peserta-container').toggle();
+
+					peserta = '<li><input type="hidden" name="peserta[]" value="' + item.id + '" /><a title="Delete" href="javascript:void(0);" class="rm-siswa" onclick="remove_siswa(this);"><img alt="Delete" src="images/icons/cross.png"></a> ' + item.nama + ' - ' + item.kelas + ' ( ' + item.jenjang + ' )</li>';
+					jQuery('#tmp_siswa').append(peserta);
+					jQuery('#siswa').val('');
+				},
+				onEnter: function() {
+					// cegah form submit
+					return false;
+				}
+			});
+
+			function remove_siswa(item) {
+				var li = jQuery(item).parent();
+				li.fadeOut();
+				li.remove();
+			};
+
+			jQuery('.select_grouping').focus(function() {
+				if (this.id != 'siswa') {
+					grouping = 'kelas';
+					jQuery('#peserta-container').fadeOut();
+				} else {
+					grouping = 'siswa';
+					jQuery(':checkbox').each(function() {
+						this.checked = false;
+						jQuery(this).parent().removeClass("checked");
+					});
+				};
+				jQuery('#grouping').val(grouping);
+			});
+
+			jQuery('a.paging-leaf').click(function(e) {
+				jQuery('#page').val(jQuery(this).attr('href'));
+				jQuery('#frm-filter-cat').submit();
+				e.preventDefault();
+			});
+
+			jQuery('.submit-filter').keypress(function(e){
+				if (e.keyCode == 13) jQuery('#frm-filter-cat').submit();
+			});
+
+			jQuery('#keyword').keypress(function(e){
+				jQuery('#page').val(1);
+			});
+
+			jQuery('#checker').click(function() {
+				var on = this.checked;
+				jQuery(':checkbox').each(function() {
+					this.checked = on;
+					if (on) {
+						jQuery(this).parent().addClass("checked");
+					} else {
+						jQuery(this).parent().removeClass("checked");
+					}
+				});
+			});
+
+			jQuery('.delete-row').click(function(e) {
+				if (confirm('Anda yakin akan menghapus data kelompok tagihan ?')) {
+					jQuery.post(jQuery(this).attr('href'), function(response) {
+						if (response.search('berhasil') == -1) flashDialog('err-msg', response, 10);
+						else {
+							flashDialog('info-msg', response, 2);
+							setTimeout(function() { document.location.href=document.location.href; }, 3000);
+						}
+					});
+				}
+				e.preventDefault();
+			});
 			</script>
