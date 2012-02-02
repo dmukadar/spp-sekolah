@@ -4,7 +4,6 @@
 			</strong></h2>
 			
 <form id="myform" name="myform" method="post" action="<?php 
-//echo site_url('otogroup/simpan_exc');
 echo (@$action_url);
 ?>">		
 <table id="tabel" class="gtable">
@@ -55,7 +54,7 @@ echo (@$action_url);
 					  
 						<label>
 						  <script>
-							function test(){
+							function save(){
 									var url = jQuery('#myform').attr('action');
 									var data = jQuery('#myform').serialize();
 									
@@ -65,12 +64,12 @@ echo (@$action_url);
 											flashDialog('err-msg', response.message, 5);
 										} else {
 											flashDialog('info-msg', response.message, 2);
-											setTimeout(function() { document.location.href=document.location.href; }, 3000);
+											setTimeout(function() { document.location.href="<? base_url()?>"+ "index.php/otogroup/index" }, 3000);
 										}
 									});
 							}
 						  </script>
-						  <button type="button" class="button green" name="save-button2" id="save-button2" onclick="test();">Impor Data Diatas</button>
+						  <button type="button" class="button green" name="save-button2" id="save-button2" onclick="save();">Impor Data Diatas</button>
 						</label>
 					  
 					</div>

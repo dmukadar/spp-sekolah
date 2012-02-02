@@ -138,7 +138,7 @@ class Otogroup extends Alazka_Controller {
 		$this->load->model('ClassGroup_model');
 
 		$this->data['sess'] = null;
-		$this->data['action_url'] = site_url('otogroup/simpan');
+		$this->data['action_url'] = site_url('otogroup/do_upload');
 		$this->data['info_url'] = site_url('otogroup/info');
 		$this->data['filter_url'] = site_url('otogroup/index');
 
@@ -147,7 +147,8 @@ class Otogroup extends Alazka_Controller {
 		} catch (Exception $e) {
 			$this->data['list_tarif'] = array();
 		}
-
+                $data['action_url'] = site_url('otogroup/do_upload');
+                $this->data['eror']= "0";
 		$this->load->view('site/header_view');
 		$this->load->view('site/impor_kelompok_tagihan_view', $this->data);
 		$this->load->view('site/footer_view');
@@ -156,12 +157,10 @@ class Otogroup extends Alazka_Controller {
 //---by puz	-----------------------------------------------
 function do_upload()
 	{
-                $this->data['sess'] = null;
-		$this->data['action_url'] = site_url('otogroup/simpan');
-		$this->data['info_url'] = site_url('otogroup/info');
-		$this->data['filter_url'] = site_url('otogroup/index');
+               
 		$this->load->helper(array('form', 'url'));
-	    $config['upload_path'] = './uploads/';
+
+                $config['upload_path'] = './uploads/';
 		$config['allowed_types'] = 'csv|xls|txt';
 		$this->load->library('upload', $config);
 		if ( $this->upload->do_upload('file_import'))
@@ -177,11 +176,21 @@ function do_upload()
                         else if ($ext==".txt"){
 				$this->loadCSV();
 			}
+                    
 		}
 		else
 		{
-			echo $this->upload->display_errors();
-			  redirect('/otogroup/import/', 'refresh');
+                    $this->data['sess'] = null;
+		     //$this->upload->display_errors();
+                        try {
+			$this->data['list_tarif'] = $this->Rate_model->get_all_rate();
+		         } catch (Exception $e) {
+			$this->data['list_tarif'] = array();
+		         }
+                        $this->data['eror']= "1";
+                        $this->load->view('site/header_view');
+		        $this->load->view('site/impor_kelompok_tagihan_view', $this->data);
+		        $this->load->view('site/footer_view');
 		}
 	}
 
@@ -211,9 +220,15 @@ catch (StudentGroupNotFoundException $e)
  $baris = $import->rowcount($sheet_index=0);           
  $kolom = $import->colcount($sheet_index=0);
 if ($kolom > 2){
-    $eror= "data yang dimasukkan tidak valid";
-    $this->import();
-    echo $eror;
+                        try {
+			$this->data['list_tarif'] = $this->Rate_model->get_all_rate();
+		         } catch (Exception $e) {
+			$this->data['list_tarif'] = array();
+		         }
+                        $this->data['eror']= "1";
+                        $this->load->view('site/header_view');
+		        $this->load->view('site/impor_kelompok_tagihan_view', $this->data);
+		        $this->load->view('site/footer_view');
 }
 else if ($kolom==2){
              $counter=0;
@@ -281,7 +296,7 @@ catch (Exception $e)
    
   }
  $data['data_siswa']=$data_siswa;
- $data['action_url'] = site_url('otogroup/simpan_exc');
+ $data['action_url'] = site_url('otogroup/simpan');
  $this->load->view('site/header_view');
  $this->load->view('site/tampil_tagihan_view',$data);
  $this->load->view('site/footer_view');
@@ -372,7 +387,6 @@ $delimiter= ",";
          $data_siswa[$counter]['id']=$query->get_id();
 
          $data['noinduk']= $id_siswa;
-         //print_r ($data['noinduk']);
          $data_siswa[$counter]['noinduk']=$id_siswa;
 
          $data['namalengkap']= $query->get_namalengkap();
@@ -407,7 +421,7 @@ $delimiter= ",";
 $counter++;
 }//while
 	   $data['data_siswa']=$data_siswa;
-           $data['action_url'] = site_url('otogroup/simpan_exc');
+           $data['action_url'] = site_url('otogroup/simpan');
 		$this->load->view('site/header_view');
 		$this->load->view('site/tampil_tagihan_view',$data);
 		$this->load->view('site/footer_view');
@@ -424,10 +438,6 @@ $counter++;
    }
 }
 
-function simpan_exc(){
- $this->simpan();
- redirect('/otogroup/index/', 'refresh');
-}
 //--------------------------------------------------------------------------
 
 	public function simpan() {
