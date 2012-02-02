@@ -83,6 +83,7 @@ class Userctl extends Alazka_Controller {
 	}
 	
 	public function pengguna() {
+		$this->deny_group('ksr');
 		$this->data['action_url'] = site_url() . '/userctl/save';
 		$this->data['list_status'] = User_model::get_status_list();
 		$this->data['list_privilege'] = User_model::get_user_privilege_list();

@@ -175,6 +175,21 @@ class Alazka_Controller extends CI_Controller {
 	public function add_more_javascript() {
 		// load your js
 	}
+	
+	/**
+	 * Method mencegah user mengakses suatu halaman jika privilege atau
+	 * hak aksesnya sesuai yang dicari.
+	 *
+	 * @author Rio Astamal <me@rioastamal.net>
+	 *
+	 * @param string $group - Nama group/privilege
+	 * @return void
+	 */
+	protected function deny_group($group) {
+		if ($group === $this->current_user->get_user_privilege()) {
+			show_error('<strong>ANDA TIDAK BERHAK MENGAKSES HALAMAN INI.</strong>');
+		}
+	}
 }
 
 /**

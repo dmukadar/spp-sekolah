@@ -3,6 +3,7 @@
 class Tarif_khusus extends Alazka_Controller {
 	public function __construct() {
 		parent::__construct();
+		$this->deny_group('ksr');
 	}
 	
 	/**

@@ -94,8 +94,8 @@
 						<li><a href="<?php echo (site_url('otogroup/import'));?>">Impor Kelompok Tagih</a></li>
 					</ul>
 				</li>
+				<?php endif; ?>
 			</ul>
-			<?php endif; ?>
 			<ul id="usermenu">
 				<li><a href="<?php echo (site_url('site/logout'));?>">Logout</a></li>
 			</ul>

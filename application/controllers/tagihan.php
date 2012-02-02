@@ -4,6 +4,7 @@ class Tagihan extends Alazka_Controller {
 	public function __construct() {
 		parent::__construct();
 		// $this->output->enable_profiler(FALSE);
+		$this->deny_group('ksr');
 	}
 	
 	public function index($loadId = 0) {

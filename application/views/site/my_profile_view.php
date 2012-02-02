@@ -4,6 +4,14 @@
 			<form action="<?php echo (@$action_url);?>" method="post">
 			<table style="width:80%" cellspacing="4">
 				<tr>
+					<td style="font-weight:bold;"><dt><label for="">Username</label></dt></td>
+					<td style="font-weight:bold;">
+						<dl>
+							<dd><?php echo ME()->get_current_user()->get_username();?></dd>
+						<dl>
+					</td>
+				</tr>
+				<tr>
 					<td style="font-weight:bold;"><dt><label for="namadepan">Nama Depan</label></dt></td>
 					<td style="font-weight:bold;">
 						<dl>
@@ -20,7 +28,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td style="font-weight:bold;"><dt><label for="namabelakang">Privilege</label></dt></td>
+					<td style="font-weight:bold;"><dt><label for="namabelakang">Hak Akses</label></dt></td>
 					<td style="font-weight:bold;">
 						<dl>
 							<dd style="font-weight:bold;"><?php echo (@$sess->privilege);?></dd>

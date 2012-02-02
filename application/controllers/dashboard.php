@@ -4,6 +4,7 @@ class Dashboard extends Alazka_Controller {
 	
 	public function __construct() {
 		parent::__construct();
+		$this->deny_group('ksr');
 	}
 	
 	public function index() {
