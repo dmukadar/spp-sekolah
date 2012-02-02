@@ -156,12 +156,15 @@ class StudentGroup_model extends CI_Model {
 		parent::__construct();
 	}
 	
-	public function get_all_studentgroup($where=array(), $limit=-1, $offset=0) {
+	public function get_all_studentgroup($where=array(), $limit=-1, $offset=0, $order='') {
 		if ($limit > 0) {
 			$this->db->limit($limit, $offset);
 		}
 		if ($where) {
 			$this->db->where($where);
+		}
+		if (! empty($order)) {
+			$this->db->order_by($order);
 		}
 		$query = $this->db->get(STUDENGROUP_TABLE);
 		if ($query->num_rows == 0) {
