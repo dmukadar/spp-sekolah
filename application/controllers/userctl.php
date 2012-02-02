@@ -81,4 +81,65 @@ class Userctl extends Alazka_Controller {
 		$this->set_flash_message($flash);
 		$this->index();
 	}
+	
+	public function pengguna() {
+		$this->data['action_url'] = site_url() . '/userctl/simpan';
+		$this->data['list_status'] = User_model::get_status_list();
+		$this->data['list_privilege'] = User_model::get_user_privilege_list();
+		try {
+			// exclude guest user
+			$where = array('ar_user.username !=' => 'guest');
+			$this->db->order_by('ar_user.user_first_name');
+			$this->data['list_user'] = $this->User_model->get_all_user($where);
+		} catch (Exception $e) {
+			$this->data['list_user'] = array();
+		}
+		
+		$this->load->view('site/header_view');
+		$this->load->view('site/data_user_view', $this->data);
+		$this->load->view('site/footer_view');
+	}
+	
+	public function simpan() {
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('username', 'Username', 'required');
+		$this->form_validation->set_rules('password', 'Password', 'required|matches[password2]');
+		$this->form_validation->set_rules('password2', 'Ulangi Password', 'required');
+		$this->form_validation->set_rules('namadepan', 'Nama Depan', 'required');
+		$this->form_validation->set_rules('namabelakang', 'Nama Belakang', 'required');
+		$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+		$this->form_validation->set_rules('status', 'Status', 'required');
+		$this->form_validation->set_rules('privilege', 'Hak Akses', 'required');
+		
+		if ($this->form_validation->run() == FALSE) {
+			$this->set_flash_message(validation_errors('<span>', '</span><br/>'), 'error msg');
+			$this->print_flash_message();
+			return FALSE;
+		}
+		
+		try {
+			$this->load->helper('mr_string');
+			$usermod = new User_model();
+			$salt = mr_random_string(8);
+			$password = User_model::generate_password($salt, $this->input->post('password'));
+
+			$user = new User();
+			$user->set_username(trim($this->input->post('username')));
+			$user->set_user_pass($this->input->post('password'));
+			$user->set_user_salt($salt);
+			$user->set_user_first_name($this->input->post('namadepan'));
+			$user->set_user_last_name($this->input->post('namabelakang'));
+			$user->set_user_status($this->input->post('status'));
+			$user->set_user_privilege($this->input->post('privilege'));
+			$user->set_user_join_date(time());
+			
+			$this->User_model->insert($user);
+			
+			$this->set_flash_message(sprintf('User "%s" berhasil disimpan!', $user->get_username()), 'information msg');
+		} catch (Exception $e) {
+			$this->set_flash_message($e->getMessage(), 'error msg');
+		}
+		
+		$this->print_flash_message();
+	}
 }

@@ -83,7 +83,10 @@ class User {
 		$this->user_status = $user_status;
 	}
 
-	public function get_user_status() {
+	public function get_user_status($format=FALSE) {
+		if ($format === TRUE) {
+			return User_model::get_status_by_id($this->user_status);
+		}
 		return $this->user_status;
 	}
 
@@ -99,7 +102,13 @@ class User {
 		$this->user_last_login = (int)$user_last_login;
 	}
 
-	public function get_user_last_login() {
+	public function get_user_last_login($format=FALSE) {
+		if ($format === TRUE) {
+			if ($this->user_last_login == 0) {
+				return 'Unknown';
+			}
+			return date('d-m-Y H:i:s', $this->user_last_login);
+		}
 		return $this->user_last_login;
 	}
 
@@ -444,6 +453,16 @@ class User_model extends CI_Model {
 				throw new Exception (sprintf('ID status "%d" yang anda cari tidak ada, baca dokumentasi!.', $status_id));
 			break;
 		}
+	}
+	
+	public function get_status_list() {
+		return array(
+			// 0 => 'Deleted',
+			1 => 'Pending',
+			2 => 'Blocked',
+			// 3 => 'Profile Empty',
+			4 => 'Active'
+		);
 	}
 	
 	/**

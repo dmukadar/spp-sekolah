@@ -2,7 +2,7 @@
 
 $lang['required']			= "Isian <strong>%s</strong> tidak boleh kosong.";
 $lang['isset']				= "The %s field must have a value.";
-$lang['valid_email']		= "The %s field must contain a valid email address.";
+$lang['valid_email']		= "Format untuk isian <strong>%s</strong> tidak benar.";
 $lang['valid_emails']		= "The %s field must contain all valid email addresses.";
 $lang['valid_url']			= "The %s field must contain a valid URL.";
 $lang['valid_ip']			= "The %s field must contain a valid IP.";
@@ -16,7 +16,7 @@ $lang['numeric']			= "The %s field must contain only numbers.";
 $lang['is_numeric']			= "The %s field must contain only numeric characters.";
 $lang['integer']			= "The %s field must contain an integer.";
 $lang['regex_match']		= "The %s field is not in the correct format.";
-$lang['matches']			= "The %s field does not match the %s field.";
+$lang['matches']			= "Isian <strong>%s</strong> tidak sama dengan isian <strong>%s</strong>.";
 $lang['is_unique'] 			= "The %s field must contain a unique value.";
 $lang['is_natural']			= "The %s field must contain only positive numbers.";
 $lang['is_natural_no_zero']	= "The %s field must contain a number greater than zero.";
