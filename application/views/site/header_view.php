@@ -56,6 +56,7 @@
 	<div class="container_12 clearfix">
 		<div class="grid_12">
 			<ul id="mainmenu" class="sf-menu">
+				<?php if (ME()->get_current_user()->get_user_privilege() == 'adm') : ?>
 				<li><a href="<?php echo (site_url('dashboard/index'));?>">Dashboard</a></li>
 				<li><a href="#" onClick="return false;">Tarif</a>
 					<ul>
@@ -70,12 +71,16 @@
 						<li><a href="<?php echo (site_url('tagihan'));?>">Data Tagihan Per Siswa</a></li>
 					</ul>
 				</li>
+				<?php endif; ?>
+				<?php if (ME()->get_current_user()->get_user_privilege() == 'adm' || ME()->get_current_user()->get_user_privilege() == 'ksr') : ?>
 				<li><a href="#" onClick="return false;">Pembayaran</a>
 					<ul>
 						<li><a href="<?php echo (site_url('pembayaran/index'));?>">Input Pembayaran</a></li>
 						<li><a href="<?php echo (site_url('pembayaran/data_pembayaran'));?>">Data Pembayaran</a></li>
 					</ul>
 				</li>
+				<?php endif; ?>
+				<?php if (ME()->get_current_user()->get_user_privilege() == 'adm') : ?>
 				<li><a href="#" onClick="return false;">Laporan</a>
 					<ul>
 						<li><a href="<?php echo (site_url('rekap/index'));?>">Data Tagihan</a></li>
@@ -90,6 +95,7 @@
 					</ul>
 				</li>
 			</ul>
+			<?php endif; ?>
 			<ul id="usermenu">
 				<li><a href="<?php echo (site_url('site/logout'));?>">Logout</a></li>
 			</ul>

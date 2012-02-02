@@ -22,7 +22,9 @@
 					<td><dt><label for="password">Password</label></dt></td>
 					<td>
 						<dl>
-							<dd><input id="password" type="password" name="password" value="<?php echo (@$sess->password);?>" /></dd>
+							<dd><input id="password" type="password" name="password" value="<?php echo (@$sess->password);?>" />
+							<span style="font-size:10px;" class="kosongi">Kosongi jika tidak ingin mengubah</span>
+							</dd>
 						</dl>
 					</td>
 				</tr>
@@ -30,7 +32,9 @@
 					<td><dt><label for="password2">Ulangi Password</label></dt></td>
 					<td>
 						<dl>
-							<dd><input id="password2" type="password" name="password2" value="<?php echo (@$sess->password2);?>" /></dd>
+							<dd><input id="password2" type="password" name="password2" value="<?php echo (@$sess->password2);?>" />
+							<span style="font-size:10px;" class="kosongi">Kosongi jika tidak ingin mengubah</span>
+							</dd>
 						</dl>
 					</td>
 				</tr>
@@ -159,13 +163,17 @@
 
 		<script>
 		// response r
-		function repop_form(r) {
-			/*
-			jQuery('#user-id').val(r.custom_rate.id);
-			jQuery('#tagihan').val(r.custom_rate.id_rate);
-			jQuery('#siswa').val(r.siswa.namalengkap);
-			jQuery('#siswa_id').val(r.siswa.id);
-			*/
+		function repop_form(u) {
+			jQuery('#user-id').val(u.user_id);
+			jQuery('#username').val(u.username);
+			jQuery('#namadepan').val(u.user_first_name);
+			jQuery('#namabelakang').val(u.user_last_name);
+			jQuery('#email').val(u.user_email);
+			jQuery('#status').val(u.user_status);
+			jQuery('#privilege').val(u.user_privilege);
+			
+			jQuery('#username').attr('disabled', true);
+			jQuery('.kosongi').show();
 		}
 
 		jQuery('#new-button').click(function() {
@@ -193,11 +201,9 @@
 						jQuery('#flash-msg').html(response);
 						jQuery('#flash-msg').slideDown();
 					} else {
-						jQuery('#flash-msg').hide();
-						jQuery('#flash-msg').html(response);
-						jQuery('#flash-msg').slideDown();
-						// flashDialog('flash-msg', response, 2);
-						// setTimeout(function() { document.location.href=document.location.href; }, 3000);
+						// jQuery('#flash-msg').hide();
+						flashDialog('flash-msg', response, 2);
+						setTimeout(function() { document.location.href=document.location.href; }, 5000);
 					}
 				}
 			);
@@ -207,14 +213,13 @@
 			var id = jQuery(this).attr('href');
 
 			jQuery.post(
-				"<?php echo site_url('tarif_khusus/info'); ?>",
-				{"id": id},
+				"<?php echo site_url('userctl/info'); ?>",
+				{"user-id": id},
 				function (response) {
 					if (response.success == false) {
 						flashDialog('flash-msg', response.message, 10);
 					} else {
-						// alert(response.item);
-						repop_form(response);
+						repop_form(response.item);
 						jQuery('#form-layer').slideDown();
 						jQuery('#list-layer').hide();
 					}
@@ -247,11 +252,8 @@
 		});
 
 		function clear_form() {
-			jQuery('#tagihan').val('');jQuery
-			jQuery('#siswa').val('');jQuery
-			jQuery('#siswa_id').val('');jQuery
-			jQuery('#custom-rate-id').val('');jQuery
-			jQuery('#jumlah').val('');
-			jQuery('#siswa-kelas, #siswa-induk').css('display', 'none');
+			jQuery('#myform')[0].reset();
+			jQuery('.kosongi').hide();
+			jQuery('#username').attr('disable', false);
 		}
 		</script>

@@ -294,13 +294,13 @@ class Tarif_khusus extends Alazka_Controller {
 			$json['custom_rate'] = $tarif->export('object', array('siswa', 'rate', 'kelas'));
 			$json['siswa'] = $tarif->siswa->export('object');
 			$json['kelas'] = $tarif->kelas->export('object');
-			
-			echo json_encode($json);
 		} catch (Custom_RateNotFoundException $e) {
 			$this->set_flash_message('Error: Data yang akan diubah tidak ditemukan.', 'error msg');
 			$json['sucess'] = FALSE;
 			$json['message'] = $this->print_flash_message(TRUE);
 		}
+		
+		echo json_encode($json);
 	}
 	
 	/**
