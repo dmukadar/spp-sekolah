@@ -209,6 +209,7 @@ class Tagihan extends Alazka_Controller {
 		$this->load->model('Kelas_model');
 		$this->load->model('Siswa_model');
 		$this->load->model('Rate_model');
+		$this->load->model('Custom_Rate_model');
 		$this->load->model('Invoice_model');
 		$this->load->model('TahunAkademik_model');
 
@@ -218,6 +219,15 @@ class Tagihan extends Alazka_Controller {
 		if (empty($id_student) || empty($id_rate)) $data = null;
 		else {
 			$tagihan = $this->Rate_model->find_by_pk($id_rate);
+
+			$dispensasi = null;
+			try {
+				$dispensasi = $this->Custom_Rate_model->get_single_custom_rate(array('id_rate'=>$id_rate, 'id_student'=>$id_student));
+
+				$tagihan->set_fare($dispensasi->get_fare());
+			} catch (Custom_RateNotFoundException $e) {
+				//do nothing
+			}
 
 			$data = array();
 			$data['tagihan'] = $tagihan->get_name();
@@ -232,6 +242,21 @@ class Tagihan extends Alazka_Controller {
 					break;
 				default: $data['waktu']  =  $this->TahunAkademik_model->berjalan->get_tahun();
 			}
+
+			$lastInvoice = null;
+			try {
+				//$invoice = $this->Invoice_model->get_single_invoice(array('ar_invoice.id_rate'=>$id_rate, 'ar_invoice.id_student'=>$id_student), 'id desc');
+				$invoice = $this->Invoice_model->get_single_invoice(array('ar_invoice.id_student'=>$id_student), 'id desc');
+
+				$lastInvoice = new StdClass;
+				$lastInvoice->number = $invoice->get_code();
+				$lastInvoice->date   = $invoice->get_created_date();
+				$lastInvoice->description  = $invoice->get_description();
+				$lastInvoice->amount  = $invoice->get_amount(TRUE);
+			} catch (InvoiceNotFoundException $e) {}
+
+			$data['tagihan_terakhir'] = $lastInvoice;
+
 		}
 
 		header('Content-type: application/json');

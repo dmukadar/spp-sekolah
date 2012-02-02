@@ -188,7 +188,9 @@ class Invoice {
 		foreach ($array_of_object as $i => $result) {
 			$tmp = new Invoice();
 			$tmp->set_id($result->id);
-			$tmp->set_code($result->code);
+			if (isset($result->code)) {
+				$tmp->set_code($result->code);
+			}
 			$tmp->set_created_date($result->created_date);
 			$tmp->set_due_date($result->due_date);
 			$tmp->set_description($result->description);
@@ -204,6 +206,24 @@ class Invoice {
 			$tmp->set_modified($result->modified);
 			$tmp->set_modified_by($result->modified_by);
 			$tmp->sisa_bayar = $result->sisa_bayar;
+			
+			// inject siswa
+			if (isset($result->siswa_id)) {
+				$siswa = new Siswa();
+				$siswa->set_id($result->siswa_id);
+				$siswa->set_namalengkap($result->namalengkap);
+				$tmp->siswa = clone $siswa;
+				$siswa = NULL;
+			}
+			
+			// inject orang tua
+			if (isset($result->orang_tua_id)) {
+				$ortu = new Orang_Tua();
+				$ortu->set_id($result->orang_tua_id);
+				$ortu->set_nosms($result->nosms);
+				$tmp->orang_tua = clone $ortu;
+				$ortu = NULL;
+			}
 			
 			// inject object rate
 			$rate = new Rate();
@@ -240,7 +260,9 @@ class Invoice {
 		// sehingga tidak digunakan pada saat akan insert atau update
 		$def_exclude = array(
 			'sisa_bayar',
-			'rate'
+			'rate',
+			'orang_tua',
+			'siswa'
 		);
 		$exclude = array_merge($def_exclude, $param_exclude);
 		
@@ -295,7 +317,7 @@ class Invoice_model extends CI_Model {
 		parent::__construct();
 	}
 	
-	public function get_all_invoice($where=array(), $limit=-1, $offset=0) {
+	public function get_all_invoice($where=array(), $limit=-1, $offset=0, $order='') {
 		// join dengan rate untuk mendapatkan jumlah installment atau recurrence
 		$this->db->select('ar_invoice.*, (ar_invoice.amount - ar_invoice.received_amount) sisa_bayar');
 		$this->db->select('ar_rate.id rate_id, ar_rate.name rate_name, ar_rate.recurrence rate_recurrence, ar_rate.installment rate_installment');
@@ -305,6 +327,9 @@ class Invoice_model extends CI_Model {
 		}
 		if ($where) {
 			$this->db->where($where);
+		}
+		if (!empty($order)) {
+			$this->db->order_by($order);
 		}
 		$query = $this->db->get(INVOICE_TABLE);
 		if ($query->num_rows == 0) {
@@ -341,8 +366,23 @@ class Invoice_model extends CI_Model {
 		return $this->get_all_invoice($where, $limit, $offsett);
 	}
 	
-	public function get_single_invoice($where=array()) {
-		$record = $this->get_all_invoice($where, 1, 0);
+	public function get_all_due_date_invoice($where=array(), $limit=-1, $offset=0) {
+		$this->db->select('sis_siswa.id siswa_id, sis_siswa.namalengkap, sis_orangtua.id orang_tua_id, sis_orangtua.nosms');
+		$this->db->join('sis_siswa', 'sis_siswa.id=ar_invoice.id_student', 'left');
+		$this->db->join('sis_orangtua', 'sis_orangtua.id=sis_siswa.sis_orangtua_id', 'left');
+		$this->db->join('ar_invoice_outbox', 'ar_invoice_outbox.invoice_id=ar_invoice.id', 'left');
+		
+		$this->db->where(array('ar_rate.notification' => 1));
+		$this->db->where('ar_invoice.due_date < CURRENT_DATE()', NULL, FALSE);
+		$this->db->where('sis_orangtua.nosms IS NOT NULL', NULL, FALSE);
+		$this->db->where('ar_invoice.due_date IS NOT NULL', NULL, FALSE);
+		$this->db->where('ar_invoice_outbox.invoice_id IS NULL', NULL, FALSE);
+		
+		return $this->get_all_invoice($where, $limit, $offset);
+	}
+	
+	public function get_single_invoice($where=array(), $order='') {
+		$record = $this->get_all_invoice($where, 1, 0, $order);
 			
 		return $record[0];
 	}
