@@ -1,12 +1,13 @@
 <!DOCTYPE HTML>
 <html lang="en">
 <head>
-<title><?php echo (ME()->get_page_title());?></title>
+<title>Finance <?php echo (ME()->get_page_title());?></title>
 <meta charset="utf-8">
 
 <base href="<?php echo base_url(); ?>"></base>
 
 <link rel="stylesheet" type="text/css" href="css/style.css">
+<link rel="stylesheet" type="text/css" href="css/login.css">
 <link rel="stylesheet" type="text/css" href="css/skins/orange.css">
 
 <link rel="stylesheet" type="text/css" href="css/superfish.css">
@@ -41,9 +42,8 @@
 <header id="top">
 	<div class="container_12 clearfix">
 		<div id="logo" class="grid_6">
-			<!-- replace with your website title or logo -->
-			<a id="site-title" href="#"><span>Admin</span>ique</a>
-			<a id="view-site" href="#">View Site</a>
+			<img src="images/logo.png" alt="Sistem Informasi Akademik Al-Azhar Kelapa Gading Surabaya" border="0" />
+			<a id="site-title" href="<?php echo site_url(); ?>"><span>Al-Azhar Kelapa Gading</span> Surabaya</a>
 		</div>
 		<div id="userinfo" class="grid_6">
 			<a href="<?php echo (site_url('userctl/index'));?>"><?php echo (ME()->get_current_user()->get_user_full_name());?></a>

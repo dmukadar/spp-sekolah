@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title><?php echo (ME()->get_page_title());?></title>
+<title>Finance <?php echo (ME()->get_page_title());?></title>
 <meta charset="utf-8">
 <base href="<?php echo base_url(); ?>"></base>
 <link rel="stylesheet" type="text/css" href="css/style.css">
