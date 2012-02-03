@@ -67,24 +67,32 @@
 				</li>
 				<li><a href="#" onClick="return false;">Tagihan</a>
 					<ul>
-						<li><a href="<?php echo (site_url('tagihan/create'));?>">Input Tagihan Siswa</a></li>
-						<li><a href="<?php echo (site_url('tagihan'));?>">Data Tagihan Per Siswa</a></li>
+						<li><a href="javascript:void(0);" onclick="alert('Belum terkoneksi dengan modul pendaftaran siswa baru');">Calon Siswa</a></li>
+						<li><a href="<?php echo (site_url('tagihan/all'));?>">Seluruh Siswa</a></li>
+						<li><a href="<?php echo (site_url('tagihan'));?>">Per Siswa</a></li>
 					</ul>
 				</li>
 				<?php endif; ?>
 				<?php if (ME()->get_current_user()->get_user_privilege() == 'adm' || ME()->get_current_user()->get_user_privilege() == 'ksr') : ?>
 				<li><a href="#" onClick="return false;">Pembayaran</a>
 					<ul>
-						<li><a href="<?php echo (site_url('pembayaran/index'));?>">Input Pembayaran</a></li>
-						<li><a href="<?php echo (site_url('pembayaran/data_pembayaran'));?>">Data Pembayaran</a></li>
+						<li><a href="javascript:void(0);" onclick="alert('Belum terkoneksi dengan modul pendaftaran siswa baru');">Calon Siswa</a></li>
+						<li><a href="javascript:void(0);" onclick="alert('Belum terkoneksi dengan modul pendaftaran siswa baru');">Kuitansi Calon Siswa</a></li>
+						<li><a href="<?php echo (site_url('pembayaran/index'));?>">Siswa</a></li>
+						<li><a href="<?php echo (site_url('pembayaran/data_pembayaran'));?>">Kuitansi Siswa</a></li>
+						<?php if (ME()->get_current_user()->get_user_privilege() == 'adm') : ?>
+						<!-- open this link when ready
+						<li><a href="<?php echo (site_url('pembayaran/void'));?>">Pembatalan</a></li>
+						-->
+						<?php endif; ?>
 					</ul>
 				</li>
 				<?php endif; ?>
 				<?php if (ME()->get_current_user()->get_user_privilege() == 'adm') : ?>
 				<li><a href="#" onClick="return false;">Laporan</a>
 					<ul>
-						<li><a href="<?php echo (site_url('rekap/index'));?>">Data Tagihan</a></li>
-						<li><a href="<?php echo (site_url('setoran/index'));?>">Data Setoran</a></li>
+						<li><a href="<?php echo (site_url('rekap/index'));?>">Rekap Tunggakan</a></li>
+						<li><a href="<?php echo (site_url('setoran/index'));?>">Rekap Pembayaran</a></li>
 					</ul>
 				</li>
 				<li><a href="#" onClick="return false;">Settings</a>
