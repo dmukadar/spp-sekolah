@@ -89,6 +89,7 @@ class Tagihan extends Alazka_Controller {
 	 */
 	public function delete($id=0, $hash='') {
 		$id = (int)$id;
+		$this->load->model('Siswa_model');
 		$this->load->model('Rate_model');
 		$this->load->model('Invoice_model');
 		
@@ -108,7 +109,7 @@ class Tagihan extends Alazka_Controller {
 			
 			$this->set_flash_message('Data tagihan berhasil dihapus.');
 			
-			$this->index($invoice->get_id_student());
+			$this->all();
 			
 			return TRUE;
 		} catch (InvoiceNotFoundException $e) {
@@ -117,7 +118,7 @@ class Tagihan extends Alazka_Controller {
 			$this->set_flash_message($e->getMessage(), 'error msg');
 		}
 		
-		$this->index();
+		$this->all();
 	}
 
 	/**
@@ -381,6 +382,7 @@ class Tagihan extends Alazka_Controller {
 
 	public function edit($loadId) {
 		$this->load->model('Rate_model');
+		$this->load->model('Siswa_model');
 		$this->load->model('Invoice_model');
 
 		try {
@@ -391,5 +393,113 @@ class Tagihan extends Alazka_Controller {
 			$this->data['list_tagihan'] = array();
 			$this->create();
 		}
+	}
+	public function all() {
+		$this->load->model('Kelas_model');
+		$this->load->model('Siswa_model');
+		$this->load->model('Rate_model');
+		$this->load->model('Invoice_model');
+
+		$this->data['sess'] = null;
+		$this->data['action_url'] = site_url('tagihan/create');
+		$this->data['info_url'] = site_url('tagihan/info');
+		$this->data['filter_url'] = site_url('tagihan/all');
+
+		$this->data['ajax_siswa_url'] = site_url('tarif_khusus/get_ajax_siswa/10/');
+
+		try {
+			$this->data['list_tarif'] = $this->Rate_model->get_all_rate();
+		} catch (Exception $e) {
+			$this->data['list_tarif'] = array();
+		}
+
+		$this->data['list_kelas'] = array();
+		try {
+			$this->data['list_kelas'] = $this->Kelas_model->get_all_kelas();
+		} catch (Exception $e) { }
+		$offset = 10;
+		$page = $this->input->post('page');
+		$keyword = $this->input->post('keyword');
+		$search_id = $this->input->post('search_id');
+		$search_status = $this->input->post('status');
+		if (empty($search_status)) $search_status = 1;
+		$condition = array('ar_invoice.status'=>$search_status);
+
+		$validField = array('rate'=>'ar_rate', 'student'=>'sis_siswa');
+		$field_name = $this->input->post('field_name');
+		if (! isset($validField[$field_name])) $field_name = 'rate';
+		if (! empty($search_id)) {
+			$condition[$validField[$field_name] . '.id']=$search_id;
+		}
+
+		$total_page = ceil($this->Invoice_model->get_all_invoice_count($condition) / $offset);
+		if (empty($page)) $page = 1;
+		else if (($page > $total_page) && ($total_page > 0)) $page = $total_page;
+
+		try {
+			$this->data['list_data'] = $this->Invoice_model->get_all_invoice($condition, $offset, ($page-1) * $offset, 'ar_invoice.modified desc');
+		} catch (InvoiceNotFoundException $e) {
+			$this->data['list_data'] = array();
+		}
+
+		$firstRange = floor($page / 5) * 5;
+		if (empty($firstRange)) $firstRange = 1;
+
+		if (($firstRange + 4) < $total_page)  $lastRange = $firstRange + 4;
+		else $lastRange = $total_page - 1;
+
+		$this->data['total_page'] = $total_page;
+		$this->data['offset'] = $offset;
+		$this->data['page'] = $page;
+		$this->data['next_page'] = ($page >= $total_page) ? $total_page : ($page + 1);
+		$this->data['prev_page'] = ($page == 1) ? 1 : ($page - 1);
+		$this->data['first_range'] = $firstRange;
+		$this->data['last_range'] = $lastRange;
+		$this->data['keyword'] = $keyword;
+		$this->data['list_status'] = $this->Invoice_model->get_all_status();
+		$this->data['field_name'] = $field_name;
+		$this->data['search_id'] = $search_id;
+		$this->data['search_status'] = $search_status;
+
+		$this->load->view('site/header_view');
+		$this->load->view('site/semua_tagihan_view', $this->data);
+		$this->load->view('site/footer_view');
+	}
+
+	function suggest($key = 1) {
+		$this->load->model('Rate_model');
+		$this->load->model('Kelas_model');
+		$this->load->model('Siswa_model');
+
+		$limit = 5;
+		$response = array();
+		$keyword = $this->input->get("search");
+
+		try {
+			$list = $this->Rate_model->get_all_rate(array('name like'=>strtolower("%$keyword%")), 3);
+			foreach ($list as $l) {
+				$line = new StdClass;
+				$line->text = sprintf('Tagihan: %s', $l->get_name());
+	 			$line->value = $l->get_name();
+	 			$line->id = $l->get_id();
+	 			$line->field = 'rate';
+				array_push($response, $line);
+			}
+		} catch (RateNotFoundException $e) {}
+
+		try {
+			$list = $this->Siswa_model->get_all_siswa_ajax($keyword, $limit);
+			foreach ($list as $l) {
+				$line = new StdClass;
+				$line->text = sprintf('%s - %s (%s)', $l->get_namalengkap(), $l->kelas->get_kelas(), $l->kelas->get_jenjang());
+				$line->value = $l->get_namalengkap();
+				$line->id = $l->get_id();
+				$line->field = 'student';
+				array_push($response, $line);
+			}
+		} catch (SiswaNotFoundException $e) {}
+
+		header('Content-type: application/json');
+		echo json_encode($response);
 	}
 }

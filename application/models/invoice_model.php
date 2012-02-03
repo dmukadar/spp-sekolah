@@ -206,11 +206,12 @@ class Invoice {
 			$tmp->set_modified($result->modified);
 			$tmp->set_modified_by($result->modified_by);
 			$tmp->sisa_bayar = $result->sisa_bayar;
+			$tmp->namalengkap = $result->namalengkap;
 			
-			// inject siswa
+			// inject siswa, //will never got here, try id_student,  it works but will broke any other code using this class
 			if (isset($result->siswa_id)) {
 				$siswa = new Siswa();
-				$siswa->set_id($result->siswa_id);
+				$siswa->set_id($result->id_student);
 				$siswa->set_namalengkap($result->namalengkap);
 				$tmp->siswa = clone $siswa;
 				$siswa = NULL;
@@ -321,7 +322,9 @@ class Invoice_model extends CI_Model {
 		// join dengan rate untuk mendapatkan jumlah installment atau recurrence
 		$this->db->select('ar_invoice.*, (ar_invoice.amount - ar_invoice.received_amount) sisa_bayar');
 		$this->db->select('ar_rate.id rate_id, ar_rate.name rate_name, ar_rate.recurrence rate_recurrence, ar_rate.installment rate_installment');
+		$this->db->select('sis_siswa.namalengkap');
 		$this->db->join('ar_rate', 'ar_rate.id=ar_invoice.id_rate', 'left');
+		$this->db->join('sis_siswa', 'sis_siswa.id=ar_invoice.id_student');
 		if ($limit > 0) {
 			$this->db->limit($limit, $offset);
 		}
@@ -339,6 +342,25 @@ class Invoice_model extends CI_Model {
 		$result = $query->result();
 		
 		return Invoice::import_from_array($result);
+	}
+	//for paging purpose
+	public function get_all_invoice_count($where=array(), $limit=-1, $offset=0, $order='') {
+		// join dengan rate untuk mendapatkan jumlah installment atau recurrence
+		$this->db->select('COUNT(-1) as total');
+		$this->db->join('ar_rate', 'ar_rate.id=ar_invoice.id_rate', 'left');
+		$this->db->join('sis_siswa', 'sis_siswa.id=ar_invoice.id_student');
+		if ($limit > 0) {
+			$this->db->limit($limit, $offset);
+		}
+		if ($where) {
+			$this->db->where($where);
+		}
+
+		$query = $this->db->get(INVOICE_TABLE);
+		
+		$result = $query->result();
+		
+		return (empty($result) ? 0 : $result[0]->total);
 	}
 	
 	public function get_all_open_invoice($where=array(), $limit=-1, $offset=0) {
