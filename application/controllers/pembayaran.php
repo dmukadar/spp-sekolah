@@ -33,7 +33,7 @@ class Pembayaran extends Alazka_Controller {
 		}
 		
 		// URL untuk Ajax auto complete
-		$this->data['ajax_siswa_url'] = site_url('tarif_khusus/get_ajax_siswa/10/');
+		$this->data['ajax_siswa_url'] = site_url('ajax/get_siswa/10/');
 		
 		$this->proses_bayar($sess);
 		$this->show_invoices($sess);
@@ -321,7 +321,7 @@ class Pembayaran extends Alazka_Controller {
 		}
 		
 		// URL untuk Ajax auto complete
-		$this->data['ajax_siswa_url'] = site_url('tarif_khusus/get_ajax_siswa/10/');
+		$this->data['ajax_siswa_url'] = site_url('ajax/get_siswa/10/');
 		
 		$this->data['ajax_payment_detail_url'] = site_url('pembayaran/ajax_payment_detail');
 		
