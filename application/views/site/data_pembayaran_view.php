@@ -30,6 +30,7 @@
 					</td>
 				</tr>
 			</table>
+			
 			<!-- helper untuk repopulate -->
 			<input type="hidden" name="rep-siswa-kelas" id="rep-siswa-kelas" value="<?php echo (@$sess->kelas_jenjang);?>" />
 			<input type="hidden" name="rep-siswa-induk" id="rep-siswa-induk" value="<?php echo (@$sess->no_induk);?>" />
@@ -62,6 +63,11 @@
 			<?php endforeach; ?>
 			</tbody>
 		</table>
+		<div class="tablefooter clearfix">
+			<div class="actions">
+				Keterangan: <img alt="Search" src="images/icons/magnifier.png" />Detail &nbsp; <img alt="Cetak" src="images/icons/printer.png" /> Cetak
+			</div>
+		</div>
 		<?php endif;?>
 		
 		<div id="basic-modal-content"></div>

@@ -374,7 +374,7 @@ class Pembayaran extends Alazka_Controller {
 			$where = array(
 					'ar_invoice.id_student' => (int)$sess->id_siswa,
 			);
-			$this->db->order_by('ar_payment.id', 'desc');
+			$this->db->order_by('ar_payment.modified', 'desc');
 			$this->data['list_payments'] = $this->Payment_model->get_all_payment($where);
 		} catch (PaymentNotFoundException $e) {
 			$this->set_flash_message('Tidak ada pembayaran untuk siswa ini.');
@@ -383,13 +383,12 @@ class Pembayaran extends Alazka_Controller {
 	}
 	
 	public function payment_detail_link($payment) {
-		$link = '<a href="%s" onclick="return ajax_payment_detail(%d);" class="reply">%s</a> <a href="%s" class="reply">%s</a>';
+		$link = '<a href="%s" onclick="return ajax_payment_detail(%d);" class="edit-data"><img src="images/icons/magnifier.png" alt="Detail" title="Detail" /></a> 
+				<a href="%s" class="delete-data"><img src="images/icons/printer.png" alt="Cetak" title="Cetak" /></a>';
 		printf($link, 
 				site_url() . '/pembayaran/detail/'  . $payment->get_id(),
 				$payment->get_id(),
-				'Detail',
-				site_url() . '/pembayaran/cetak/' . $payment->get_id(),
-				'Cetak'
+				site_url() . '/pembayaran/cetak/' . $payment->get_id()
 		);
 	}
 	
@@ -475,14 +474,20 @@ class Pembayaran extends Alazka_Controller {
 	
 	private function print_pdf($content, $filename) {
 		$this->load->library('pdf');
+		// $this->pdf->setPageUnit('cm');
 		$this->pdf->setPageFormat('A5', 'L');
-		$this->pdf->SetSubject('Laporan Tunggakan Lain-lain');
+		$this->pdf->setPrintHeader(FALSE);
+		$this->pdf->setHeaderMargin(0);
+		// $this->pdf->setHeaderData('', 0, '', '');
+		$this->pdf->SetSubject('Tagihan Siswa');
 		$this->pdf->SetKeywords('TCPDF, PDF');      
-		$this->pdf->setHeaderFont(Array('times', '', '14'));
-		$this->pdf->setFooterFont(Array('times', '', '12'));
+		// $this->pdf->setHeaderFont(Array('times', '', '14'));
+		// $this->pdf->setFooterFont(Array('times', '', '12'));
 		$this->pdf->SetFont('times', '', 10);   
 		$this->pdf->SetAutoPageBreak(FALSE, PDF_MARGIN_BOTTOM);    
-		$this->pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+		// $this->pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+		// $this->pdf->setTopMargin(1);
+		$this->pdf->SetMargins(10, 40, 10);
 		$this->pdf->AddPage(); 
 
 		$this->pdf->writeHTML($content, true, true, true, true, '');		

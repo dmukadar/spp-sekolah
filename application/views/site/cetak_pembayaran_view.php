@@ -16,7 +16,7 @@
 <body>
 <table width="100%">
 	 <tr>
-		 <td style="text-align:center;font-size:18pt;">Kuitansi Pembayaran</td>
+		 <td style="text-align:center;font-size:18pt;">KUITANSI PEMBAYARAN</td>
 	</tr>
 	<tr><td></td></tr>
 </table>
@@ -70,6 +70,19 @@
 		<td style="text-align:right;width:12%"></td>
 		<td></td>
 	</td>
+</table>
+<table style="width:100%" border="0">
+	<tr><td></td></tr>
+	<tr>
+		<td style="text-align:right">Dicetak: <?php echo date('d/m/Y');?></td>
+	</tr>
+	<tr><td></td></tr>
+	<tr><td></td></tr>
+	<tr><td></td></tr>
+	<tr><td></td></tr>
+	<tr>
+		<td style="text-align:right">Petugas: <?php echo ME()->get_current_user()->get_user_full_name();?></td>
+	</tr>
 </table>
 </body>
 </html>
