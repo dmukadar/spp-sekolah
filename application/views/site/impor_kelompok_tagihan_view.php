@@ -41,8 +41,7 @@ echo (@$action_url);
 									
 					
 									jQuery.post(url, data, function(response) {
-										if (! response.success) {
-											flashDialog('err-msg', response.message, 5);
+										if (! response.success) {											
 										} else {
 											flashDialog('info-msg', response.message, 2);
 											setTimeout(function() { document.location.href=document.location.href; }, 3000);
