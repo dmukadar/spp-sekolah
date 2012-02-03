@@ -1,6 +1,6 @@
 
 <div id="login" class="box">
-	<h2>Login</h2>
+	<h2>Finance - Login</h2>
 	<section>
 		<!-- <div class="error msg">Message if login failed</div> -->
 		<?php ME()->print_flash_message(); ?>

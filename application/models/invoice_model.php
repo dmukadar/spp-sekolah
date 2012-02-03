@@ -409,6 +409,8 @@ class Invoice_model extends CI_Model {
 		}
 		
 		$invoice->set_id($this->db->insert_id());
+
+		return $this->db->insert_id();
 	}
 	
 	public function update($invoice, $exclude=array()) {
