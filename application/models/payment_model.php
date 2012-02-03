@@ -134,6 +134,17 @@ class Payment {
 			$siswa = NULL;
 			$kelas = NULL;
 			
+			// inject object user (petugas)
+			if (property_exists($result, 'user_first_name')) {
+				$user = new User();
+				$user->set_user_id($result->id_employee);
+				$user->set_user_first_name($result->user_first_name);
+				$user->set_user_last_name($result->user_last_name);
+				
+				$tmp->petugas = clone $user;
+				$user = NULL;
+			}
+			
 			$objects[$i] = clone $tmp;
 		}
 		
@@ -202,11 +213,12 @@ class Payment_model extends CI_Model {
 	}
 	
 	public function get_all_payment($where=array(), $limit=-1, $offset=0) {
-		$this->db->select('ar_payment.*, ar_invoice.id_student, sis_siswa.noinduk, sis_siswa.namalengkap, dm_kelas.id kelas_id, dm_kelas.kelas, dm_kelas.jenjang kelas_jenjang, dm_kelas.angka kelas_angka');
+		$this->db->select('ar_payment.*, ar_invoice.id_student, sis_siswa.noinduk, sis_siswa.namalengkap, dm_kelas.id kelas_id, dm_kelas.kelas, dm_kelas.jenjang kelas_jenjang, dm_kelas.angka kelas_angka, ar_user.user_first_name, ar_user.user_last_name');
 		$this->db->join('ar_payment_details', 'ar_payment_details.id_payment=ar_payment.id', 'left');
 		$this->db->join('ar_invoice', 'ar_invoice.id=ar_payment_details.id_invoice', 'left');
 		$this->db->join('sis_siswa', 'sis_siswa.id=ar_invoice.id_student', 'left');
 		$this->db->join('dm_kelas', 'dm_kelas.id=sis_siswa.dm_kelas_id', 'left');
+		$this->db->join('ar_user', 'ar_user.user_id=ar_payment.id_employee', 'left');
 		$this->db->group_by('ar_payment.id');
 		if ($limit > 0) {
 			$this->db->limit($limit, $offset);

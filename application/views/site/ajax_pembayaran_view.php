@@ -2,7 +2,8 @@
 	<tr>
 		<td style="text-align:left;width:15%">Nama</td>
 		<td style="text-align:left;font-weight:bold;width:35%">: <?php echo ($pembayaran->siswa->get_namalengkap());?></td>
-		<td colspan="3" style="width:50%;"></td>
+		<td style="text-align:right;width:30%">Petugas :</td>
+		<td style="text-align:right;font-weight:bold;width:20%"><?php echo ($pembayaran->petugas->get_user_full_name());?></td>
 	</tr>
 	<tr>
 		<td style="text-align:left;width:15%">Kelas</td>
