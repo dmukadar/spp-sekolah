@@ -263,7 +263,8 @@ class Invoice {
 			'sisa_bayar',
 			'rate',
 			'orang_tua',
-			'siswa'
+			'siswa',
+			'namalengkap'
 		);
 		$exclude = array_merge($def_exclude, $param_exclude);
 		
@@ -435,7 +436,7 @@ class Invoice_model extends CI_Model {
 		return $this->db->insert_id();
 	}
 	
-	public function update($invoice, $exclude=array()) {
+	public function update($invoice, $exclude=array('namalengkap')) {
 		if (FALSE === ($invoice instanceof Invoice)) {
 			throw new Exception('Argumen yang diberikan untuk method Invoice_model::update harus berupa instance dari object Invoice.');
 		}
