@@ -57,7 +57,7 @@
 			<?php foreach ($list_tagihan as $tagihan) : ?>
 			<tr>
 				<td><input class="tagihan-check" type="checkbox" id="tagihan-<?php echo ($tagihan->get_id());?>" name="tagihan[]" value="<?php echo ($tagihan->get_id());?>" /></td>
-				<td><a href="#"><?php echo ($tagihan->get_description());?></a></td>
+				<td><label for="tagihan-<?php echo $tagihan->get_id(); ?>"><a href="javascript:void(0);"><?php echo ($tagihan->get_description());?></a></label></td>
 				<td><?php echo ($tagihan->get_due_date());?></td>
 				<td style="text-align:right;"><?php echo ($tagihan->get_last_installment() + 1);?> dari <?php echo ($tagihan->rate->get_installment());?></td>
 				<td style="text-align:right;"><?php echo ($tagihan->get_amount(TRUE));?></td>
@@ -74,8 +74,8 @@
 		<div id="div-total-bayar" style="width:350px;float:right;">
 			<div style="text-align:right;">
 				<div style="display:block;margin-bottom:5px;font-size:18px;font-weight:bold;"><label>Total</label> <input style="font-size:18px;font-weight:bold;text-align:right;" type="textbox" value="0" id="total-bayar" size="10" readonly="readonly" /></div>
-				<div style="display:block;margin-bottom:5px;font-size:18px;font-weight:bold;"><label>Pembayaran</label> <input style="font-size:18px;font-weight:bold;text-align:right;" type="textbox" value="0" id="total-pembayaran" size="10" /></div>
-				<div style="display:block;margin-bottom:5px;font-size:18px;font-weight:bold;"><label>Kembalian</label> <input style="font-size:18px;font-weight:bold;text-align:right;" type="textbox" value="0" id="total-kembalian" size="10" readonly="readonly" /></div>
+				<div style="display:block;margin-bottom:5px;font-size:18px;font-weight:bold;"><label>Terima Pembayaran</label> <input style="font-size:18px;font-weight:bold;text-align:right;" type="textbox" value="0" id="total-pembayaran" size="10" /></div>
+				<div style="display:block;margin-bottom:5px;font-size:18px;font-weight:bold;"><label>Uang Kembali</label> <input style="font-size:18px;font-weight:bold;text-align:right;" type="textbox" value="0" id="total-kembalian" size="10" readonly="readonly" /></div>
 			</div>
 		</div>
 		<div style="clear:both;"></div>
@@ -89,27 +89,29 @@
 			// ---- Form submit pembayaran
 			document.getElementById('paybtn').onclick = function(el) {
 				var totalbayar = jQuery('#total-bayar').autoNumericGet();
-				var pembayaran = jQuery('#total-pembayaran').val();
+				var pembayaran = jQuery('#total-pembayaran').autoNumericGet();
 				
 				if (parseFloat(totalbayar) <= 0) {
 					alert('Mohon pilih tagihan terlebih dulu.');
 					return false;
 				}
-				if (parseFloat(pembayaran.replace(',', '')) <= 0) {
+				if (parseFloat(pembayaran) <= 0) {
 					alert('Mohon isikan pembayaran terlebih dulu.');
 					jQuery('#total-pembayaran').focus();
 					jQuery('#total-pembayaran').select();
 					return false;
 				}
+				console.log(pembayaran);
+				console.log(totalbayar);
 				
-				if (parseFloat(pembayaran.replace(',', '')) < parseFloat(totalbayar)) {
+				if (parseFloat(pembayaran) < parseFloat(totalbayar)) {
 					alert('Mohon maaf, Uang pembayaran kurang!');
 					jQuery('#total-pembayaran').focus();
 					jQuery('#total-pembayaran').select();
 					return false;
 				}
 				
-				var tanya = confirm('Menerima pembayaran sebesar Rp' + pembayaran + '.-\n\nTekan OK untuk melanjutkan atau Cancel untuk batal.');
+				var tanya = confirm('Menerima pembayaran sebesar Rp' + totalbayar + '.-\n\nTekan OK untuk melanjutkan atau Cancel untuk batal.');
 				if (!tanya) {
 					return false;
 				}
