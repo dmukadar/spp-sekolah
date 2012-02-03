@@ -495,7 +495,7 @@ class Pembayaran extends Alazka_Controller {
 	 *
 	 * WARNING: HANYA UNTUK TESTING!
 	 */
-	public function dev_reset() {
+	public function dev_reset212() {
 		$this->load->model('Invoice_model');
 		$status_open = Invoice_model::get_status_by_name('open');
 		$query = "UPDATE ar_invoice SET last_installment=0, received_amount=0, status='%s' ";

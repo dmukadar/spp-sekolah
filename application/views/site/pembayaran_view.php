@@ -3,7 +3,7 @@
 
 		<?php ME()->print_flash_message(); ?>	
 		
-		<span style="color:#c60000;">Developer Note: Klik <a href="<?php echo (site_url());?>/pembayaran/dev_reset">reset</a> untuk mereset semua record pada ar_invoice.</span>
+		<!-- <span style="color:#c60000;">Developer Note: Klik <a href="<?php echo (site_url());?>/pembayaran/dev_reset">reset</a> untuk mereset semua record pada ar_invoice.</span> -->
 		<form name="frm-filter-cat" id="frm-filter-cat" method="post" action="<?php echo (@$action_url);?>">
 			<table style="width:80%" cellspacing="4">
 				<tr>
