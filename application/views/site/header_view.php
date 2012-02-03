@@ -69,7 +69,6 @@
 					<ul>
 						<li><a href="javascript:void(0);" onclick="alert('Belum terkoneksi dengan modul pendaftaran siswa baru');">Calon Siswa</a></li>
 						<li><a href="<?php echo (site_url('tagihan/all'));?>">Seluruh Siswa</a></li>
-						<li><a href="<?php echo (site_url('tagihan'));?>">Per Siswa</a></li>
 					</ul>
 				</li>
 				<?php endif; ?>
@@ -78,8 +77,8 @@
 					<ul>
 						<li><a href="javascript:void(0);" onclick="alert('Belum terkoneksi dengan modul pendaftaran siswa baru');">Calon Siswa</a></li>
 						<li><a href="javascript:void(0);" onclick="alert('Belum terkoneksi dengan modul pendaftaran siswa baru');">Kuitansi Calon Siswa</a></li>
-						<li><a href="<?php echo (site_url('pembayaran/index'));?>">Siswa</a></li>
-						<li><a href="<?php echo (site_url('pembayaran/data_pembayaran'));?>">Kuitansi Siswa</a></li>
+						<li><a href="<?php echo (site_url('pembayaran/index'));?>">Per Siswa</a></li>
+						<li><a href="<?php echo (site_url('pembayaran/data_pembayaran'));?>">Kuitansi Per Siswa</a></li>
 						<?php if (ME()->get_current_user()->get_user_privilege() == 'adm') : ?>
 						<!-- open this link when ready
 						<li><a href="<?php echo (site_url('pembayaran/void'));?>">Pembatalan</a></li>
