@@ -138,7 +138,7 @@ class Otogroup extends Alazka_Controller {
 		$this->load->model('ClassGroup_model');
 
 		$this->data['sess'] = null;
-		$this->data['action_url'] = site_url('otogroup/simpan');
+		$this->data['action_url'] = site_url('otogroup/do_upload');
 		$this->data['info_url'] = site_url('otogroup/info');
 		$this->data['filter_url'] = site_url('otogroup/index');
 
@@ -147,17 +147,17 @@ class Otogroup extends Alazka_Controller {
 		} catch (Exception $e) {
 			$this->data['list_tarif'] = array();
 		}
-
+                $data['action_url'] = site_url('otogroup/do_upload');
+                $this->data['eror']= "0";
 		$this->load->view('site/header_view');
 		$this->load->view('site/impor_kelompok_tagihan_view', $this->data);
 		$this->load->view('site/footer_view');
 	}
-
 //---by puz	-----------------------------------------------
 function do_upload()
-	{
+	{               
 		$this->load->helper(array('form', 'url'));
-	    $config['upload_path'] = './uploads/';
+                $config['upload_path'] = './uploads/';
 		$config['allowed_types'] = 'csv|xls|txt';
 		$this->load->library('upload', $config);
 		if ( $this->upload->do_upload('file_import'))
@@ -172,16 +172,30 @@ function do_upload()
 			}
                         else if ($ext==".txt"){
 				$this->loadCSV();
-			}
+			}                    
 		}
 		else
 		{
-			echo $this->upload->display_errors();
-			  redirect('/otogroup/import/', 'refresh');
+                    $this->data['sess'] = null;
+		     //$this->upload->display_errors();
+                        try {
+			$this->data['list_tarif'] = $this->Rate_model->get_all_rate();
+		         } catch (Exception $e) {
+			$this->data['list_tarif'] = array();
+		         }
+                        $this->data['eror']= "1";
+                        $this->load->view('site/header_view');
+		        $this->load->view('site/impor_kelompok_tagihan_view', $this->data);
+		        $this->load->view('site/footer_view');
+                      
 		}
 	}
 
 function loadExcel(){
+  $this->data['sess'] = null;
+  $this->data['action_url'] = site_url('otogroup/simpan');
+  $this->data['info_url'] = site_url('otogroup/info');
+  $this->data['filter_url'] = site_url('otogroup/index');
   $this->load->model('Siswa_model');
   $this->load->model('Rate_model');
   $this->load->model('StudentGroup_model');
@@ -196,16 +210,22 @@ function loadExcel(){
        }
 catch (StudentGroupNotFoundException $e)
        {
-
        }
  $this->load->helper('excel_reader2');
  $import = new Spreadsheet_Excel_Reader($_FILES['file_import']['tmp_name']);
  $baris = $import->rowcount($sheet_index=0);           
  $kolom = $import->colcount($sheet_index=0);
 if ($kolom > 2){
-    $eror= "data yang dimasukkan tidak valid";
-    $this->import();
-    echo $eror;
+                        try {
+			$this->data['list_tarif'] = $this->Rate_model->get_all_rate();
+		         } catch (Exception $e) {
+			$this->data['list_tarif'] = array();
+		         }
+                        $this->data['eror']= "1";
+                        $this->load->view('site/header_view');
+		        $this->load->view('site/impor_kelompok_tagihan_view', $this->data);
+		        $this->load->view('site/footer_view');
+                        $this->import();
 }
 else if ($kolom==2){
              $counter=0;
@@ -215,7 +235,6 @@ else if ($kolom==2){
 try {
  for ($i=1; $i<=$baris; $i++)
 {
-
     $id_siswa=$import->val($i, 'A');
     $nama=$import->val($i, 'B');
     try {
@@ -234,7 +253,6 @@ try {
          $data_siswa[$counter]['id']=$query->get_id();
 
          $data['noinduk']= $id_siswa;
-         //print_r ($data['noinduk']);
          $data_siswa[$counter]['noinduk']=$id_siswa;
 
          $data['namalengkap']= $query->get_namalengkap();
@@ -244,8 +262,7 @@ try {
          $data_siswa[$counter]['kelas']= $query->kelas->get_kelas();
 
          $data['jenjang']= $query->kelas->get_jenjang();
-         $data_siswa[$counter]['jenjang']=$query->kelas->get_jenjang();
-         
+         $data_siswa[$counter]['jenjang']=$query->kelas->get_jenjang();         
          try {
 	 $query2 = $this->StudentGroup_model->get_single_studentgroup(array('id_rate'=>$rate, 'id_student'=>$query->get_id()));
          $data['status']="SUDAH" ;
@@ -269,10 +286,10 @@ try {
  }
 }
 catch (Exception $e)
-  {
-   
+  {   
   }
- $data['data_siswa']=$data_siswa;	
+ $data['data_siswa']=$data_siswa;
+ $data['action_url'] = site_url('otogroup/simpan');
  $this->load->view('site/header_view');
  $this->load->view('site/tampil_tagihan_view',$data);
  $this->load->view('site/footer_view');
@@ -288,41 +305,38 @@ catch (Exception $e)
  }
 }
 
-function olahData(){
-$file=fopen($_FILES['file_import']['tmp_name'], "w");
-$fileData = file_get_contents($_FILES['file_import']['tmp_name']);
-$fileData = str_replace(";", ",", $fileData);
-fwrite($file, $fileData);
-flush();
-fclose($file);
-$this -> loadCSV();
-}
-
 function loadCSV()
 {
+$file=fopen($_FILES['file_import']['tmp_name'], "rw");
+$fileData = file_get_contents($_FILES['file_import']['tmp_name']);
+$fileData = str_replace(";", ",", $fileData);
+$fileData = str_replace("'", "", $fileData);
+$fileData = str_replace('"', "", $fileData);
+$mypath=".\\uploads\\";
+
+$rand = rand(1, 10000000);
+$filename = $mypath.$rand.'_dtkelompok.csv';
+$handle = fopen($filename,"w");
+$somecontent = "$fileData";
+fwrite($handle,$somecontent);
+
+  $this->data['sess'] = null;
+  $this->data['action_url'] = site_url('otogroup/simpan');
+  $this->data['info_url'] = site_url('otogroup/info');
+  $this->data['filter_url'] = site_url('otogroup/index');
   $this->load->model('Siswa_model');
   $this->load->model('Rate_model');
   $this->load->model('StudentGroup_model');
 
 $row = 1;
 $counter=0;
-$file=fopen($_FILES['file_import']['tmp_name'], "rw");
-//$file=fopen("./uploads/data.csv", "rw");
-$fileData = file_get_contents($_FILES['file_import']['tmp_name']);
-
-if(stristr($fileData, ';') === TRUE) {
-    $delimiter= ";";
-  }
-else if (stristr($fileData, ',') === TRUE) {
-    $delimiter= ",";
-  }
-if (($handle =$file) !== FALSE) {
+$file2=fopen("$filename", "rw");
+if (($handle =$file2) !== FALSE) {
 $delimiter= ",";
 	    while (($data2 = fgetcsv($handle, 1000, $delimiter)) !== FALSE )
 	  {
              $num = count($data2)/2;
              $row++;
-
              $error_msg="";
              $counter_index=0;
              $status=true;
@@ -340,7 +354,6 @@ $delimiter= ",";
        }
 
  for ($c=0; $c < $num; $c++) {
-
 	$id_siswa=$data2[0];
 	$nama=$data2[1];
 	try {
@@ -359,7 +372,6 @@ $delimiter= ",";
          $data_siswa[$counter]['id']=$query->get_id();
 
          $data['noinduk']= $id_siswa;
-         //print_r ($data['noinduk']);
          $data_siswa[$counter]['noinduk']=$id_siswa;
 
          $data['namalengkap']= $query->get_namalengkap();
@@ -394,6 +406,7 @@ $delimiter= ",";
 $counter++;
 }//while
 	   $data['data_siswa']=$data_siswa;
+           $data['action_url'] = site_url('otogroup/simpan');
 		$this->load->view('site/header_view');
 		$this->load->view('site/tampil_tagihan_view',$data);
 		$this->load->view('site/footer_view');
@@ -409,13 +422,7 @@ $counter++;
 	 fclose($handle);
    }
 }
-
-function simpan_exc(){
- $this->simpan();
- redirect('/otogroup/index/', 'refresh');
-}
 //--------------------------------------------------------------------------
-
 	public function simpan() {
 		$this->load->model('ClassGroup_model');
 		$this->load->model('StudentGroup_model');
@@ -522,46 +529,5 @@ function simpan_exc(){
 				echo $ok ? 'data berhasil dihapus' : 'data gagal dihapus';
 			}
 		}
-	}
-	function suggest($key = 1) {
-		$this->load->model('Rate_model');
-		$this->load->model('Kelas_model');
-		$this->load->model('Siswa_model');
-
-		$limit = 5;
-		$response = array();
-		$keyword = $this->input->get("search");
-
-		try {
-			$list = $this->Kelas_model->get_all_kelas(array('kelas like'=>"%$keyword%"), 3);
-			foreach ($list as $l) {
-				$line = new StdClass;
-				$line->text = sprintf('kelas %s (tingkat %s %s)', $l->get_kelas(), $l->get_angka(), $l->get_jenjang());
-				$line->value = $l->get_kelas();
-				array_push($response, $line);
-			}
-		} catch (KelasNotFoundException $e) {}
-		try {
-			$list = $this->Rate_model->get_all_rate(array('name like'=>strtolower("%$keyword%")), 3);
-			foreach ($list as $l) {
-				$line = new StdClass;
-				$line->text = sprintf('%s - Rp %s', $l->get_name(), $l->get_fare());
-				$line->value = $l->get_name();
-				array_push($response, $line);
-			}
-		} catch (RateNotFoundException $e) {}
-
-		try {
-			$list = $this->Siswa_model->get_all_siswa_ajax($keyword, $limit);
-			foreach ($list as $l) {
-				$line = new StdClass;
-				$line->text = sprintf('%s - %s (%s)', $l->get_namalengkap(), $l->kelas->get_kelas(), $l->kelas->get_jenjang());
-				$line->value = $l->get_namalengkap();
-				array_push($response, $line);
-			}
-		} catch (SiswaNotFoundException $e) {}
-
-		header('Content-type: application/json');
-		echo json_encode($response);
 	}
 }

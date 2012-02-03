@@ -128,9 +128,12 @@ class Alazka_Controller extends CI_Controller {
 	 *
 	 * @return void
 	 */
-	public function print_flash_message() {
+	public function print_flash_message($return=FALSE) {
 		if (strlen($this->flash_message) > 0) {
 			$div = '<div class="%s">%s</div>';
+			if ($return === TRUE) {
+				return sprintf($div, $this->flash_class, $this->flash_message);
+			}
 			printf($div, $this->flash_class, $this->flash_message);
 		}
 	}
