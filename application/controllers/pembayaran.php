@@ -35,7 +35,10 @@ class Pembayaran extends Alazka_Controller {
 		// URL untuk Ajax auto complete
 		$this->data['ajax_siswa_url'] = site_url('ajax/get_siswa/10/');
 		
-		$this->proses_bayar($sess);
+		if ($this->proses_bayar($sess) === TRUE) {
+			// diarahkan ke data pembayaran jadi jangan diteruskan
+			return TRUE;
+		}
 		$this->show_invoices($sess);
 		
 		$this->data['sess'] = $sess;
@@ -265,6 +268,18 @@ class Pembayaran extends Alazka_Controller {
 		
 		$message = sprintf('Pembayaran tagihan berhasil. <a href="%s">Cetak Sekarang</a>', site_url() . '/pembayaran/cetak/' . $payment->get_id());;
 		$this->set_flash_message($message);
+		
+		// Factory POST - sesuai dengan apa yang diminta data_pembayaran untuk
+		// simulasi form submit
+		$_POST['showbtn'] = 'Tampil';
+		$_POST['siswa_id'] = $sess->id_siswa;
+		$_POST['siswa'] = $sess->nama_siswa;
+		$_POST['rep-siswa-induk'] = $sess->no_induk;
+		$_POST['rep-siswa-kelas'] = $sess->kelas_jenjang;
+
+		$this->data_pembayaran();
+		
+		return TRUE;
 	}
 	
 	private function rollback(&$old_tagihan, &$payment_details, &$payment_lunas=TRUE) {
@@ -490,6 +505,14 @@ class Pembayaran extends Alazka_Controller {
 		}
 	}
 	
+	public function print_cicilan($tagihan) {
+		if (($tagihan->get_last_installment() + 1) == $tagihan->rate->get_installment()) {
+			print 'el="langsunglunas"';
+		} else {
+			print 'el="cicil"';
+		}
+	}
+	
 	/**
 	 * Method untuk mereset status dari invoice ber-id 1 dan dua
 	 *
@@ -526,8 +549,13 @@ class Pembayaran extends Alazka_Controller {
 		$script = '
 		<script type="text/javascript" src="%s"></script>
 		<script type="text/javascript" src="%s"></script>
+		<script type="text/javascript" src="%s"></script>
 		';
-		printf($script, base_url() . 'js/json.suggest.js', base_url() . 'js/jquery.simplemodal.1.4.2.min.js');
+		printf($script, 
+				base_url() . 'js/json.suggest.js', 
+				base_url() . 'js/jquery.simplemodal.1.4.2.min.js',
+				base_url() . 'js/autoNumeric-1.7.4.js'
+		);
 	}
 	
 	public function add_more_css() {

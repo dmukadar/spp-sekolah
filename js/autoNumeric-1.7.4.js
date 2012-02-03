@@ -959,7 +959,7 @@
 		* aPad: `some number` - pad decimals with zero to number different from mDec
 		* thanks to Jonas Johansson for the suggestion
 		*/
-		aPad: true,
+		aPad: false,
 		/** Displayed on empty string
 		* wEmpty: 'empty', - input can be blank
 		* wEmpty: 'zero', - displays zero

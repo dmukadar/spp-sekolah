@@ -39,6 +39,7 @@
       
 		<?php if (count($list_tagihan) > 0) : ?>
 		<br/>
+		<h3 style="border-bottom:1px solid #ccc;">Operator: <?php echo ME()->get_current_user()->get_user_full_name();?></h3>
 		<form action="<?php echo ($action_url);?>" method="post">
 		<table id="tabel" class="gtable">
 			<thead>
@@ -60,16 +61,24 @@
 				<td><?php echo ($tagihan->get_due_date());?></td>
 				<td style="text-align:right;"><?php echo ($tagihan->get_last_installment() + 1);?> dari <?php echo ($tagihan->rate->get_installment());?></td>
 				<td style="text-align:right;"><?php echo ($tagihan->get_amount(TRUE));?></td>
-				<td style="text-align:right;"><?php echo (number_format($tagihan->sisa_bayar));?></td>
-				<td style="text-align:right;"><input <?php (ME()->installment_read_only($tagihan));?> style="text-align:right;font-weight:bold;" size="8" type="textbox" name="bayar[<?php echo ($tagihan->get_id());?>]" value="<?php echo (number_format($tagihan->sisa_bayar));?>" /></td>
+				<td style="text-align:right;" id="sisa-<?php echo ($tagihan->get_id());?>"><?php echo (number_format($tagihan->sisa_bayar));?></td>
+				<td style="text-align:right;"><input <?php ME()->print_cicilan($tagihan); ?> readonly="readonly" style="text-align:right;font-weight:bold;" size="8" type="textbox" class="uang" id="bayar-<?php echo ($tagihan->get_id());?>" name="bayar[<?php echo ($tagihan->get_id());?>]" value="<?php echo (number_format($tagihan->sisa_bayar));?>" /></td>
 			</tr>
 			<?php endforeach; ?>
 			</tbody>
 		</table>
 		<br/>
-		<input type="checkbox" id="confirm-bayar" value="yes" /><label for="confirm-bayar">Centang jika sudah yakin dengan data yang akan dibayarkan</label><br/>
-		<input type="submit" value="BAYAR" name="paybtn" id="paybtn" class="button gray" />
-		
+		<div style="float:left;width:400px;">
+			<input type="submit" value="BAYAR" name="paybtn" id="paybtn" class="button gray" />
+		</div>
+		<div id="div-total-bayar" style="width:350px;float:right;">
+			<div style="text-align:right;">
+				<div style="display:block;margin-bottom:5px;font-size:18px;font-weight:bold;"><label>Total</label> <input style="font-size:18px;font-weight:bold;text-align:right;" type="textbox" value="0" id="total-bayar" size="10" readonly="readonly" /></div>
+				<div style="display:block;margin-bottom:5px;font-size:18px;font-weight:bold;"><label>Pembayaran</label> <input style="font-size:18px;font-weight:bold;text-align:right;" type="textbox" value="0" id="total-pembayaran" size="10" /></div>
+				<div style="display:block;margin-bottom:5px;font-size:18px;font-weight:bold;"><label>Kembalian</label> <input style="font-size:18px;font-weight:bold;text-align:right;" type="textbox" value="0" id="total-kembalian" size="10" readonly="readonly" /></div>
+			</div>
+		</div>
+		<div style="clear:both;"></div>
 		<input type="hidden" name="siswa-2" value="<?php echo (@$sess->nama_siswa);?>" size="30"/></dd>
 		<input type="hidden" name="rep-siswa-kelas-2" value="<?php echo (@$sess->kelas_jenjang);?>" />
 		<input type="hidden" name="rep-siswa-induk-2" value="<?php echo (@$sess->no_induk);?>" />
@@ -79,13 +88,113 @@
 		<script>
 			// ---- Form submit pembayaran
 			document.getElementById('paybtn').onclick = function(el) {
-				// pastikan user mencentang
-				var status = document.getElementById('confirm-bayar').checked;
-				if (status == false) {
-					alert('Mohon centang dulu.');
+				var totalbayar = jQuery('#total-bayar').autoNumericGet();
+				var pembayaran = jQuery('#total-pembayaran').val();
+				
+				if (parseFloat(totalbayar) <= 0) {
+					alert('Mohon pilih tagihan terlebih dulu.');
 					return false;
 				}
-			};
+				if (parseFloat(pembayaran.replace(',', '')) <= 0) {
+					alert('Mohon isikan pembayaran terlebih dulu.');
+					jQuery('#total-pembayaran').focus();
+					jQuery('#total-pembayaran').select();
+					return false;
+				}
+				
+				if (parseFloat(pembayaran.replace(',', '')) < parseFloat(totalbayar)) {
+					alert('Mohon maaf, Uang pembayaran kurang!');
+					jQuery('#total-pembayaran').focus();
+					jQuery('#total-pembayaran').select();
+					return false;
+				}
+				
+				var tanya = confirm('Menerima pembayaran sebesar Rp' + pembayaran + '.-\n\nTekan OK untuk melanjutkan atau Cancel untuk batal.');
+				if (!tanya) {
+					return false;
+				}
+				
+				return true;
+			}
+			
+			// ---- Check all tagihan
+			document.getElementById('check-all').onclick = function(el) {
+				var status = this.checked;
+				jQuery('.tagihan-check').attr('checked', status);
+				hitung_total();
+				hitung_kembalian();
+			}
+			
+			jQuery('.uang, #total-bayar, #total-pembayaran, #total-kembalian').autoNumeric();
+			
+			jQuery('.tagihan-check').click(function() {
+				var id = this.id.substring('tagihan-'.length);
+				var jmlbox = jQuery('#bayar-' + id);
+				var jml_tagihan = jmlbox.attr('value');
+				var cicilan = jmlbox.attr('el');
+				var status_checkbox = this.checked;
+				
+				// jika tagihan bukan langsung lunas maka hilangkan
+				// tanda disabled pada textbox agar user dapat menginput
+				// jumlah baru
+				if (status_checkbox == false) {
+					// tanpa perlu dipikir langsung saja disabled
+					jmlbox.attr('readonly', true);
+				} else {
+					if (cicilan == 'cicil') {
+						jmlbox.removeAttr('readonly');
+					}
+				}
+				hitung_total();
+				hitung_kembalian();
+			});
+			
+			function hitung_total() {
+				var total = 0.0;
+				jQuery('.tagihan-check').each(function() {
+					if (this.checked) {
+						var id = this.id.substring('tagihan-'.length);
+						total += parseFloat(jQuery('#bayar-' + id).autoNumericGet());
+					}
+				});
+				
+				jQuery('#total-bayar').autoNumericSet(total);
+			}
+			
+			function hitung_kembalian() {
+				var total = parseFloat(jQuery('#total-bayar').autoNumericGet());
+				var pembayaran = parseFloat(jQuery('#total-pembayaran').autoNumericGet());
+				
+				if (pembayaran < total) {
+					jQuery('#total-kembalian').val('0');
+					return -1;
+				}
+				
+				var kembalian = pembayaran - total;
+				jQuery('#total-kembalian').autoNumericSet(kembalian);
+			}
+			
+			jQuery('.uang').keyup(function() {
+				var id = this.id.substring('bayar-'.length);
+				var sisa = jQuery('#sisa-' + id).html().replace(',', '');
+				var myval = parseFloat(jQuery(this).autoNumericGet());
+				
+				// angka yang diinputkan seharusnya tidak lebih besar daripada sisa
+				if (myval > sisa) {
+					this.value = sisa;
+				}
+				hitung_total();
+				hitung_kembalian();
+			});
+			
+			jQuery('#total-pembayaran').keyup(function() {
+				hitung_kembalian();
+			});
+			
+			jQuery('#total-pembayaran').focus(function() {
+				this.select();
+			});
+			
 		</script>
 		<?php endif;?>
 
@@ -121,7 +230,7 @@
 			}
 			
 			// ---- Form Submit
-			document.getElementById('showbtn').onclick = function(el) {				
+			document.getElementById('showbtn').onclick = function(el) {
 				// jika input hidden siswa nilainya lebih dari NOL maka, 
 				// form dapat disubmit
 				var id_siswa = parseInt(document.getElementById('siswa_id').value);
@@ -132,11 +241,5 @@
 				}
 				
 				document.forms[0].submit();
-			}
-			
-			// ---- Check all tagihan
-			document.getElementById('check-all').onclick = function(el) {
-				var status = this.checked;
-				jQuery('.tagihan-check').attr('checked', status);
 			}
 		</script>
