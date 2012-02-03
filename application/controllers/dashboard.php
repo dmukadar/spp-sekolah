@@ -4,7 +4,7 @@ class Dashboard extends Alazka_Controller {
 	
 	public function __construct() {
 		parent::__construct();
-		if ($this->current_user->get_user_privilege('ksr')) {
+		if ($this->current_user->get_user_privilege() == 'ksr') {
 			redirect('/pembayaran');
 		}
 		$this->deny_group('ksr');
