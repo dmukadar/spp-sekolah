@@ -127,8 +127,8 @@
     <td width="31%" height="32"><div align="left"><span class="style6">_</span><?php echo $row->namalengkap;?></div></td>
     <td width="14%" height="32"><div align="center"><?php echo $row->kelas;?></div></td>
     <td width="13%" height="32"><div align="center"><span class="style5"><?php echo $ajaran;?></span></div></td>
-    <td width="21%" height="32"><div align="right"><span class="style6">_</span>
-      <?php $tagihan=$row->total;$clean = str_replace(".00", ",-",$tagihan);echo $clean;?><span class="style6">.</span>    </div></td>
+    <td width="21%" height="32"><div align="right"><span class="style6">.</span>
+      <?php $tagihan=$row->total;$clean = str_replace(".00", ",-",$tagihan);echo $clean;?><span class="style6">.</span></div></td>
     <td width="16%" height="32"><div align="right"><?php $tagihan=$row->total;$clean = str_replace(".00", ",-",$tagihan);echo $clean;?><span class="style6">.</span></div>   </td>
   </tr>
 </table>
