@@ -127,11 +127,12 @@
   </tr>
 </table>
 <?php 
+$i=1;
 		foreach($data_seragam->result() as $row){
 		?>
 <table width="100%" border="1">
   <tr>
-    <td width="5%" height="32"><div align="center"><?php echo $row->inv_id;?></div></td>
+    <td width="5%" height="32"><div align="center"><?php echo $i++;?></div></td>
     <td width="31%" height="32"><div align="left"><span class="style6">_</span><?php echo $row->namalengkap;?></div></td>
     <td width="17%" height="32"><div align="center"><?php echo $row->kelas;?></div></td>
     <td width="15%" height="32"><div align="center"><?php echo $row->bulan;?></div></td>
