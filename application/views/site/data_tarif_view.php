@@ -129,7 +129,7 @@
 				<tr>
 					<td><?php echo ($tarif->get_category());?></td>
 					<td><?php echo ($tarif->get_name());?></td>
-					<td style="text-align:right;"><?php echo ($tarif->get_fare(TRUE));?></td>
+					<td style="text-align:right;"><?php echo (number_format($tarif->get_fare(), 2));?></td>
 					<td style="text-align:right;"><?php echo ($tarif->get_recurrence(TRUE));?></td>
 					<td style="text-align:right;"><?php echo ($tarif->get_installment());?>x</td>
 					<td style="text-align:center;">
