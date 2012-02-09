@@ -266,9 +266,8 @@ class Rate_model extends CI_Model {
 	}
 	
 	public function get_all_category() {
-		$this->db->group_by('ar_rate.category');
-		$this->db->order_by('ar_rate.category', 'ASC');
-		return $this->get_all_rate();
+		$result = array('SPP', 'Uang Masuk', 'Uang Buku', 'Uang Kegiatan', 'Uang Seragam', 'Uang Alat', 'Uang Antar Jemput', 'Uang Sanggar', 'BPPS');
+		return $result;
 	}
 	
 	public function insert($rate) {

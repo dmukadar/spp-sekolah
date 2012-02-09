@@ -23,14 +23,6 @@ class Data_tarif extends Alazka_Controller {
 		// Page title untuk HTML
 		$this->data['page_title'] = 'Daftar Tarif';
 		
-		try {
-			// selalu gunakan try akan setiap model akan melempar exception
-			// jika record tidak ditemukan
-			$this->data['list_category'] = $this->Rate_model->get_all_category();
-		} catch (Exception $e) {
-			$this->data['list_category'] = array();
-		}
-		
 		// digunakan pada form action
 		// membiarkan form action kosong bukanlah ide yang baik, dan itu
 		// tergantung masing-masing browser implementasinya
@@ -52,7 +44,7 @@ class Data_tarif extends Alazka_Controller {
 			$this->data['list_tarif'] = array();
 		}
 
-		$this->data['list_rate_category'] = array('SPP', 'Uang Masuk', 'Uang Buku', 'Uang Kegiatan', 'Uang Seragam', 'Uang Alat', 'Uang Antar Jemput', 'Uang Sanggar', 'BPPS');
+		$this->data['list_rate_category'] = $this->Rate_model->get_all_category();
 		
 		$this->load->view('site/header_view');
 		$this->load->view('site/data_tarif_view', $this->data);

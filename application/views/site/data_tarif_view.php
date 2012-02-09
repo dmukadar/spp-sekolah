@@ -101,8 +101,8 @@
 				  <label> <strong>Tampilkan Kategori :</strong> </label>
 				  <select name="mn_kategori" id="mn_kategori">
 						<option value=''>Semua</option>
-						<?php foreach ($list_category as $category) : ?>
-						<option <?php echo (mr_selected_if(@$sess->category, $category->get_category()));?> value="<?php echo ($category->get_category());?>"><?php echo ($category->get_category());?></option>
+						<?php foreach ($list_rate_category as $category) : ?>
+						<option <?php echo (mr_selected_if(@$sess->category, $category));?> value="<?php echo ($category);?>"><?php echo ($category);?></option>
 						<?php endforeach; ?>
                   </select>
 					</div>
