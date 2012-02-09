@@ -45,7 +45,7 @@
 </table>
 
 <table style="width:100%" border="1" cellspacing="0" cellpadding="4">
-<tr style="font-weight:bold;background-color: #f1f1f1;">
+<tr style="font-weight:bold;">
 	<th style="text-align:center;width:5%">#</th>
 	<th style="text-align:left;width:28%">Keterangan</th>
 	<th style="text-align:right;width:15%">Bayar (Rp)</th>
