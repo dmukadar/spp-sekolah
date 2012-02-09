@@ -18,7 +18,7 @@
 								<select name="tagihan" id="tagihan">
 									<option value=''>-- Pilih --</option>
 									<?php foreach ($list_tarif as $tarif) : ?>
-									<option <?php echo (mr_selected_if(@$sess->tagihan, $tarif->get_id()));?> value="<?php echo ($tarif->get_id());?>"><?php echo ($tarif->get_name());?></option>
+									<option <?php echo (mr_selected_if(@$sess->tagihan, $tarif->get_id()));?> value="<?php echo ($tarif->get_id());?>"><?php echo sprintf("%s - Rp %s", $tarif->get_name(), $tarif->get_fare(TRUE));?></option>
 									<?php endforeach; ?>
 								</select>
 							</dd>
