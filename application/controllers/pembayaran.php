@@ -37,9 +37,12 @@ class Pembayaran extends Alazka_Controller {
 		
 		if ($this->proses_bayar($sess) === TRUE) {
 			// diarahkan ke data pembayaran jadi jangan diteruskan
-			return TRUE;
+			//return TRUE;
+			$sess = new StdClass;
+			$this->data['list_tagihan'] = array();
+		} else {
+			$this->show_invoices($sess);
 		}
-		$this->show_invoices($sess);
 		
 		$this->data['sess'] = $sess;
 		
@@ -277,8 +280,6 @@ class Pembayaran extends Alazka_Controller {
 		$_POST['rep-siswa-induk'] = $sess->no_induk;
 		$_POST['rep-siswa-kelas'] = $sess->kelas_jenjang;
 
-		$this->data_pembayaran();
-		
 		return TRUE;
 	}
 	

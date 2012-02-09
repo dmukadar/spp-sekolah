@@ -101,8 +101,6 @@
 					jQuery('#total-pembayaran').select();
 					return false;
 				}
-				console.log(pembayaran);
-				console.log(totalbayar);
 				
 				if (parseFloat(pembayaran) < parseFloat(totalbayar)) {
 					alert('Mohon maaf, Uang pembayaran kurang!');
