@@ -476,7 +476,7 @@ class Pembayaran extends Alazka_Controller {
 	private function print_pdf($content, $filename) {
 		$this->load->library('pdf');
 		// $this->pdf->setPageUnit('cm');
-		$this->pdf->setPageFormat('A5', 'L');
+		$this->pdf->setPageFormat('A4', 'P');
 		$this->pdf->setPrintHeader(FALSE);
 		$this->pdf->setHeaderMargin(0);
 		// $this->pdf->setHeaderData('', 0, '', '');
