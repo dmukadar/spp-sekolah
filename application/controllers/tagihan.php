@@ -457,6 +457,7 @@ class Tagihan extends Alazka_Controller {
 		$this->data['last_range'] = $lastRange;
 		$this->data['keyword'] = $keyword;
 		$this->data['list_status'] = $this->Invoice_model->get_all_status();
+		array_pop($this->data['list_status']);
 		$this->data['field_name'] = $field_name;
 		$this->data['search_id'] = $search_id;
 		$this->data['search_status'] = $search_status;
