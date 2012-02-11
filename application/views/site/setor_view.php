@@ -16,7 +16,7 @@
 							<dd>
 							<select name="tx_unit" id="tx_unit" class="medium">
               <option value="-1">Semua</option>
-							<?php foreach($data_unit->result() as $value) : ?>
+							<?php foreach($data_unit as $value) : ?>
 								<option value="<?php echo $value->id; ?>"><?php echo $value->nama; ?></option>;
 							<?php endforeach; ?>
 							</select>
