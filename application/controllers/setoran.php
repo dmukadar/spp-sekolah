@@ -67,16 +67,17 @@ function __construct()
 		$data['nm_jenjang'] = $nm_jenjang;
 		$data['page_title'] = sprintf('Laporan Penerimaan %s Siswa', $kategori);
 		//$this->load->view('site/rekap_penerimaan_siswa_view', $data);
-		$content = $this->load->view('site/rekap_penerimaan_siswa_view', $data, true);
+		$content = $this->load->view('site/detil_pembayaran_per_siswa_view', $data, true);
 
 		$this->load->library('pdf');
-    $this->pdf->SetSubject('Laporan Setoran Lain-lain');
-    $this->pdf->SetKeywords('TCPDF, PDF');      
-    $this->pdf->SetFont('times', '', 12);   
+    $this->pdf->SetSubject('Detil Laporan Penerimaan');
+    $this->pdf->SetKeywords('Laporan Penerimaan Kas Al Azhar Kelapa Gading Surabaya');      
+		$this->pdf->SetHeaderData('alazka.jpg', 0, "                                        YAYASAN AL AZHAR KELAPA GADING", "                                             Jl. Taman Bhaskara Utara, Mulyorejo - Surabaya\n                                           Telp. (031) 5927420, 5927447, Fax. (031) 5938179 ");
 		$this->pdf->setHeaderFont(Array('times', '', '14'));
 		$this->pdf->setFooterFont(Array('times', '', '12'));
-    $this->pdf->SetAutoPageBreak(FALSE, PDF_MARGIN_BOTTOM);    
-		$this->pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+    $this->pdf->SetFont('times', '', 10);   
+    $this->pdf->SetAutoPageBreak(true, PDF_MARGIN_BOTTOM);    
+		$this->pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP + 5, PDF_MARGIN_RIGHT);
     $this->pdf->AddPage(); 
   	$this->pdf->writeHTML($content, true, true, true, true, '');		
 		$this->pdf->lastPage();		

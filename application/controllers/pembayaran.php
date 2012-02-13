@@ -484,7 +484,7 @@ class Pembayaran extends Alazka_Controller {
 		$this->pdf->SetKeywords('TCPDF, PDF');      
 		// $this->pdf->setHeaderFont(Array('times', '', '14'));
 		// $this->pdf->setFooterFont(Array('times', '', '12'));
-		$this->pdf->SetFont('times', '', 10);   
+		$this->pdf->SetFont('courier', '', 10);   
 		$this->pdf->SetAutoPageBreak(FALSE, PDF_MARGIN_BOTTOM);    
 		// $this->pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
 		// $this->pdf->setTopMargin(1);
