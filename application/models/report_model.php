@@ -43,4 +43,21 @@ EOL;
 		$rs = $this->db->query($query);
 		return $rs->result();
 	}
+
+	public function getPaymentSummary($jenjang=-1, $start=null) {
+		if ($jenjang > -1) $jenjangFilter = ' AND kelas.dm_jenjang_id = ' . $jenjang;
+		else $jenjangFilter = '';
+
+		if (empty($start)) $start = date('Y-m-d');
+
+$query = <<<EOL
+SELECT rate.category, rate.name, kelas.kelas, SUM(payment.amount) received 
+	FROM ar_payment_details payment, ar_invoice invoice, sis_siswa siswa, dm_kelas kelas, ar_rate rate 
+	WHERE invoice.id = payment.id_invoice AND siswa.id = invoice.id_student AND kelas.id = siswa.dm_kelas_id AND invoice.id_rate = rate.id 
+		AND DATE_FORMAT(payment.created, '%Y-%m-%d') = '$start' $jenjangFilter
+		GROUP BY rate.category, rate.name, kelas.kelas ORDER BY rate.category, rate.name, kelas.angka, kelas.kelas
+EOL;
+		$rs = $this->db->query($query);
+		return $rs->result();
+	}
 }
