@@ -447,8 +447,12 @@ class Siswa_model extends CI_Model {
 		return $this->get_single_siswa(array('sis_siswa.id'=>$id));
 	}
 	
-	public function get_all_siswa_ajax($nama_siswa, $limit=-1, $offset=0) {
-		$this->db->like('sis_siswa.namalengkap', $nama_siswa, 'after');
+	public function get_all_siswa_ajax($condition, $limit=-1, $offset=0) {
+		@list($nama_siswa, $kelas) = explode('kelas', $condition);
+		if (!empty($kelas)) {
+			$this->db->like('dm_kelas.kelas', trim($kelas), 'after');
+		}
+		$this->db->like('sis_siswa.namalengkap', trim($nama_siswa), 'both');
 		$this->db->order_by('sis_siswa.namalengkap', 'ASC');
 		return $this->get_all_siswa(array(), $limit, $offset);
 	}
