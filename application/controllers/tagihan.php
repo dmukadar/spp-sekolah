@@ -5,14 +5,16 @@ class Tagihan extends Alazka_Controller {
 		parent::__construct();
 		// $this->output->enable_profiler(FALSE);
 		$this->deny_group('ksr');
-	}
-	
-	public function index($loadId = 0) {
+
 		$this->load->model('Kelas_model');
 		$this->load->model('Siswa_model');
 		$this->load->model('Rate_model');
+		$this->load->model('Custom_Rate_model');
 		$this->load->model('Invoice_model');
-		
+		$this->load->model('TahunAkademik_model');
+	}
+	
+	public function index($loadId = 0) {
 		// helper untuk melakukan repopulate checkbox, radio atau select
 		$this->load->helper('mr_form');
 		
@@ -89,9 +91,6 @@ class Tagihan extends Alazka_Controller {
 	 */
 	public function delete($id=0, $hash='') {
 		$id = (int)$id;
-		$this->load->model('Siswa_model');
-		$this->load->model('Rate_model');
-		$this->load->model('Invoice_model');
 		
 		// cari terlebih dulu tarif yang akan dihapus ada atau tidak
 		try {
@@ -165,10 +164,6 @@ class Tagihan extends Alazka_Controller {
 	}
 
 	public function create($loadId=null, $invoiceEdited=null) {
-		$this->load->model('Kelas_model');
-		$this->load->model('Siswa_model');
-		$this->load->model('Rate_model');
-
 		$this->load->helper('mr_form');
 
 		if (empty($invoiceEdited)) {
@@ -208,15 +203,12 @@ class Tagihan extends Alazka_Controller {
 	}
 
 	public function info() {
-		$this->load->model('Kelas_model');
-		$this->load->model('Siswa_model');
-		$this->load->model('Rate_model');
-		$this->load->model('Custom_Rate_model');
-		$this->load->model('Invoice_model');
-		$this->load->model('TahunAkademik_model');
-
 		$id_student = $this->input->post('id', false);
 		$id_rate    = $this->input->post('rate', false);
+		$created_date = $this->input->post('date', false);
+		if ($created_date) {
+			$this->TahunAkademik_model->berjalan->set_by_date($created_date);
+		}
 
 		if (empty($id_student) || empty($id_rate)) $data = null;
 		else {
@@ -280,14 +272,11 @@ class Tagihan extends Alazka_Controller {
 				$$r = trim($this->input->post($r));
 				if (empty($$r)) array_push($errors, $r . ' belum diisi');
 			}
+			$tanggal = $this->input->post('tanggal', false);
+			if ($tanggal) $this->TahunAkademik_model->berjalan->set_by_date($tanggal);
 
 			if (! is_numeric($jumlah)) array_push($errors, 'jumlah hanya bisa diisi angka');
 			else if ($this->input->post('action') == 'new') {
-				$this->load->model('Kelas_model');
-				$this->load->model('Siswa_model');
-				$this->load->model('Rate_model');
-				$this->load->model('Invoice_model');
-				$this->load->model('TahunAkademik_model');
 
 				try {
 				$siswa = $this->Siswa_model->find_by_pk($siswa_id);
@@ -317,12 +306,6 @@ class Tagihan extends Alazka_Controller {
 				echo '<span> - ' . implode('</span><br/><span> - ', $errors) . '</span>';
 			}
 		} else {
-			$this->load->model('Kelas_model');
-			$this->load->model('Siswa_model');
-			$this->load->model('Rate_model');
-			$this->load->model('Invoice_model');
-			$this->load->model('TahunAkademik_model');
-
 			//get user data
 			$model = new Invoice;
 
@@ -336,6 +319,12 @@ class Tagihan extends Alazka_Controller {
 
 				} else {
 					$model->isNew = true;
+					
+					$tanggal = $this->input->post('tanggal', false);
+					if ($tanggal) {
+						$this->TahunAkademik_model->berjalan->set_by_date($tanggal);
+						$model->set_created_date($tanggal);
+					}
 
 					$model->set_id_rate($this->input->post('tagihan'));
 					$model->set_id_student($this->input->post('siswa_id'));
@@ -381,10 +370,6 @@ class Tagihan extends Alazka_Controller {
 	}
 
 	public function edit($loadId) {
-		$this->load->model('Rate_model');
-		$this->load->model('Siswa_model');
-		$this->load->model('Invoice_model');
-
 		try {
 			$invoice = $this->Invoice_model->find_by_pk($loadId);
 			$this->create($invoice->get_id_student(), $invoice);
@@ -395,11 +380,6 @@ class Tagihan extends Alazka_Controller {
 		}
 	}
 	public function all() {
-		$this->load->model('Kelas_model');
-		$this->load->model('Siswa_model');
-		$this->load->model('Rate_model');
-		$this->load->model('Invoice_model');
-
 		$this->data['sess'] = null;
 		$this->data['action_url'] = site_url('tagihan/create');
 		$this->data['info_url'] = site_url('tagihan/info');
@@ -468,10 +448,6 @@ class Tagihan extends Alazka_Controller {
 	}
 
 	function suggest($key = 1) {
-		$this->load->model('Rate_model');
-		$this->load->model('Kelas_model');
-		$this->load->model('Siswa_model');
-
 		$limit = 5;
 		$response = array();
 		$keyword = $this->input->get("search");

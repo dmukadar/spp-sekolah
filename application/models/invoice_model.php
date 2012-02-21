@@ -47,8 +47,9 @@ class Invoice {
 		return $this->code;
 	}
 
-	public function set_created_date($created_date) {
-		$this->created_date = $created_date;
+	public function set_created_date($created) {
+		$created = strtotime($created);
+		if ($created != -1) $this->created_date = date('Y-m-01', $created);
 	}
 
 	public function get_created_date() {
@@ -421,7 +422,9 @@ class Invoice_model extends CI_Model {
 
 		//berikut ini adalah default value saat membuat tagihan baru
 		$now = date('Y-m-d H:i:s');
-		$invoiceDate = date('Y-m-01');
+		$invoiceDate = $invoice->get_created_date();
+		if (empty($invoiceDate)) $invoiceDate = date('Y-m-01');
+
 		$invoice->set_created($now);
 		$invoice->set_modified($now);
 		$invoice->set_created_date($invoiceDate);

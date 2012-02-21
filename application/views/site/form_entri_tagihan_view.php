@@ -57,6 +57,15 @@
 
 					<dt><label for="catatan">Catatan</label></dt>
 					<dd><textarea id="catatan" class="medium" name="catatan"><?php echo (empty($model) ? '' : $model->get_notes());?> </textarea></dd>
+
+					<dt><label for="o-tanggal">Untuk ditagihkan</label></dt>
+					<dd>
+						<input id="o-tanggal" type="text" class="small" name="o-tanggal" />
+						<input type="hidden" id="tanggal" name="tanggal" /><small>akan ditagihkan tanggal 1 bulan yang dipilih</small>
+					</dd>
+
+					<dt>&nbsp;</dt>
+					<dd><label><input id="redo" type="checkbox" name="redo" value="<?php echo (empty($model) ? '' : $model->get_description());?>" readonly="readonly" /> Simpan kemudian lanjutkan entri tagihan </label></dd>
 			</dl>
 			<div class="buttons">
 							<?php if (empty($model) || ($model->get_status() != 'closed')) : ?>
@@ -115,7 +124,8 @@
 				'<?php echo $info_url; ?>', 
 				{
 					id: jQuery('#siswa_id').val(), 
-					rate: jQuery('#tagihan').val()
+					rate: jQuery('#tagihan').val(),
+					date: jQuery('#tanggal').val()
 				},
 				function(data) {
 					//console.log(data);
@@ -166,4 +176,10 @@
 			);
 		});
 		
+		jQuery('#o-tanggal').datepicker({'altField': '#tanggal', 'altFormat': 'yy-mm-dd', 'dateFormat': 'dd/mm/yy'});
+		jQuery('#o-tanggal').change(function() {
+			if (jQuery('#o-tanggal').val() == '') jQuery('#tanggal').val('');
+
+			jQuery('#tagihan').change();
+		});
 		</script>

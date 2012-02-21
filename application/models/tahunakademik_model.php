@@ -21,12 +21,17 @@ class TahunAkademik {
 		$this->set_tahun($tahun);
 	}
 	
-	public function set_tahun($tahun) {
-			if (strpos('-', $tahun) > 0) list($tahun) = explode('-', $tahun);
-			else $tahun = date('Y');
+	//param: yyyy, yyyy-yyyy atau null untuk default value
+	//agar tahun yg diset valid, selalu set bulan terlebih dahulu (menentukan semester)
+	public function set_tahun($tahun, $checkSemester = true) {
+			if (preg_match('/\d{4}-\d{4}/', $tahun)) list($tahun) = explode('-', $tahun);
+			else if (!preg_match('/\d{4}/', $tahun)) $tahun = date('Y');
 
-			if ($this->semester_is_gasal()) $this->_tahun = (int) $tahun;
-			else $this->_tahun = ((int) $tahun) - 1;
+			if (! $checkSemester) $this->_tahun = (int) $tahun;
+			else {
+				if ($this->semester_is_gasal()) $this->_tahun = (int) $tahun;
+				else $this->_tahun = ((int) $tahun) - 1;
+			}
 	}
 
 	public function set_id($id) {
@@ -106,6 +111,15 @@ class TahunAkademik {
 		}
 		return $result;
 	}
+
+	public function set_by_date($tanggal) {
+		$tanggal = strtotime($tanggal);
+		if ($tanggal === -1) throw new Exception('invalid date format');
+		else {
+			$this->set_bulan(date('m', $tanggal));
+			$this->set_tahun(date('Y', $tanggal));
+		}
+	}
 }
 
 	
@@ -133,7 +147,8 @@ class TahunAkademik_model extends CI_Model {
 				$tahun = new TahunAkademik(0);
 			} else {
 				$record = $query->result();
-				$tahun = new TahunAkademik($record[0]->id, date('m'), $record[0]->tahun);
+				$tahun = new TahunAkademik($record[0]->id, date('m'));
+				$tahun->set_tahun($record[0]->tahun, false);
 			}
 		} catch (Exception $e) {
 			throw new Exception ($e->getMessage());
