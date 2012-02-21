@@ -33,11 +33,11 @@ EOL;
 		if (empty($end)) $end = $start;
 
 $query = <<<EOL
-SELECT id_student, id_rate, namalengkap, kelas, invoice.description, status, DATEDIFF(CURDATE(), invoice.created) elapsed, invoice.amount, invoice.received_amount, invoice.last_installment
+SELECT id_student, id_rate, namalengkap, kelas, invoice.description, status, DATEDIFF('$start', invoice.due_date) elapsed, invoice.amount, invoice.received_amount, invoice.last_installment
 FROM ar_invoice invoice, sis_siswa siswa, dm_kelas kelas
 WHERE siswa.id = invoice.id_student AND kelas.id = siswa.dm_kelas_id AND (invoice.status = 1 OR invoice.status = 2)
-AND DATE_FORMAT(invoice.created, '%Y-%m-%d') BETWEEN '$start' AND '$end' $jenjangFilter
-AND EXISTS(SELECT 1 FROM ar_rate WHERE invoice.id_rate=ar_rate.id AND ar_rate.category = '$rate_category' AND DATEDIFF(CURDATE(), invoice.created) > due_after)
+AND DATE_FORMAT(invoice.due_date, '%Y-%m-%d') < '$start' $jenjangFilter
+AND EXISTS(SELECT 1 FROM ar_rate WHERE invoice.id_rate=ar_rate.id AND ar_rate.category = '$rate_category')
 ORDER BY kelas.id, siswa.namalengkap 
 EOL;
 		$rs = $this->db->query($query);
