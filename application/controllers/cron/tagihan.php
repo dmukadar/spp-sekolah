@@ -146,4 +146,45 @@ class Tagihan extends CI_Controller {
 				if (empty($errors)) return array(true, $tagihan);
 				else return array(false, $errors);
 	}
+	public function fix_due_date($key = false) {
+		$challenge = 'b46303m0';
+		if ($key != $challenge) show_404();
+		else {
+			$process = array();
+			$dueAfterList = array();
+			$rate = $this->Rate_model->get_all_rate();
+			foreach ($rate as $r) $dueAfterList[$r->get_id()] = $r->get_due_after();
+
+			try {
+			$miss = $this->Invoice_model->get_all_invoice(array('due_date'=>null), 500, 0, 'ar_invoice.id desc');
+			foreach ($miss as $invoice) {
+				$invoiceDate = strtotime($invoice->get_created_date());
+				$dueDate = date('Y-m-01', $invoiceDate);
+				if (date('d', $invoiceDate) != '01') {
+					$invoice->set_created_date($dueDate);
+					array_push($process, sprintf('%s id %d date from %s to %s', $invoice->get_code(), $invoice->get_id(), date('Y-m-d', $invoiceDate), $invoice->get_created_date()));
+				}
+				$invoice->set_due_date($dueDate, $dueAfterList[$invoice->get_id_rate()]);
+				array_push($process, sprintf('%s id %d duedate from null to %s', $invoice->get_code(), $invoice->get_id(), $invoice->get_due_date()));
+
+				if ( $this->Invoice_model->update($invoice) ) array_push($process, '--saved');
+				else array_push($process, '--error!!!');
+			} // eo foreach $miss as $invoice
+			} catch (InvoiceNotFoundException $e) { 
+				//all iz well;
+			}
+			ob_start();
+			echo sprintf("===running script @%s=====\n", date("Y-m-d H:i:s"));
+			if (empty($process)) echo "all invoice iz well\n";
+			else {
+				echo implode("\n", $process) . "\n";
+			}
+			$contents = ob_get_contents();
+			ob_end_flush();
+			$filename = sprintf('/tmp/finalazka/log/%s-%s', str_replace('::', '.', __METHOD__), date('Ymd'));
+			if (! file_exists('/tmp/finalazka')) mkdir ('/tmp/finalazka');
+			if (! file_exists('/tmp/finalazka/log')) mkdir ('/tmp/finalazka/log');
+			file_put_contents($filename, $contents, FILE_APPEND);
+		} // eo else key != challenge
+	} //eo fix_due_date
 }
