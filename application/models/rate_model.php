@@ -76,7 +76,8 @@ class Rate {
 	}
 
 	public function get_due_after() {
-		return $this->due_after;
+		//make sure it returns int, even if it 0
+		return (int)($this->due_after);
 	}
 
 	public function set_recurrence($recurrence) {

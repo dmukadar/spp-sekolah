@@ -55,7 +55,11 @@ class Invoice {
 		return $this->created_date;
 	}
 
-	public function set_due_date($due_date) {
+	public function set_due_date($due_date, $due_after = 0) {
+		if (! empty($due_after)) {
+			$due_after--;
+			$due_date = date('Y-m-d', (strtotime($due_date) + ($due_after * 24 * 3600)));
+		}
 		$this->due_date = $due_date;
 	}
 
@@ -417,12 +421,14 @@ class Invoice_model extends CI_Model {
 
 		//berikut ini adalah default value saat membuat tagihan baru
 		$now = date('Y-m-d H:i:s');
+		$invoiceDate = date('Y-m-01');
 		$invoice->set_created($now);
 		$invoice->set_modified($now);
-		$invoice->set_created_date($now);
+		$invoice->set_created_date($invoiceDate);
 		$invoice->set_status(1);
 		$invoice->set_last_installment(0);
 		$invoice->set_received_amount(0);
+		$invoice->set_due_date($invoiceDate, $invoice->rate->get_due_after());
 		
 		$data = $invoice->export('array', array('siswa', 'rate', 'isNew'));
 		$this->db->insert(INVOICE_TABLE, $data);
