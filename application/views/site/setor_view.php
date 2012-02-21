@@ -29,11 +29,10 @@
 							<?php endforeach; ?>
 							</select>
 							</dd>
-							<dt><label>Pada Tanggal</label></dt>
+							<dt><label>Per Tanggal</label></dt>
 							<dd>
-								<input type="text" class="small" id="o-tgl-mulai" value="<?php echo date('d/m/Y'); ?>" /> sampai <input type="text" class="small" id="o-tgl-selesai" />
+								<input type="text" class="small" id="o-tgl-mulai" value="<?php echo date('d/m/Y'); ?>" />
 								<input type="hidden" id="tgl-mulai" name="tgl-mulai" value="<?php echo date('Y-m-d'); ?>" />
-								<input type="hidden" id="tgl-selesai" name="tgl-selesai" />
 							</dd>
 						</dl>
 					</fieldset>
@@ -44,7 +43,6 @@
 
 				<script language="javascript">
 					jQuery("#o-tgl-mulai").datepicker({'altField': '#tgl-mulai', 'altFormat': 'yy-mm-dd', 'dateFormat':'dd/mm/yy'});
-					jQuery("#o-tgl-selesai").datepicker({'altField': '#tgl-selesai', 'altFormat': 'yy-mm-dd', 'dateFormat':'dd/mm/yy'});
 					jQuery(".toggle-kategori").change(function() {
 						if (jQuery(this).val() == 2) jQuery('#kategori-container').fadeOut();
 						else jQuery('#kategori-container').fadeIn();
