@@ -58,6 +58,7 @@
 					<dt><label for="catatan">Catatan</label></dt>
 					<dd><textarea id="catatan" class="medium" name="catatan"><?php echo (empty($model) ? '' : $model->get_notes());?> </textarea></dd>
 
+					<?php if (empty($model)) : ?>
 					<dt><label for="o-tanggal">Untuk ditagihkan</label></dt>
 					<dd>
 						<input id="o-tanggal" type="text" class="small" name="o-tanggal" />
@@ -66,6 +67,7 @@
 
 					<dt>&nbsp;</dt>
 					<dd><label><input id="redo" type="checkbox" name="redo" value="1" /> Simpan kemudian lanjutkan entri tagihan </label></dd>
+					<?php endif; ?>
 			</dl>
 			<div class="buttons">
 							<?php if (empty($model) || ($model->get_status() != 'closed')) : ?>
