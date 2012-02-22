@@ -350,8 +350,8 @@ class Tagihan extends Alazka_Controller {
 			}
 
 			//var_dump($model);
-			//redirect(site_url('tagihan/index/' . $model->siswa->get_id()));
-			$this->index($model->get_id_student());
+			if ($this->input->post('redo')) redirect(site_url('tagihan/create/' . $model->siswa->get_id()));
+			else $this->index($model->get_id_student());
 		}
 	}
 

@@ -65,7 +65,7 @@
 					</dd>
 
 					<dt>&nbsp;</dt>
-					<dd><label><input id="redo" type="checkbox" name="redo" value="<?php echo (empty($model) ? '' : $model->get_description());?>" readonly="readonly" /> Simpan kemudian lanjutkan entri tagihan </label></dd>
+					<dd><label><input id="redo" type="checkbox" name="redo" value="1" /> Simpan kemudian lanjutkan entri tagihan </label></dd>
 			</dl>
 			<div class="buttons">
 							<?php if (empty($model) || ($model->get_status() != 'closed')) : ?>
