@@ -488,7 +488,7 @@ class Pembayaran extends Alazka_Controller {
 		$this->pdf->SetAutoPageBreak(FALSE, PDF_MARGIN_BOTTOM);    
 		// $this->pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
 		// $this->pdf->setTopMargin(1);
-		$this->pdf->SetMargins(10, 40, 10);
+		$this->pdf->SetMargins(10, 0, 10);
 		$this->pdf->AddPage(); 
 
 		$this->pdf->writeHTML($content, true, true, true, true, '');		
