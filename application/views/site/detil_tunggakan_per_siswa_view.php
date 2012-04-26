@@ -115,10 +115,10 @@
     <td width="24%" height="32"><div align="left"><?php echo ucwords(strtolower($row->namalengkap));?></div></td>
     <td width="10%" height="32"><div align="center"><?php echo $row->kelas;?></div></td>
     <td width="40%" height="32"><div align="center"><?php echo $row->description;?></div></td>
-    <td width="18%"><div align="right"><?php echo number_format($row->amount, 2); ?><span class="style6">.</span></div></td>
+    <td width="18%"><div align="right"><?php echo number_format($row->amount - $row->received_amount, 2); ?><span class="style6">.</span></div></td>
     <td width="4%"><div align="right"><?php echo $row->elapsed; ?><span class="style6">.</span></div></td>
   </tr>
-<?php if (empty($total)) $total = $row->amount; else $total += $row->amount; ?>
+<?php if (empty($total)) $total = $row->amount - $row->received_amount; else $total += $row->amount - $row->received_amount; ?>
 <?php endforeach; ?>
   <tr>
     <td colspan="4"><div align="center">Potensi Pendapatan</div></td>
