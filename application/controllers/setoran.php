@@ -79,6 +79,7 @@ function __construct()
 		$data['page_title'] = sprintf('Laporan Penerimaan %s Siswa', $kategori);
 		//$this->load->view('site/rekap_penerimaan_siswa_view', $data);
 		$content = $this->load->view('site/detil_pembayaran_per_siswa_view', $data, true);
+		$ttd = $this->load->view('site/cetak_ttd_laporan_setor', $data, true);
 
 		$this->load->library('pdf');
     $this->pdf->SetSubject('Detil Laporan Penerimaan');
@@ -86,11 +87,16 @@ function __construct()
 		$this->pdf->SetHeaderData('alazka.jpg', 0, "                                        YAYASAN AL AZHAR KELAPA GADING", "                                             Jl. Taman Bhaskara Utara, Mulyorejo - Surabaya\n                                           Telp. (031) 5927420, 5927447, Fax. (031) 5938179 ");
 		$this->pdf->setHeaderFont(Array('times', '', '14'));
 		$this->pdf->setFooterFont(Array('times', '', '12'));
+
+		$this->pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
     $this->pdf->SetFont('times', '', 10);   
     $this->pdf->SetAutoPageBreak(true, PDF_MARGIN_BOTTOM);    
 		$this->pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP + 5, PDF_MARGIN_RIGHT);
     $this->pdf->AddPage(); 
   	$this->pdf->writeHTML($content, true, true, true, true, '');		
+
+  	$this->pdf->writeHTML($ttd, true, true, true, true, '');		
 		$this->pdf->lastPage();		
 		$this->pdf->Output($filename, 'I');  
 	}
@@ -141,6 +147,7 @@ function __construct()
 		return false;
 		*/
 		$content = $this->load->view('site/rekap_pembayaran_view', $data, true);
+		$ttd = $this->load->view('site/cetak_ttd_laporan_setor', $data, true);
 
 		$this->load->library('pdf');
     $this->pdf->SetSubject('Rekap Penerimaan');
@@ -153,6 +160,20 @@ function __construct()
 		$this->pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP + 5, PDF_MARGIN_RIGHT);
     $this->pdf->AddPage(); 
   	$this->pdf->writeHTML($content, true, true, true, true, '');		
+
+  	$this->pdf->writeHTML($ttd, true, true, true, true, '');		
+/*
+		$this->pdf->startTransaction();
+		$curPage = $this->pdf->getPage();
+  	$this->pdf->writeHTML($ttd, true, true, true, true, '');		
+		if ($this->pdf->getPage() > $curPage) {
+			$this->pdf->rollbackTransaction();
+			$this->pdf->AddPage();
+  		$this->pdf->writeHTML($ttd, true, true, true, true, '');		
+		}
+		$this->pdf->commitTransaction();
+*/
+
 		$this->pdf->lastPage();		
 		$this->pdf->Output($filename, 'I');  
 	}
